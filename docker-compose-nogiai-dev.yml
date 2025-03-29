@@ -1,0 +1,102 @@
+version: "3"
+services:
+  web:
+    container_name: nogisfai-dev
+    restart: "always"
+    build: 
+      context: ./aisupporter
+      dockerfile: ./Dockerfile.dev
+    shm_size: '2gb'
+    #runtime: nvidia
+    ports:
+      - "17700:8000"  # 애플리케이션 포트
+      - "17751:8888"  # jupyter port (필요 시)
+    volumes:        
+      - ./:/app
+      - /DATA1/elcom_shared_data/ECTNFS_PINNER:/app/data:rw,z
+    environment:
+      - ENV=development
+      - DEBUG=true
+    depends_on:
+      - db
+      - redis
+      - postgisdb
+      - kafka
+      - geoserver
+
+  db:
+    image: duckdb/duckdb:latest
+    volumes:
+      - db_data:/var/lib/duckdb
+  
+  redis:
+    image: redis:alpine
+    ports:
+      - "17760:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+  
+  postgisdb:
+    image: postgis/postgis:14-3.3
+    ports:
+      - "17770:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=nogi
+      - POSTGRES_PASSWORD=nogi1234
+      - POSTGRES_DB=nogidb
+    restart: always
+  
+  geoserver:
+    image: kartoza/geoserver:2.19.0
+    ports:
+      - "17780:8080"
+    volumes:
+      - geoserver_data:/opt/geoserver/data_dir
+    environment:
+      - GEOSERVER_DATA_DIR=/opt/geoserver/data_dir
+      - GEOSERVER_ADMIN_USER=admin
+      - GEOSERVER_ADMIN_PASSWORD=geoserver
+    restart: always
+    depends_on:
+      - postgisdb
+  
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    ports:
+      - "17790:2181"
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+      - zookeeper_log:/var/lib/zookeeper/log
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    restart: always
+  
+  kafka:
+    image: confluentinc/cp-kafka:7.0.1
+    ports:
+      - "17795:9092"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:17795
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    restart: always
+    depends_on:
+      - zookeeper
+
+volumes:
+  db_data:
+  redis_data:
+  postgis_data:
+  geoserver_data:
+  zookeeper_data:
+  zookeeper_log:
+  kafka_data:

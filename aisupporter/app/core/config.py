@@ -16,7 +16,7 @@ class Settings(BaseModel):
     APP_NAME: str = "스마트 콩 재배 AI 자동제어 시스템"
     DEBUG: bool = os.getenv("DEBUG", "false").lower() == "true"
     HOST: str = os.getenv("HOST", "0.0.0.0")
-    PORT: int = int(os.getenv("PORT", "8000"))
+    PORT: int = int(os.getenv("PORT", "8080"))
     
     # 보안 설정
     SECRET_KEY: str = os.getenv("SECRET_KEY", "super-secret-key-for-development")

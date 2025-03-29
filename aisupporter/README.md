@@ -36,6 +36,47 @@
     pip install -r requirements.txt
     ```
 
+## 🐳 도커 컴포즈 실행 방법
+
+1. 도커와 도커 컴포즈가 설치되어 있는지 확인
+    ```bash
+    docker --version
+    docker-compose --version
+    ```
+
+2. 개발 환경용 도커 컴포즈 파일(docker-compose-nogiai-dev.yml)로 서비스 빌드 및 실행
+    ```bash
+    docker-compose -f docker-compose-nogiai-dev.yml build
+    docker-compose -f docker-compose-nogiai-dev.yml up -d
+    ```
+
+3. 서비스 상태 확인
+    ```bash
+    docker-compose -f docker-compose-nogiai-dev.yml ps
+    ```
+
+4. 로그 확인
+    ```bash
+    docker-compose -f docker-compose-nogiai-dev.yml logs
+    ```
+
+5. 실시간 로그 확인
+    ```bash
+    docker-compose -f docker-compose-nogiai-dev.yml logs -f
+    ```
+
+6. 서비스 중지 및 삭제
+    ```bash
+    docker-compose -f docker-compose-nogiai-dev.yml down
+    ```
+
+
+
+도커 컴포즈 개발 환경으로 실행 시 다음 주소에서 서비스에 접근할 수 있습니다:
+- 홈페이지: http://localhost:8000
+- 대시보드: http://localhost:8000/dashboard
+- API 문서: http://localhost:8000/docs
+
 ## 🚀 실행 방법
 
 1. 개발 모드로 실행
