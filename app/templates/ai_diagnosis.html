@@ -1,0 +1,208 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">콩 작물 AI 진단</h5>
+                    <button class="btn btn-primary" id="startDiagnosis">
+                        <i class="bx bx-scan me-1"></i> 진단 시작
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="bx bx-info-circle me-2"></i>
+                        AI 진단은 현재 센서 데이터와 카메라 이미지를 분석하여 콩 작물의 건강 상태를 평가합니다. 진단을 시작하려면 오른쪽 상단의 '진단 시작' 버튼을 클릭하세요.
+                    </div>
+                    
+                    <div class="row" id="diagnosticSummary" style="display: none;">
+                        <div class="col-md-4 mb-4">
+                            <div class="status-card">
+                                <i class="bx bx-check-circle status-card-icon"></i>
+                                <div class="status-card-title">전체 건강 점수</div>
+                                <div class="status-card-value">85<span style="font-size: 1rem;">/100</span></div>
+                                <div class="status-card-trend trend-up">
+                                    <i class="bx bx-up-arrow-alt me-1"></i> 지난 주 대비 5% 향상
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="status-card">
+                                <i class="bx bx-water status-card-icon"></i>
+                                <div class="status-card-title">토양 상태</div>
+                                <div class="status-card-value">양호</div>
+                                <div class="status-card-trend text-muted">
+                                    적정 수분 함량: 40~55%
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="status-card">
+                                <i class="bx bx-leaf status-card-icon"></i>
+                                <div class="status-card-title">질병 위험도</div>
+                                <div class="status-card-value">낮음</div>
+                                <div class="status-card-trend trend-up">
+                                    <i class="bx bx-check me-1"></i> 이상 증상 없음
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h6 class="mb-0">현재 센서 데이터</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="sensor-reading">
+                                        <i class="bx bx-sun sensor-icon" style="color: #FFC107;"></i>
+                                        <div class="sensor-info">
+                                            <div class="sensor-name">일사량</div>
+                                            <div class="sensor-value">780 W/m²</div>
+                                        </div>
+                                        <span class="badge bg-success">적정</span>
+                                    </div>
+                                    <div class="sensor-reading">
+                                        <i class="bx bx-droplet sensor-icon" style="color: #2196F3;"></i>
+                                        <div class="sensor-info">
+                                            <div class="sensor-name">토양 수분</div>
+                                            <div class="sensor-value">43%</div>
+                                        </div>
+                                        <span class="badge bg-success">적정</span>
+                                    </div>
+                                    <div class="sensor-reading">
+                                        <i class="bx bx-wind sensor-icon" style="color: #9E9E9E;"></i>
+                                        <div class="sensor-info">
+                                            <div class="sensor-name">대기 습도</div>
+                                            <div class="sensor-value">65%</div>
+                                        </div>
+                                        <span class="badge bg-success">적정</span>
+                                    </div>
+                                    <div class="sensor-reading">
+                                        <i class="bx bx-dialpad sensor-icon" style="color: #F44336;"></i>
+                                        <div class="sensor-info">
+                                            <div class="sensor-name">토양 온도</div>
+                                            <div class="sensor-value">21°C</div>
+                                        </div>
+                                        <span class="badge bg-success">적정</span>
+                                    </div>
+                                    <div class="sensor-reading">
+                                        <i class="bx bx-test-tube sensor-icon" style="color: #673AB7;"></i>
+                                        <div class="sensor-info">
+                                            <div class="sensor-name">토양 pH</div>
+                                            <div class="sensor-value">6.5</div>
+                                        </div>
+                                        <span class="badge bg-success">적정</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h6 class="mb-0">실시간 작물 모니터링</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center mb-3">
+                                        <img src="https://via.placeholder.com/400x250/4CAF50/FFFFFF?text=콩+작물+이미지" alt="콩 작물 이미지" class="img-fluid rounded">
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6>이미지 분석 결과:</h6>
+                                        <ul class="mb-0">
+                                            <li>잎 색상: 정상 (진한 녹색)</li>
+                                            <li>잎 크기: 적정</li>
+                                            <li>병충해 징후: 없음</li>
+                                            <li>성장 단계: 개화기 (예상 대비 정상)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" id="diagnosticResults" style="display: none;">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">AI 진단 결과</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert alert-success">
+                                        <i class="bx bx-check-circle me-2"></i>
+                                        <strong>양호 상태:</strong> 현재 콩 작물은 전반적으로 건강한 상태입니다. 모든 센서 데이터가 적정 범위 내에 있으며, 이미지 분석에서도 이상 징후가 발견되지 않았습니다.
+                                    </div>
+                                    
+                                    <div class="mt-4">
+                                        <h6 class="mb-3">세부 진단:</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>진단 항목</th>
+                                                        <th>상태</th>
+                                                        <th>권장 사항</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>수분 관리</td>
+                                                        <td><span class="badge bg-success">양호</span></td>
+                                                        <td>현재 관수 일정을 유지하세요.</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>영양 상태</td>
+                                                        <td><span class="badge bg-success">양호</span></td>
+                                                        <td>계획된 양분 공급을 계속하세요.</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>잎 건강도</td>
+                                                        <td><span class="badge bg-success">양호</span></td>
+                                                        <td>정기적인 모니터링을 유지하세요.</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>성장 속도</td>
+                                                        <td><span class="badge bg-warning">주의</span></td>
+                                                        <td>이전 주보다 약간 느린 성장률을 보이고 있습니다. 질소 비료 소량 추가를 고려하세요.</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const startDiagnosisBtn = document.getElementById('startDiagnosis');
+        const diagnosticSummary = document.getElementById('diagnosticSummary');
+        const diagnosticResults = document.getElementById('diagnosticResults');
+        
+        startDiagnosisBtn.addEventListener('click', function() {
+            startDiagnosisBtn.disabled = true;
+            startDiagnosisBtn.innerHTML = '<i class="bx bx-loader-circle bx-spin me-1"></i> 진단 중...';
+            
+            // 로딩 시뮬레이션 (실제 환경에서는 API 호출로 대체)
+            setTimeout(function() {
+                diagnosticSummary.style.display = 'flex';
+                diagnosticResults.style.display = 'block';
+                
+                startDiagnosisBtn.disabled = false;
+                startDiagnosisBtn.innerHTML = '<i class="bx bx-refresh me-1"></i> 진단 다시 시작';
+            }, 2000);
+        });
+    });
+</script>
+{% endblock %} 

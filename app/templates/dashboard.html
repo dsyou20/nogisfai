@@ -1,0 +1,288 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!-- 대시보드 주요 지표 카드 -->
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="status-card">
+            <div class="status-icon"><i class="bx bx-water"></i></div>
+            <div class="status-title">평균 토양 수분</div>
+            <div class="status-value">68%</div>
+            <div class="status-trend text-success"><i class="bx bx-up-arrow-alt"></i> 2.5% 증가</div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="status-card">
+            <div class="status-icon"><i class="bx bx-sun"></i></div>
+            <div class="status-title">평균 온도</div>
+            <div class="status-value">24.3°C</div>
+            <div class="status-trend text-danger"><i class="bx bx-down-arrow-alt"></i> 1.2°C 감소</div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="status-card">
+            <div class="status-icon"><i class="bx bx-leaf"></i></div>
+            <div class="status-title">생육 지수</div>
+            <div class="status-value">76/100</div>
+            <div class="status-trend text-success"><i class="bx bx-up-arrow-alt"></i> 3점 증가</div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="status-card">
+            <div class="status-icon"><i class="bx bx-line-chart"></i></div>
+            <div class="status-title">수확 예상일</div>
+            <div class="status-value">D-45</div>
+            <div class="status-trend text-info"><i class="bx bx-calendar"></i> 9월 15일</div>
+        </div>
+    </div>
+</div>
+
+<!-- 날씨 및 환경 정보 -->
+<div class="row">
+    <div class="col-lg-4">
+        <div class="weather-widget">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="h6 mb-3">현재 기상</div>
+                    <div class="weather-temp">25°C</div>
+                    <div>맑음</div>
+                </div>
+                <div class="weather-icon">
+                    <i class="bx bx-sun"></i>
+                </div>
+            </div>
+            <div class="row weather-detail mt-4">
+                <div class="col">
+                    <div>습도</div>
+                    <div class="fw-bold">48%</div>
+                </div>
+                <div class="col">
+                    <div>강수 확률</div>
+                    <div class="fw-bold">5%</div>
+                </div>
+                <div class="col">
+                    <div>풍속</div>
+                    <div class="fw-bold">5 m/s</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">일일 센서 데이터 요약</div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="dailyChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 실시간 센서 데이터 및 AI 제어 -->
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>실시간 센서 데이터</div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-secondary">새로고침</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table custom-table">
+                    <thead>
+                        <tr>
+                            <th>센서 ID</th>
+                            <th>유형</th>
+                            <th>위치</th>
+                            <th>값</th>
+                            <th>상태</th>
+                            <th>시간</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>S-001</td>
+                            <td>토양 수분</td>
+                            <td>A구역</td>
+                            <td>67%</td>
+                            <td><span class="badge bg-success">정상</span></td>
+                            <td>13:45:22</td>
+                        </tr>
+                        <tr>
+                            <td>S-002</td>
+                            <td>토양 온도</td>
+                            <td>A구역</td>
+                            <td>22.3°C</td>
+                            <td><span class="badge bg-success">정상</span></td>
+                            <td>13:45:20</td>
+                        </tr>
+                        <tr>
+                            <td>S-003</td>
+                            <td>대기 온도</td>
+                            <td>전체</td>
+                            <td>25.1°C</td>
+                            <td><span class="badge bg-success">정상</span></td>
+                            <td>13:45:18</td>
+                        </tr>
+                        <tr>
+                            <td>S-004</td>
+                            <td>대기 습도</td>
+                            <td>전체</td>
+                            <td>48%</td>
+                            <td><span class="badge bg-success">정상</span></td>
+                            <td>13:45:15</td>
+                        </tr>
+                        <tr>
+                            <td>S-005</td>
+                            <td>일사량</td>
+                            <td>전체</td>
+                            <td>752 W/m²</td>
+                            <td><span class="badge bg-success">정상</span></td>
+                            <td>13:45:10</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>AI 제어 작업</div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-secondary">기록 보기</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info mb-3">
+                    <div class="d-flex align-items-center">
+                        <i class="bx bx-info-circle me-2 fs-5"></i>
+                        <div>AI가 최근 6시간 동안 5건의 제어 작업을 수행했습니다.</div>
+                    </div>
+                </div>
+                <table class="table custom-table">
+                    <thead>
+                        <tr>
+                            <th>시간</th>
+                            <th>작업</th>
+                            <th>상태</th>
+                            <th>조치 사유</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>14:30:05</td>
+                            <td>관수 시스템 작동</td>
+                            <td><span class="badge bg-success">완료</span></td>
+                            <td>토양 수분 65% 이하 감지</td>
+                        </tr>
+                        <tr>
+                            <td>12:15:30</td>
+                            <td>환기 시스템 작동</td>
+                            <td><span class="badge bg-success">완료</span></td>
+                            <td>온실 내부 습도 80% 이상</td>
+                        </tr>
+                        <tr>
+                            <td>11:05:12</td>
+                            <td>차광막 50% 전개</td>
+                            <td><span class="badge bg-success">완료</span></td>
+                            <td>강한 일사량 감지</td>
+                        </tr>
+                        <tr>
+                            <td>09:30:45</td>
+                            <td>관수 시스템 작동</td>
+                            <td><span class="badge bg-success">완료</span></td>
+                            <td>정기 관수 일정</td>
+                        </tr>
+                        <tr>
+                            <td>07:15:20</td>
+                            <td>환기 시스템 작동</td>
+                            <td><span class="badge bg-success">완료</span></td>
+                            <td>이슬점 도달 방지</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 일일 센서 데이터 차트 초기화
+    function initDailyChart() {
+        const ctx = document.getElementById('dailyChart');
+        if (!ctx) return;
+        
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
+                datasets: [
+                    {
+                        label: '토양 온도 (°C)',
+                        data: [19.2, 20.5, 22.1, 23.6, 24.8, 24.3, 23.1, 21.8, 20.5],
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: '토양 수분 (%)',
+                        data: [65, 64, 63, 62, 59, 67, 70, 69, 68],
+                        borderColor: '#2196F3',
+                        backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: '대기 온도 (°C)',
+                        data: [18.5, 20.2, 22.8, 24.9, 26.1, 25.8, 24.2, 22.5, 21.0],
+                        borderColor: '#FF9800',
+                        backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        grid: {
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        initDailyChart();
+    });
+</script>
+{% endblock %} 

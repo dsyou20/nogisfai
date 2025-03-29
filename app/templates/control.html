@@ -1,0 +1,1018 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!-- 제어 일정 -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>제어 일정 관리</h5>
+    </div>
+    <div class="card-body">
+        <!-- 탭 메뉴 추가 -->
+        <ul class="nav nav-tabs mb-4" id="controlTimeline" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all-content" type="button" role="tab" aria-controls="all-content" aria-selected="true">전체 일정</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed-content" type="button" role="tab" aria-controls="completed-content" aria-selected="false">실행 완료 <span class="badge bg-success ms-1">3</span></button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="in-progress-tab" data-bs-toggle="tab" data-bs-target="#in-progress-content" type="button" role="tab" aria-controls="in-progress-content" aria-selected="false">실행 중 <span class="badge bg-primary ms-1">1</span></button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="scheduled-tab" data-bs-toggle="tab" data-bs-target="#scheduled-content" type="button" role="tab" aria-controls="scheduled-content" aria-selected="false">예약됨 <span class="badge bg-info ms-1">5</span></button>
+            </li>
+        </ul>
+
+        <!-- 탭 내용 -->
+        <div class="tab-content" id="controlTimelineContent">
+            <!-- 전체 일정 탭 -->
+            <div class="tab-pane fade show active" id="all-content" role="tabpanel" aria-labelledby="all-tab">
+                <div class="timeline mb-4">
+                    <div class="timeline-header mb-3">
+                        <div class="d-flex align-items-center">
+                            <span class="bg-success rounded-circle p-2 me-2" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                <i class="bx bx-check text-white"></i>
+                            </span>
+                            <h6 class="mb-0">오늘의 자동 제어 현황</h6>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>시스템</th>
+                                    <th>작업 시간</th>
+                                    <th>작업 내용</th>
+                                    <th>구역</th>
+                                    <th>상태</th>
+                                    <th>작업</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- 과거 작업 (완료됨) -->
+                                <tr class="table-light">
+                                    <td>관수 시스템</td>
+                                    <td>오늘 08:00</td>
+                                    <td>아침 정기 관수 (10분)</td>
+                                    <td>전체 구역</td>
+                                    <td><span class="badge bg-success">완료됨</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">상세 보기</button>
+                                    </td>
+                                </tr>
+                                <tr class="table-light">
+                                    <td>비료 공급</td>
+                                    <td>오늘 10:30</td>
+                                    <td>칼륨 비료 공급 (5kg/ha)</td>
+                                    <td>2구역</td>
+                                    <td><span class="badge bg-success">완료됨</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">상세 보기</button>
+                                    </td>
+                                </tr>
+                                <!-- 현재 작업 (실행 중) -->
+                                <tr class="table-primary bg-opacity-25">
+                                    <td>관수 시스템</td>
+                                    <td>현재</td>
+                                    <td>오후 정기 관수 (15분)</td>
+                                    <td>1구역</td>
+                                    <td><span class="badge bg-primary">실행 중</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-danger">중지</button>
+                                        <button class="btn btn-sm btn-outline-primary">모니터링</button>
+                                    </td>
+                                </tr>
+                                <!-- 미래 작업 (예약됨) -->
+                                <tr>
+                                    <td>관수 시스템</td>
+                                    <td>오늘 21:00</td>
+                                    <td>저녁 정기 관수 (10분)</td>
+                                    <td>전체 구역</td>
+                                    <td><span class="badge bg-info">예약됨</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">수정</button>
+                                        <button class="btn btn-sm btn-outline-danger">취소</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>비료 공급</td>
+                                    <td>내일 14:00</td>
+                                    <td>질소 비료 공급 (10kg/ha)</td>
+                                    <td>3구역</td>
+                                    <td><span class="badge bg-info">예약됨</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">수정</button>
+                                        <button class="btn btn-sm btn-outline-danger">취소</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>관수 시스템</td>
+                                    <td>내일 09:00</td>
+                                    <td>아침 정기 관수 (10분)</td>
+                                    <td>전체 구역</td>
+                                    <td><span class="badge bg-info">예약됨</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">수정</button>
+                                        <button class="btn btn-sm btn-outline-danger">취소</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>드론 약제 살포</td>
+                                    <td>3일 후 08:00</td>
+                                    <td>살충제 살포 (표준 15L/ha)</td>
+                                    <td>2구역</td>
+                                    <td><span class="badge bg-info">예약됨</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">수정</button>
+                                        <button class="btn btn-sm btn-outline-danger">취소</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>드론 비료 살포</td>
+                                    <td>5일 후 09:30</td>
+                                    <td>질소 비료 살포 (중간 30kg/ha)</td>
+                                    <td>1구역</td>
+                                    <td><span class="badge bg-info">예약됨</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">수정</button>
+                                        <button class="btn btn-sm btn-outline-danger">취소</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 시계열 타임라인 시각화 -->
+                <div class="timeline-visualization">
+                    <h6 class="mb-3">시계열 타임라인</h6>
+                    <div class="timeline-chart" id="controlTimelineChart" style="height: 250px;"></div>
+                </div>
+            </div>
+
+            <!-- 실행 완료 탭 -->
+            <div class="tab-pane fade" id="completed-content" role="tabpanel" aria-labelledby="completed-tab">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>시스템</th>
+                                <th>작업 시간</th>
+                                <th>작업 내용</th>
+                                <th>구역</th>
+                                <th>결과</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>관수 시스템</td>
+                                <td>오늘 08:00</td>
+                                <td>아침 정기 관수 (10분)</td>
+                                <td>전체 구역</td>
+                                <td><span class="badge bg-success">성공</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary">상세 보기</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>비료 공급</td>
+                                <td>오늘 10:30</td>
+                                <td>칼륨 비료 공급 (5kg/ha)</td>
+                                <td>2구역</td>
+                                <td><span class="badge bg-success">성공</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary">상세 보기</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>관수 시스템</td>
+                                <td>어제 21:00</td>
+                                <td>저녁 정기 관수 (10분)</td>
+                                <td>전체 구역</td>
+                                <td><span class="badge bg-success">성공</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary">상세 보기</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 실행 중 탭 -->
+            <div class="tab-pane fade" id="in-progress-content" role="tabpanel" aria-labelledby="in-progress-tab">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>시스템</th>
+                                <th>시작 시간</th>
+                                <th>작업 내용</th>
+                                <th>구역</th>
+                                <th>진행 상태</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>관수 시스템</td>
+                                <td>현재 (5분 전 시작)</td>
+                                <td>오후 정기 관수 (15분)</td>
+                                <td>1구역</td>
+                                <td>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100" style="width: 33%"></div>
+                                    </div>
+                                    <small>5/15분 (33%)</small>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger">중지</button>
+                                    <button class="btn btn-sm btn-outline-primary">모니터링</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 예약됨 탭 -->
+            <div class="tab-pane fade" id="scheduled-content" role="tabpanel" aria-labelledby="scheduled-tab">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>시스템</th>
+                                <th>예약 시간</th>
+                                <th>작업 내용</th>
+                                <th>구역</th>
+                                <th>대기 시간</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>관수 시스템</td>
+                                <td>오늘 21:00</td>
+                                <td>저녁 정기 관수 (10분)</td>
+                                <td>전체 구역</td>
+                                <td><span class="text-muted">약 3시간 후</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary">수정</button>
+                                    <button class="btn btn-sm btn-outline-danger">취소</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>비료 공급</td>
+                                <td>내일 14:00</td>
+                                <td>질소 비료 공급 (10kg/ha)</td>
+                                <td>3구역</td>
+                                <td><span class="text-muted">약 1일 후</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary">수정</button>
+                                    <button class="btn btn-sm btn-outline-danger">취소</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>관수 시스템</td>
+                                <td>내일 09:00</td>
+                                <td>아침 정기 관수 (10분)</td>
+                                <td>전체 구역</td>
+                                <td><span class="text-muted">약 20시간 후</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary">수정</button>
+                                    <button class="btn btn-sm btn-outline-danger">취소</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>드론 약제 살포</td>
+                                <td>3일 후 08:00</td>
+                                <td>살충제 살포 (표준 15L/ha)</td>
+                                <td>2구역</td>
+                                <td><span class="text-muted">약 3일 후</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary">수정</button>
+                                    <button class="btn btn-sm btn-outline-danger">취소</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>드론 비료 살포</td>
+                                <td>5일 후 09:30</td>
+                                <td>질소 비료 살포 (중간 30kg/ha)</td>
+                                <td>1구역</td>
+                                <td><span class="text-muted">약 5일 후</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary">수정</button>
+                                    <button class="btn btn-sm btn-outline-danger">취소</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-between align-items-center">
+            <button class="btn btn-primary">새 일정 추가</button>
+            <div class="btn-group" role="group">
+                <button class="btn btn-outline-secondary">일정 내보내기</button>
+                <button class="btn btn-outline-secondary">보고서 생성</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 대한민국 지도 기반 현황판 -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>김제지구 현황</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-3">
+                    <div class="card-header">김제지구 요약 정보</div>
+                    <div class="card-body">
+                        <div class="region-info">
+                            <h6>김제지구 <span class="badge bg-success">양호</span></h6>
+                            <div class="progress mb-2" style="height: 8px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 92%"></div>
+                            </div>
+                            <p class="small text-muted">토양 수분: 65% | 최근 관수: 오늘</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary w-100">김제지구 상세 리포트</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5>자동 제어 시스템</h5>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info" role="alert">
+            <i class="bx bx-info-circle me-2"></i>
+            자동 제어 시스템 페이지입니다. 여기서 관수, 비료 공급, 드론 제어 등을 관리할 수 있습니다.
+        </div>
+        
+        <!-- 시스템 상태 개요 -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="status-card">
+                    <div class="status-icon"><i class="bx bx-water"></i></div>
+                    <div class="status-title">관수 시스템</div>
+                    <div class="status-value">정상</div>
+                    <div class="status-trend text-success"><i class="bx bx-check-circle"></i> 최적화됨</div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="status-card">
+                    <div class="status-icon"><i class="bx bx-test-tube"></i></div>
+                    <div class="status-title">비료 공급</div>
+                    <div class="status-value">계획됨</div>
+                    <div class="status-trend text-info"><i class="bx bx-calendar"></i> 내일 14:00</div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="status-card">
+                    <div class="status-icon"><i class="bx bx-drone"></i></div>
+                    <div class="status-title">드론 약제 살포</div>
+                    <div class="status-value">대기중</div>
+                    <div class="status-trend text-info"><i class="bx bx-calendar"></i> 3일 후 08:00</div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="status-card">
+                    <div class="status-icon"><i class="bx bx-cloud-upload"></i></div>
+                    <div class="status-title">드론 비료 살포</div>
+                    <div class="status-value">대기중</div>
+                    <div class="status-trend text-info"><i class="bx bx-calendar"></i> 5일 후 09:30</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 농장 현황 지도 -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>김제지구 구역 현황</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card mb-3">
+                            <div class="card-header">구역 정보</div>
+                            <div class="card-body">
+                                <div class="zone-info">
+                                    <h6>1구역</h6>
+                                    <p>토양 수분: 65% <span class="badge bg-success">양호</span></p>
+                                    <p>최근 관수: 오늘 15:30</p>
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 65%"></div>
+                                    </div>
+                                </div>
+                                <div class="zone-info mt-3">
+                                    <h6>2구역</h6>
+                                    <p>토양 수분: 58% <span class="badge bg-warning">주의</span></p>
+                                    <p>최근 관수: 어제 16:20</p>
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 58%"></div>
+                                    </div>
+                                </div>
+                                <div class="zone-info mt-3">
+                                    <h6>3구역</h6>
+                                    <p>토양 수분: 62% <span class="badge bg-success">양호</span></p>
+                                    <p>최근 관수: 오늘 14:45</p>
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 62%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 제어 시스템 상세 설정 -->
+        <div class="row mt-4">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">관수 시스템</div>
+                    <div class="card-body">
+                        <div class="row align-items-center mb-4">
+                            <div class="col-md-4">
+                                <img src="/static/images/sensors/irrigation.png" alt="관수 시스템" class="img-fluid">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="autoIrrigation" checked>
+                                    <label class="form-check-label" for="autoIrrigation">자동 제어 모드</label>
+                                </div>
+                                <p>현재 상태: <span class="badge bg-success">작동 중</span></p>
+                                <p>마지막 작동: 오늘 15:30 (10분간)</p>
+                                <p>다음 예정 시간: 오늘 21:00</p>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <h6 class="mb-3">수동 제어</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">관수 강도</label>
+                                <select class="form-select mb-3">
+                                    <option>약함 (5분)</option>
+                                    <option selected>중간 (10분)</option>
+                                    <option>강함 (15분)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">구역 선택</label>
+                                <select class="form-select mb-3">
+                                    <option selected>전체 구역</option>
+                                    <option>1구역</option>
+                                    <option>2구역</option>
+                                    <option>3구역</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary mt-2">수동 작동</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">비료 공급 시스템</div>
+                    <div class="card-body">
+                        <div class="row align-items-center mb-4">
+                            <div class="col-md-4">
+                                <img src="/static/images/sensors/fertilizer.png" alt="비료 공급 시스템" class="img-fluid">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="autoFertilizer" checked>
+                                    <label class="form-check-label" for="autoFertilizer">자동 제어 모드</label>
+                                </div>
+                                <p>현재 상태: <span class="badge bg-secondary">대기 중</span></p>
+                                <p>마지막 작동: 어제 15:30</p>
+                                <p>다음 예정 시간: 내일 14:00</p>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <h6 class="mb-3">수동 제어</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">비료 종류</label>
+                                <select class="form-select mb-3">
+                                    <option>종합 영양제</option>
+                                    <option selected>질소 비료</option>
+                                    <option>인산 비료</option>
+                                    <option>칼륨 비료</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">공급량</label>
+                                <select class="form-select mb-3">
+                                    <option>소량 (5kg/ha)</option>
+                                    <option selected>중간 (10kg/ha)</option>
+                                    <option>대량 (15kg/ha)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary mt-2">수동 작동</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">드론 약제 살포 제어</div>
+                    <div class="card-body">
+                        <div class="row align-items-center mb-4">
+                            <div class="col-md-4">
+                                <img src="/static/images/drone/spray_drone.png" alt="드론 약제 살포" class="img-fluid">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="autoDroneSpray">
+                                    <label class="form-check-label" for="autoDroneSpray">자동 제어 모드</label>
+                                </div>
+                                <p>현재 상태: <span class="badge bg-secondary">대기 중</span></p>
+                                <p>마지막 작동: 3일 전 09:15</p>
+                                <p>드론 배터리: <span class="text-success">92%</span></p>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <h6 class="mb-3">수동 제어</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">약제 종류</label>
+                                <select class="form-select mb-3">
+                                    <option>제초제</option>
+                                    <option selected>살충제</option>
+                                    <option>살균제</option>
+                                    <option>생물학적 방제제</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">살포 구역</label>
+                                <select class="form-select mb-3">
+                                    <option>1구역</option>
+                                    <option selected>2구역</option>
+                                    <option>3구역</option>
+                                    <option>전체 구역</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">살포량</label>
+                                <select class="form-select mb-3">
+                                    <option>저농도 (10L/ha)</option>
+                                    <option selected>표준 (15L/ha)</option>
+                                    <option>고농도 (20L/ha)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">비행 고도</label>
+                                <select class="form-select mb-3">
+                                    <option>낮음 (2m)</option>
+                                    <option selected>중간 (3m)</option>
+                                    <option>높음 (5m)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <small><i class="bx bx-info-circle me-1"></i> 현재 풍속 2.5m/s, 살포 가능 조건입니다.</small>
+                        </div>
+                        <button class="btn btn-primary mt-2">드론 출발</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">드론 비료 살포 제어</div>
+                    <div class="card-body">
+                        <div class="row align-items-center mb-4">
+                            <div class="col-md-4">
+                                <img src="/static/images/drone/fertilizer_drone.png" alt="드론 비료 살포" class="img-fluid">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="autoDroneFertilizer">
+                                    <label class="form-check-label" for="autoDroneFertilizer">자동 제어 모드</label>
+                                </div>
+                                <p>현재 상태: <span class="badge bg-secondary">대기 중</span></p>
+                                <p>마지막 작동: 7일 전 10:30</p>
+                                <p>드론 배터리: <span class="text-success">88%</span></p>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <h6 class="mb-3">수동 제어</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">비료 종류</label>
+                                <select class="form-select mb-3">
+                                    <option>유기질 비료</option>
+                                    <option selected>질소 비료</option>
+                                    <option>인산 비료</option>
+                                    <option>복합 비료</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">살포 구역</label>
+                                <select class="form-select mb-3">
+                                    <option selected>1구역</option>
+                                    <option>2구역</option>
+                                    <option>3구역</option>
+                                    <option>전체 구역</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">살포량</label>
+                                <select class="form-select mb-3">
+                                    <option>소량 (20kg/ha)</option>
+                                    <option selected>중간 (30kg/ha)</option>
+                                    <option>대량 (40kg/ha)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">비행 패턴</label>
+                                <select class="form-select mb-3">
+                                    <option>격자형</option>
+                                    <option selected>지그재그형</option>
+                                    <option>나선형</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="alert alert-warning">
+                            <small><i class="bx bx-wind me-1"></i> 주의: 현재 풍속 5.2m/s, 살포 시 주의가 필요합니다.</small>
+                        </div>
+                        <button class="btn btn-primary mt-2">드론 출발</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 드론 비행 경로 -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>드론 비행 경로</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">비행 정보</div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <h6>예정된 비행</h6>
+                                    <p>약제 살포: 3일 후 08:00 (2구역)</p>
+                                    <p>비료 살포: 5일 후 09:30 (1구역)</p>
+                                </div>
+                                <div class="mb-3">
+                                    <h6>비행 패턴</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="flightPattern" id="pattern1" checked>
+                                        <label class="form-check-label" for="pattern1">지그재그형</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="flightPattern" id="pattern2">
+                                        <label class="form-check-label" for="pattern2">격자형</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="flightPattern" id="pattern3">
+                                        <label class="form-check-label" for="pattern3">나선형</label>
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-outline-primary">비행 경로 최적화</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 이미지 미리보기 모달 -->
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imagePreviewTitle">이미지 상세보기</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="previewImage" src="" alt="미리보기 이미지" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 제어 버튼 이벤트 처리
+        const controlButtons = document.querySelectorAll('.btn-primary');
+        controlButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // 실제로는 API 호출을 하겠지만, 데모를 위한 알림 표시
+                alert('제어 명령이 전송되었습니다.');
+            });
+        });
+        
+        // 툴크 초기화
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+        
+        // 이미지 클릭 시 모달 표시
+        const images = document.querySelectorAll('.img-fluid');
+        images.forEach(img => {
+            img.style.cursor = 'pointer';
+            img.addEventListener('click', function() {
+                document.getElementById('previewImage').src = this.src;
+                document.getElementById('imagePreviewTitle').textContent = this.alt;
+                new bootstrap.Modal(document.getElementById('imagePreviewModal')).show();
+            });
+        });
+
+        // 시계열 타임라인 차트 초기화
+        initTimelineChart();
+    });
+
+    // 시계열 타임라인 차트 초기화 함수
+    function initTimelineChart() {
+        if (document.getElementById('controlTimelineChart')) {
+            // 현재 시간 기준으로 시간 계산
+            const now = new Date();
+            const twelveHoursAgo = new Date(now.getTime() - (12 * 60 * 60 * 1000));
+
+            // 시간 형식 포맷팅 함수
+            function formatTime(date) {
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                return `${hours}:${minutes}`;
+            }
+
+            // 날짜 형식 포맷팅 함수
+            function formatDate(date) {
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');
+                return `${month}/${day}`;
+            }
+
+            // 타임라인 데이터 설정
+            const today8am = new Date(now);
+            today8am.setHours(8, 0, 0, 0);
+            
+            const today1030am = new Date(now);
+            today1030am.setHours(10, 30, 0, 0);
+            
+            const currentTime = new Date(now);
+            
+            const today9pm = new Date(now);
+            today9pm.setHours(21, 0, 0, 0);
+            
+            const tomorrow9am = new Date(now);
+            tomorrow9am.setDate(now.getDate() + 1);
+            tomorrow9am.setHours(9, 0, 0, 0);
+            
+            const tomorrow2pm = new Date(now);
+            tomorrow2pm.setDate(now.getDate() + 1);
+            tomorrow2pm.setHours(14, 0, 0, 0);
+            
+            const threeDaysLater = new Date(now);
+            threeDaysLater.setDate(now.getDate() + 3);
+            threeDaysLater.setHours(8, 0, 0, 0);
+            
+            const fiveDaysLater = new Date(now);
+            fiveDaysLater.setDate(now.getDate() + 5);
+            fiveDaysLater.setHours(9, 30, 0, 0);
+
+            // 작업 데이터 설정
+            const timelineData = [
+                {
+                    x: '관수 시스템',
+                    y: [
+                        new Date(today8am).getTime(),
+                        new Date(today8am).getTime() + 10 * 60 * 1000
+                    ],
+                    fillColor: '#4CAF50',
+                    label: {
+                        text: '완료: 아침 정기 관수'
+                    }
+                },
+                {
+                    x: '비료 공급',
+                    y: [
+                        new Date(today1030am).getTime(),
+                        new Date(today1030am).getTime() + 15 * 60 * 1000
+                    ],
+                    fillColor: '#4CAF50',
+                    label: {
+                        text: '완료: 칼륨 비료 공급'
+                    }
+                },
+                {
+                    x: '관수 시스템',
+                    y: [
+                        new Date(currentTime).getTime() - 5 * 60 * 1000,
+                        new Date(currentTime).getTime() + 10 * 60 * 1000
+                    ],
+                    fillColor: '#2196F3',
+                    label: {
+                        text: '실행 중: 오후 정기 관수'
+                    }
+                },
+                {
+                    x: '관수 시스템',
+                    y: [
+                        new Date(today9pm).getTime(),
+                        new Date(today9pm).getTime() + 10 * 60 * 1000
+                    ],
+                    fillColor: '#90CAF9',
+                    label: {
+                        text: '예약: 저녁 정기 관수'
+                    }
+                },
+                {
+                    x: '관수 시스템',
+                    y: [
+                        new Date(tomorrow9am).getTime(),
+                        new Date(tomorrow9am).getTime() + 10 * 60 * 1000
+                    ],
+                    fillColor: '#90CAF9',
+                    label: {
+                        text: '예약: 아침 정기 관수'
+                    }
+                },
+                {
+                    x: '비료 공급',
+                    y: [
+                        new Date(tomorrow2pm).getTime(),
+                        new Date(tomorrow2pm).getTime() + 20 * 60 * 1000
+                    ],
+                    fillColor: '#90CAF9',
+                    label: {
+                        text: '예약: 질소 비료 공급'
+                    }
+                },
+                {
+                    x: '드론 약제 살포',
+                    y: [
+                        new Date(threeDaysLater).getTime(),
+                        new Date(threeDaysLater).getTime() + 45 * 60 * 1000
+                    ],
+                    fillColor: '#90CAF9',
+                    label: {
+                        text: '예약: 살충제 살포'
+                    }
+                },
+                {
+                    x: '드론 비료 살포',
+                    y: [
+                        new Date(fiveDaysLater).getTime(),
+                        new Date(fiveDaysLater).getTime() + 60 * 60 * 1000
+                    ],
+                    fillColor: '#90CAF9',
+                    label: {
+                        text: '예약: 질소 비료 살포'
+                    }
+                }
+            ];
+
+            const options = {
+                series: [
+                    {
+                        data: timelineData
+                    }
+                ],
+                chart: {
+                    height: 250,
+                    type: 'rangeBar',
+                    toolbar: {
+                        show: false
+                    },
+                    fontFamily: 'Pretendard, "Malgun Gothic", sans-serif',
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                        distributed: true,
+                        dataLabels: {
+                            hideOverflowingLabels: false
+                        }
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function(val, opts) {
+                        return opts.w.globals.labels[opts.dataPointIndex];
+                    },
+                    style: {
+                        fontSize: '12px',
+                        fontWeight: 'normal'
+                    }
+                },
+                xaxis: {
+                    type: 'datetime',
+                    position: 'top',
+                    labels: {
+                        format: 'MM/dd HH:mm',
+                        style: {
+                            fontSize: '12px'
+                        }
+                    },
+                    axisBorder: {
+                        show: false
+                    },
+                    axisTicks: {
+                        show: false
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        style: {
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                grid: {
+                    borderColor: '#f1f1f1',
+                    padding: {
+                        top: 10
+                    }
+                },
+                tooltip: {
+                    custom: function({series, seriesIndex, dataPointIndex, w}) {
+                        const data = w.config.series[seriesIndex].data[dataPointIndex];
+                        const startTime = new Date(data.y[0]);
+                        const endTime = new Date(data.y[1]);
+                        
+                        // 시작 시간과 종료 시간 포맷팅
+                        const startFormatted = `${formatDate(startTime)} ${formatTime(startTime)}`;
+                        const endFormatted = `${formatDate(endTime)} ${formatTime(endTime)}`;
+                        
+                        // 작업 종류에 따른 상태 구분
+                        let status = "";
+                        if (data.fillColor === '#4CAF50') {
+                            status = "<span class='badge bg-success'>완료됨</span>";
+                        } else if (data.fillColor === '#2196F3') {
+                            status = "<span class='badge bg-primary'>실행 중</span>";
+                        } else {
+                            status = "<span class='badge bg-info'>예약됨</span>";
+                        }
+                        
+                        return `
+                        <div class="p-2">
+                            <div class="mb-1"><strong>${data.x}</strong> ${status}</div>
+                            <div class="mb-1">${data.label.text}</div>
+                            <div><small>시작: ${startFormatted}</small></div>
+                            <div><small>종료: ${endFormatted}</small></div>
+                        </div>
+                        `;
+                    }
+                },
+                legend: {
+                    show: false
+                },
+                annotations: {
+                    xaxis: [
+                        {
+                            x: now.getTime(),
+                            borderColor: '#FF4560',
+                            label: {
+                                borderColor: '#FF4560',
+                                style: {
+                                    color: '#fff',
+                                    background: '#FF4560'
+                                },
+                                text: '현재 시간'
+                            }
+                        }
+                    ]
+                }
+            };
+
+            // 차트 초기화
+            const chart = new ApexCharts(document.getElementById('controlTimelineChart'), options);
+            chart.render();
+        }
+    }
+</script>
+{% endblock %} 

@@ -1,0 +1,249 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5>AI 챗봇</h5>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info mb-4" role="alert">
+            <i class="bx bx-info-circle me-2"></i>
+            AI 챗봇 페이지입니다. 작물 재배, 질병 진단, 환경 제어 등에 관한 질문을 할 수 있습니다.
+        </div>
+        
+        <div class="row">
+            <div class="col-md-8">
+                <!-- 채팅 인터페이스 -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <i class="bx bx-bot text-primary me-2" style="font-size: 1.5rem;"></i>
+                                <div>
+                                    <h6 class="mb-0">콩이 도우미</h6>
+                                    <small class="text-muted">온라인</small>
+                                </div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#"><i class="bx bx-trash me-2"></i>대화 내역 삭제</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="bx bx-export me-2"></i>대화 내역 저장</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="bx bx-cog me-2"></i>설정</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chat-container" style="height: 400px; overflow-y: auto;">
+                            <!-- 챗봇 메시지 -->
+                            <div class="d-flex mb-3">
+                                <div class="avatar avatar-sm me-2">
+                                    <span class="avatar-initial rounded-circle bg-primary">
+                                        <i class="bx bx-bot"></i>
+                                    </span>
+                                </div>
+                                <div class="chat-message">
+                                    <div class="bg-light rounded p-3">
+                                        <p class="mb-0">안녕하세요! 콩이 도우미입니다. 스마트 대두 재배에 관한 질문이 있으시면 언제든지 물어보세요.</p>
+                                    </div>
+                                    <small class="text-muted mt-1">09:30</small>
+                                </div>
+                            </div>
+                            
+                            <!-- 사용자 메시지 -->
+                            <div class="d-flex mb-3 justify-content-end">
+                                <div class="chat-message text-end">
+                                    <div class="bg-primary text-white rounded p-3">
+                                        <p class="mb-0">안녕하세요! 요즘 콩잎에 노란 반점이 보이는데 어떤 문제일까요?</p>
+                                    </div>
+                                    <small class="text-muted mt-1">09:31</small>
+                                </div>
+                                <div class="avatar avatar-sm ms-2">
+                                    <span class="avatar-initial rounded-circle bg-success">
+                                        <i class="bx bx-user"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- 챗봇 메시지 with 진단 정보 -->
+                            <div class="d-flex mb-3">
+                                <div class="avatar avatar-sm me-2">
+                                    <span class="avatar-initial rounded-circle bg-primary">
+                                        <i class="bx bx-bot"></i>
+                                    </span>
+                                </div>
+                                <div class="chat-message">
+                                    <div class="bg-light rounded p-3">
+                                        <p class="mb-2">콩잎의 노란 반점은 여러 원인이 있을 수 있습니다:</p>
+                                        <ol class="mb-2">
+                                            <li>영양소 결핍 (특히 마그네슘, 철분)</li>
+                                            <li>해충 (특히 진딧물)</li>
+                                            <li>균류 감염 (노균병, 녹병)</li>
+                                        </ol>
+                                        <p class="mb-2">현재 농장의 센서 데이터를 확인해 본 결과, 최근 습도가 높고 온도 변화가 심한 상태로 노균병 발생 가능성이 있습니다.</p>
+                                        <p class="mb-0">정확한 진단을 위해 영상 분석 페이지에서 잎 사진을 업로드해 주시면 도움이 될 것 같습니다.</p>
+                                    </div>
+                                    <small class="text-muted mt-1">09:32</small>
+                                </div>
+                            </div>
+                            
+                            <!-- 사용자 메시지 -->
+                            <div class="d-flex mb-3 justify-content-end">
+                                <div class="chat-message text-end">
+                                    <div class="bg-primary text-white rounded p-3">
+                                        <p class="mb-0">노균병을 예방하기 위한 조치는 무엇이 있나요?</p>
+                                    </div>
+                                    <small class="text-muted mt-1">09:33</small>
+                                </div>
+                                <div class="avatar avatar-sm ms-2">
+                                    <span class="avatar-initial rounded-circle bg-success">
+                                        <i class="bx bx-user"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- 챗봇 메시지 -->
+                            <div class="d-flex mb-3">
+                                <div class="avatar avatar-sm me-2">
+                                    <span class="avatar-initial rounded-circle bg-primary">
+                                        <i class="bx bx-bot"></i>
+                                    </span>
+                                </div>
+                                <div class="chat-message">
+                                    <div class="bg-light rounded p-3">
+                                        <p class="mb-2">노균병 예방을 위한 조치는 다음과 같습니다:</p>
+                                        <ul class="mb-2">
+                                            <li>습도 관리: 온실 내 습도를 70% 이하로 유지하세요.</li>
+                                            <li>환기 개선: 자동 제어 페이지에서 환기 주기를 증가시키는 것을 추천합니다.</li>
+                                            <li>작물 간격: 식물 간 충분한 간격을 확보하여 통풍을 개선하세요.</li>
+                                            <li>질병 저항성 품종: 다음 재배 시 노균병 저항성 품종 선택을 고려하세요.</li>
+                                        </ul>
+                                        <p class="mb-0">자동 제어 페이지에서 환경 설정을 업데이트하시겠습니까? 적절한 환경 조건을 추천해 드릴 수 있습니다.</p>
+                                    </div>
+                                    <small class="text-muted mt-1">09:34</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 메시지 입력 영역 -->
+                        <div class="chat-input-container mt-3">
+                            <form>
+                                <div class="input-group">
+                                    <button class="btn btn-outline-secondary" type="button">
+                                        <i class="bx bx-paperclip"></i>
+                                    </button>
+                                    <input type="text" class="form-control" placeholder="메시지를 입력하세요...">
+                                    <button class="btn btn-primary" type="button">
+                                        <i class="bx bx-send"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <!-- 도움말 및 추천 질문 -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">추천 질문</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <button class="list-group-item list-group-item-action">
+                                <i class="bx bx-question-mark me-2 text-primary"></i> 최적의 관수 주기는 어떻게 되나요?
+                            </button>
+                            <button class="list-group-item list-group-item-action">
+                                <i class="bx bx-question-mark me-2 text-primary"></i> 개화기에 적절한 온도 범위는?
+                            </button>
+                            <button class="list-group-item list-group-item-action">
+                                <i class="bx bx-question-mark me-2 text-primary"></i> 콩 생육에 필요한 주요 영양소는?
+                            </button>
+                            <button class="list-group-item list-group-item-action">
+                                <i class="bx bx-question-mark me-2 text-primary"></i> 수확 시기를 어떻게 판단할 수 있나요?
+                            </button>
+                            <button class="list-group-item list-group-item-action">
+                                <i class="bx bx-question-mark me-2 text-primary"></i> 병해충 예방을 위한 농약 대체 방법은?
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 챗봇 정보 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">AI 도우미 정보</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6>모델 버전</h6>
+                            <p class="text-muted mb-0">NogisAI v1.2.3</p>
+                        </div>
+                        <div class="mb-3">
+                            <h6>데이터 기반</h6>
+                            <p class="text-muted mb-0">대두 재배 매뉴얼, 농촌진흥청 자료, 학술 논문, 센서 데이터</p>
+                        </div>
+                        <div class="mb-3">
+                            <h6>특성</h6>
+                            <div class="d-flex flex-wrap">
+                                <span class="badge bg-primary me-1 mb-1">실시간 센서 데이터 통합</span>
+                                <span class="badge bg-primary me-1 mb-1">이미지 인식</span>
+                                <span class="badge bg-primary me-1 mb-1">맞춤형 재배 조언</span>
+                                <span class="badge bg-primary me-1 mb-1">다국어 지원</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="mb-0 small">
+                                <i class="bx bx-info-circle me-1"></i>
+                                AI 도우미는 전문가의 조언을 대체하지 않습니다. 중요한 결정에는 항상 전문가와 상담하세요.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .chat-message {
+        max-width: 75%;
+    }
+    
+    .avatar-initial {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 채팅창 스크롤을 항상 아래로 유지
+        const chatContainer = document.querySelector('.chat-container');
+        if (chatContainer) {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // 추천 질문 클릭 시 입력창에 텍스트 추가
+        const recommendedQuestions = document.querySelectorAll('.list-group-item-action');
+        const messageInput = document.querySelector('.chat-input-container input');
+        
+        recommendedQuestions.forEach(question => {
+            question.addEventListener('click', function() {
+                const questionText = this.textContent.trim().replace(/^[\u2022\u2023\u25E6\u2043\u2219]\s*/g, '');
+                messageInput.value = questionText;
+                messageInput.focus();
+            });
+        });
+    });
+</script>
+{% endblock %} 

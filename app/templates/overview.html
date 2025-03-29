@@ -1,0 +1,838 @@
+{% extends "layout.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<style>
+    #mapContainer {
+        height: 500px;
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        position: relative;
+    }
+    #mapLoading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 10px 20px;
+        border-radius: 30px;
+        display: none;
+        z-index: 1000;
+    }
+    .info-card {
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        border: none;
+        margin-bottom: 20px;
+    }
+    .map-overlay {
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 10px;
+        border-radius: 4px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    .sensor-status {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+    .sensor-status .icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        flex-shrink: 0;
+    }
+    .sensor-status .details {
+        flex-grow: 1;
+    }
+    .sensor-status .name {
+        font-weight: 600;
+        margin-bottom: 3px;
+    }
+    .sensor-status .value {
+        font-size: 13px;
+        color: #555;
+    }
+    .status-good {
+        background-color: rgba(76, 175, 80, 0.15);
+        color: #4CAF50;
+    }
+    .status-warning {
+        background-color: rgba(255, 193, 7, 0.15);
+        color: #FFC107;
+    }
+    .status-danger {
+        background-color: rgba(244, 67, 54, 0.15);
+        color: #F44336;
+    }
+    .custom-popup .leaflet-popup-content-wrapper {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 8px;
+    }
+    .custom-popup .leaflet-popup-content {
+        margin: 12px;
+        line-height: 1.4;
+    }
+    .custom-popup .leaflet-popup-tip-container {
+        margin-top: -1px;
+    }
+    .custom-popup .leaflet-popup-tip {
+        background: rgba(255, 255, 255, 0.95);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- 상단 헤더 영역 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">전체현황 대시보드 - 김제시 죽산면</h5>
+                    <div class="controls">
+                        <button class="btn btn-sm btn-primary">
+                            <i class="bx bx-refresh me-1"></i> 데이터 새로고침
+                        </button>
+                        <div class="btn-group ms-2">
+                            <button class="btn btn-sm btn-outline-secondary active" id="mapStandard">지도</button>
+                            <button class="btn btn-sm btn-outline-secondary" id="mapSatellite">위성</button>
+                            <button class="btn btn-sm btn-outline-secondary" id="mapHybrid">하이브리드</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="bx bx-info-circle me-2"></i>
+                        김제시 죽산면 일대의 콩 재배 환경과 자동제어 시스템 현황을 확인하실 수 있습니다. 지도에서 각 구역을 클릭하면 상세 정보를 볼 수 있습니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 지도 및 상태 정보 영역 -->
+    <div class="row">
+        <!-- 지도 영역 -->
+        <div class="col-lg-8 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">김제시 죽산면 지도</h6>
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" id="showAllData" checked>
+                        <label class="form-check-label" for="showAllData">모든 데이터 표시</label>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="mapContainer">
+                        <div id="mapLoading">
+                            <span class="d-flex align-items-center">
+                                <i class="bx bx-loader-alt bx-spin me-2 fs-5"></i> 지도 로딩 중...
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mt-3 d-flex justify-content-between">
+                        <div class="map-legend d-flex">
+                            <div class="d-flex align-items-center me-3">
+                                <span class="badge bg-success rounded-circle p-1 me-1">&nbsp;</span>
+                                <small>정상</small>
+                            </div>
+                            <div class="d-flex align-items-center me-3">
+                                <span class="badge bg-warning rounded-circle p-1 me-1">&nbsp;</span>
+                                <small>주의</small>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-danger rounded-circle p-1 me-1">&nbsp;</span>
+                                <small>위험</small>
+                            </div>
+                        </div>
+                        <div class="data-filter">
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary active">전체</button>
+                                <button class="btn btn-outline-primary">환경</button>
+                                <button class="btn btn-outline-primary">제어</button>
+                                <button class="btn btn-outline-primary">센서</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 상태 정보 영역 -->
+        <div class="col-lg-4 mb-4">
+            <div class="row">
+                <!-- 일반 현황 요약 -->
+                <div class="col-12 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">죽산면 현황 요약</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="bg-success bg-opacity-10 text-success rounded p-2 me-3">
+                                    <i class="bx bx-check-circle fs-4"></i>
+                                </span>
+                                <div>
+                                    <h5 class="mb-1">85% 구역 정상</h5>
+                                    <p class="mb-0 text-muted">2개 구역 주의 필요</p>
+                                </div>
+                            </div>
+                            <div class="progress mb-3" style="height: 8px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 85%"></div>
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: 15%"></div>
+                            </div>
+                            <div class="d-flex justify-content-between text-muted small">
+                                <span>토양 수분: <strong>62%</strong></span>
+                                <span>기온: <strong>23°C</strong></span>
+                                <span>습도: <strong>58%</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 자동 제어 현황 요약 -->
+                <div class="col-12 mb-4">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">자동제어 현황</h6>
+                            <span class="badge bg-success">정상 작동 중</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="sensor-status">
+                                <div class="icon status-good">
+                                    <i class="bx bx-droplet"></i>
+                                </div>
+                                <div class="details">
+                                    <div class="name">관수 시스템</div>
+                                    <div class="value">마지막 작동: 오늘 08:30 (10분)</div>
+                                </div>
+                                <span class="badge bg-success">정상</span>
+                            </div>
+                            <div class="sensor-status">
+                                <div class="icon status-good">
+                                    <i class="bx bx-test-tube"></i>
+                                </div>
+                                <div class="details">
+                                    <div class="name">비료 공급</div>
+                                    <div class="value">다음 예정: 내일 14:00</div>
+                                </div>
+                                <span class="badge bg-success">정상</span>
+                            </div>
+                            <div class="sensor-status">
+                                <div class="icon status-warning">
+                                    <i class="bx bx-cloud"></i>
+                                </div>
+                                <div class="details">
+                                    <div class="name">병해충 방제</div>
+                                    <div class="value">예정: 3일 후 (살충제 살포)</div>
+                                </div>
+                                <span class="badge bg-warning">예정됨</span>
+                            </div>
+                            <div class="text-end mt-3">
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="bx bx-calendar me-1"></i> 전체 일정 보기
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 환경 상태 요약 -->
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">환경 상태 요약</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="sensor-status">
+                                <div class="icon status-good">
+                                    <i class="bx bx-sun"></i>
+                                </div>
+                                <div class="details">
+                                    <div class="name">일조량</div>
+                                    <div class="value">
+                                        <div class="progress" style="height: 5px;">
+                                            <div class="progress-bar bg-success" style="width: 78%"></div>
+                                        </div>
+                                        <span>78% (좋음)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sensor-status">
+                                <div class="icon status-good">
+                                    <i class="bx bx-water"></i>
+                                </div>
+                                <div class="details">
+                                    <div class="name">토양 수분</div>
+                                    <div class="value">
+                                        <div class="progress" style="height: 5px;">
+                                            <div class="progress-bar bg-success" style="width: 62%"></div>
+                                        </div>
+                                        <span>62% (적정)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sensor-status">
+                                <div class="icon status-warning">
+                                    <i class="bx bx-cloud-rain"></i>
+                                </div>
+                                <div class="details">
+                                    <div class="name">강수량</div>
+                                    <div class="value">
+                                        <div class="progress" style="height: 5px;">
+                                            <div class="progress-bar bg-warning" style="width: 35%"></div>
+                                        </div>
+                                        <span>35% (부족)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sensor-status">
+                                <div class="icon status-good">
+                                    <i class="bx bx-leaf"></i>
+                                </div>
+                                <div class="details">
+                                    <div class="name">작물 상태</div>
+                                    <div class="value">
+                                        <div class="progress" style="height: 5px;">
+                                            <div class="progress-bar bg-success" style="width: 85%"></div>
+                                        </div>
+                                        <span>85% (양호)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end mt-3">
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="bx bx-line-chart me-1"></i> 상세 분석
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 상세 데이터 영역 -->
+    <div class="row">
+        <!-- 최근 실행 작업 -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">최근 실행 작업</h6>
+                    <button class="btn btn-sm btn-outline-primary">모두 보기</button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>시간</th>
+                                    <th>구역</th>
+                                    <th>작업</th>
+                                    <th>상태</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>오늘 08:30</td>
+                                    <td>1구역</td>
+                                    <td>정기 관수 (10분)</td>
+                                    <td><span class="badge bg-success">완료</span></td>
+                                </tr>
+                                <tr>
+                                    <td>어제 15:40</td>
+                                    <td>2구역</td>
+                                    <td>영양제 공급</td>
+                                    <td><span class="badge bg-success">완료</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2일 전</td>
+                                    <td>3구역</td>
+                                    <td>토양 산도 조절</td>
+                                    <td><span class="badge bg-success">완료</span></td>
+                                </tr>
+                                <tr>
+                                    <td>3일 전</td>
+                                    <td>전체</td>
+                                    <td>해충 모니터링</td>
+                                    <td><span class="badge bg-warning">일부 주의</span></td>
+                                </tr>
+                                <tr>
+                                    <td>7일 전</td>
+                                    <td>1구역</td>
+                                    <td>살충제 살포</td>
+                                    <td><span class="badge bg-success">완료</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 예정된 작업 -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">예정된 작업</h6>
+                    <button class="btn btn-sm btn-outline-primary">일정 관리</button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>예정 시간</th>
+                                    <th>구역</th>
+                                    <th>작업</th>
+                                    <th>우선순위</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>오늘 21:00</td>
+                                    <td>전체</td>
+                                    <td>저녁 관수 (15분)</td>
+                                    <td><span class="badge bg-info">정기</span></td>
+                                </tr>
+                                <tr>
+                                    <td>내일 09:00</td>
+                                    <td>전체</td>
+                                    <td>아침 관수 (10분)</td>
+                                    <td><span class="badge bg-info">정기</span></td>
+                                </tr>
+                                <tr>
+                                    <td>내일 14:00</td>
+                                    <td>2구역</td>
+                                    <td>질소 비료 공급</td>
+                                    <td><span class="badge bg-primary">AI 추천</span></td>
+                                </tr>
+                                <tr>
+                                    <td>3일 후</td>
+                                    <td>1, 3구역</td>
+                                    <td>살충제 살포</td>
+                                    <td><span class="badge bg-warning">주의</span></td>
+                                </tr>
+                                <tr>
+                                    <td>5일 후</td>
+                                    <td>전체</td>
+                                    <td>영양 상태 점검</td>
+                                    <td><span class="badge bg-info">정기</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 김제시 죽산면 좌표 (근사값)
+        const JukSanMyeonCenter = [35.8187, 126.8735];
+        
+        // 지도 초기화
+        const map = L.map('mapContainer').setView(JukSanMyeonCenter, 13);
+        
+        // 타일 레이어 정의
+        const baseLayers = {
+            standard: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19
+            }),
+            satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+                maxZoom: 19
+            })
+        };
+        
+        // 하이브리드 지도 구성을 위한 추가 레이어
+        const overlayLayers = {
+            // 도로와 라벨을 위한 반투명 오버레이
+            roadsAndLabels: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 19,
+                opacity: 0.9
+            }),
+            // 대체 도로 레이어
+            roads: L.tileLayer('https://{s}.tile.openstreetmap.org/hot/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19,
+                opacity: 0.6
+            })
+        };
+        
+        // 지도 로딩 표시 함수
+        function showMapLoading() {
+            document.getElementById('mapLoading').style.display = 'block';
+        }
+        
+        function hideMapLoading() {
+            document.getElementById('mapLoading').style.display = 'none';
+        }
+        
+        // 지도 로딩 상태 추적을 위한 변수
+        let loadingTilesCount = 0;
+        
+        // 맵 타일 로드 이벤트 처리
+        map.on('tileloadstart', function() {
+            loadingTilesCount++;
+            showMapLoading();
+        });
+        
+        map.on('tileloadend tileerror', function() {
+            loadingTilesCount--;
+            if (loadingTilesCount <= 0) {
+                loadingTilesCount = 0;
+                hideMapLoading();
+            }
+        });
+        
+        // 기본 타일 레이어 추가 (OpenStreetMap)
+        baseLayers.standard.addTo(map);
+        
+        // 지도 유형 버튼 이벤트 처리
+        document.getElementById('mapStandard').addEventListener('click', function() {
+            showMapLoading();
+            // 모든 레이어 제거
+            Object.values(baseLayers).forEach(layer => {
+                try {
+                    if (map.hasLayer(layer)) map.removeLayer(layer);
+                } catch (e) {
+                    console.log('레이어 제거 오류:', e);
+                }
+            });
+            Object.values(overlayLayers).forEach(layer => {
+                try {
+                    if (map.hasLayer(layer)) map.removeLayer(layer);
+                } catch (e) {
+                    console.log('오버레이 레이어 제거 오류:', e);
+                }
+            });
+            
+            // 표준 지도 추가
+            map.addLayer(baseLayers.standard);
+            
+            // 버튼 활성화 상태 변경
+            document.getElementById('mapStandard').classList.add('active');
+            document.getElementById('mapSatellite').classList.remove('active');
+            document.getElementById('mapHybrid').classList.remove('active');
+        });
+        
+        document.getElementById('mapSatellite').addEventListener('click', function() {
+            showMapLoading();
+            // 모든 레이어 제거
+            Object.values(baseLayers).forEach(layer => {
+                try {
+                    if (map.hasLayer(layer)) map.removeLayer(layer);
+                } catch (e) {
+                    console.log('레이어 제거 오류:', e);
+                }
+            });
+            Object.values(overlayLayers).forEach(layer => {
+                try {
+                    if (map.hasLayer(layer)) map.removeLayer(layer);
+                } catch (e) {
+                    console.log('오버레이 레이어 제거 오류:', e);
+                }
+            });
+            
+            // 위성 지도 추가
+            map.addLayer(baseLayers.satellite);
+            
+            // 버튼 활성화 상태 변경
+            document.getElementById('mapStandard').classList.remove('active');
+            document.getElementById('mapSatellite').classList.add('active');
+            document.getElementById('mapHybrid').classList.remove('active');
+        });
+        
+        document.getElementById('mapHybrid').addEventListener('click', function() {
+            showMapLoading();
+            // 모든 레이어 제거
+            Object.values(baseLayers).forEach(layer => {
+                try {
+                    if (map.hasLayer(layer)) map.removeLayer(layer);
+                } catch (e) {
+                    console.log('레이어 제거 오류:', e);
+                }
+            });
+            Object.values(overlayLayers).forEach(layer => {
+                try {
+                    if (map.hasLayer(layer)) map.removeLayer(layer);
+                } catch (e) {
+                    console.log('오버레이 레이어 제거 오류:', e);
+                }
+            });
+            
+            // 하이브리드 지도 구성 (위성 + 도로 레이블 오버레이)
+            map.addLayer(baseLayers.satellite);
+            map.addLayer(overlayLayers.roadsAndLabels);
+            
+            // 버튼 활성화 상태 변경
+            document.getElementById('mapStandard').classList.remove('active');
+            document.getElementById('mapSatellite').classList.remove('active');
+            document.getElementById('mapHybrid').classList.add('active');
+        });
+        
+        // 사용자 정의 팝업 스타일
+        const customOptions = {
+            'className': 'custom-popup'
+        };
+        
+        // 농경지 구역 정의 (다각형으로 표시)
+        const fieldPolygons = [
+            {
+                name: '1구역',
+                coords: [
+                    [35.8227, 126.8705],
+                    [35.8237, 126.8755],
+                    [35.8217, 126.8795],
+                    [35.8187, 126.8765]
+                ],
+                status: 'good',
+                data: {
+                    moisture: 65,
+                    temperature: 23.5,
+                    lastIrrigation: '오늘 08:30',
+                    nextAction: '저녁 관수 (21:00)'
+                }
+            },
+            {
+                name: '2구역',
+                coords: [
+                    [35.8157, 126.8675],
+                    [35.8187, 126.8705],
+                    [35.8167, 126.8755],
+                    [35.8137, 126.8725]
+                ],
+                status: 'warning',
+                data: {
+                    moisture: 48,
+                    temperature: 24.2,
+                    lastIrrigation: '어제 15:40',
+                    nextAction: '비료 공급 (내일 14:00)'
+                }
+            },
+            {
+                name: '3구역',
+                coords: [
+                    [35.8197, 126.8805],
+                    [35.8227, 126.8835],
+                    [35.8207, 126.8885],
+                    [35.8177, 126.8855]
+                ],
+                status: 'good',
+                data: {
+                    moisture: 62,
+                    temperature: 22.8,
+                    lastIrrigation: '2일 전',
+                    nextAction: '살충제 살포 (3일 후)'
+                }
+            }
+        ];
+        
+        // 구역별 색상 정의
+        const colors = {
+            good: {
+                fill: '#4CAF50',
+                border: '#388E3C'
+            },
+            warning: {
+                fill: '#FFC107',
+                border: '#FFA000'
+            },
+            danger: {
+                fill: '#F44336',
+                border: '#D32F2F'
+            }
+        };
+        
+        // 농경지 구역 추가
+        fieldPolygons.forEach(field => {
+            const color = colors[field.status];
+            const polygon = L.polygon(field.coords, {
+                color: color.border,
+                fillColor: color.fill,
+                fillOpacity: 0.4,
+                weight: 2
+            }).addTo(map);
+            
+            // 팝업 내용 구성
+            const popupContent = `
+                <div style="min-width: 200px;">
+                    <h6 style="margin-bottom: 10px;">${field.name}</h6>
+                    <div style="margin-bottom: 8px;">
+                        <strong>토양 수분:</strong> 
+                        <div class="progress" style="height: 5px; margin-top: 5px;">
+                            <div class="progress-bar ${field.status === 'good' ? 'bg-success' : 'bg-warning'}" 
+                                style="width: ${field.data.moisture}%"></div>
+                        </div>
+                        <small>${field.data.moisture}%</small>
+                    </div>
+                    <div style="margin-bottom: 5px;"><strong>온도:</strong> ${field.data.temperature}°C</div>
+                    <div style="margin-bottom: 5px;"><strong>마지막 관수:</strong> ${field.data.lastIrrigation}</div>
+                    <div style="margin-bottom: 5px;"><strong>다음 작업:</strong> ${field.data.nextAction}</div>
+                    <div style="margin-top: 10px; text-align: center;">
+                        <button class="btn btn-sm btn-outline-primary">상세 보기</button>
+                    </div>
+                </div>
+            `;
+            
+            // 팝업 바인딩
+            polygon.bindPopup(popupContent, customOptions);
+            
+            // 호버 이벤트
+            polygon.on('mouseover', function() {
+                this.setStyle({
+                    fillOpacity: 0.6
+                });
+            });
+            
+            polygon.on('mouseout', function() {
+                this.setStyle({
+                    fillOpacity: 0.4
+                });
+            });
+        });
+        
+        // 센서 위치 표시
+        const sensors = [
+            {
+                name: '환경 센서 #1',
+                coords: [35.8227, 126.8735],
+                type: 'environment',
+                status: 'good'
+            },
+            {
+                name: '수분 센서 #1',
+                coords: [35.8187, 126.8705],
+                type: 'moisture',
+                status: 'good'
+            },
+            {
+                name: '수분 센서 #2',
+                coords: [35.8157, 126.8725],
+                type: 'moisture',
+                status: 'warning'
+            },
+            {
+                name: '환경 센서 #2',
+                coords: [35.8197, 126.8835],
+                type: 'environment',
+                status: 'good'
+            }
+        ];
+        
+        // 센서 아이콘 정의
+        const sensorIcons = {
+            environment: {
+                good: L.divIcon({
+                    html: '<i class="bx bx-meteor" style="color: #4CAF50; font-size: 20px;"></i>',
+                    className: 'sensor-icon-div',
+                    iconSize: [20, 20]
+                }),
+                warning: L.divIcon({
+                    html: '<i class="bx bx-meteor" style="color: #FFC107; font-size: 20px;"></i>',
+                    className: 'sensor-icon-div',
+                    iconSize: [20, 20]
+                })
+            },
+            moisture: {
+                good: L.divIcon({
+                    html: '<i class="bx bx-droplet" style="color: #2196F3; font-size: 20px;"></i>',
+                    className: 'sensor-icon-div',
+                    iconSize: [20, 20]
+                }),
+                warning: L.divIcon({
+                    html: '<i class="bx bx-droplet" style="color: #FFC107; font-size: 20px;"></i>',
+                    className: 'sensor-icon-div',
+                    iconSize: [20, 20]
+                })
+            }
+        };
+        
+        // 센서 마커 추가
+        sensors.forEach(sensor => {
+            const marker = L.marker(sensor.coords, {
+                icon: sensorIcons[sensor.type][sensor.status]
+            }).addTo(map);
+            
+            // 센서 정보 팝업
+            marker.bindPopup(`<strong>${sensor.name}</strong><br>상태: ${sensor.status === 'good' ? '정상' : '주의'}`, customOptions);
+        });
+        
+        // 제어 설비 위치 표시
+        const controls = [
+            {
+                name: '관수 시스템 #1',
+                coords: [35.8217, 126.8735],
+                type: 'irrigation'
+            },
+            {
+                name: '비료 공급 시스템',
+                coords: [35.8167, 126.8705],
+                type: 'fertilizer'
+            }
+        ];
+        
+        // 제어 설비 아이콘 정의
+        const controlIcons = {
+            irrigation: L.divIcon({
+                html: '<i class="bx bx-water" style="color: #2196F3; font-size: 24px;"></i>',
+                className: 'control-icon-div',
+                iconSize: [24, 24]
+            }),
+            fertilizer: L.divIcon({
+                html: '<i class="bx bx-test-tube" style="color: #9C27B0; font-size: 24px;"></i>',
+                className: 'control-icon-div',
+                iconSize: [24, 24]
+            })
+        };
+        
+        // 제어 설비 마커 추가
+        controls.forEach(control => {
+            const marker = L.marker(control.coords, {
+                icon: controlIcons[control.type]
+            }).addTo(map);
+            
+            // 제어 설비 정보 팝업
+            marker.bindPopup(`<strong>${control.name}</strong><br>상태: 정상 작동`, customOptions);
+        });
+        
+        // 버튼 토글 이벤트
+        document.querySelectorAll('.btn-group .btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.btn-group .btn').forEach(innerBtn => {
+                    innerBtn.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+        
+        // 지도 새로고침 버튼
+        document.querySelector('.btn-primary').addEventListener('click', function() {
+            this.disabled = true;
+            this.innerHTML = '<i class="bx bx-loader-alt bx-spin me-1"></i> 새로고침 중...';
+            
+            setTimeout(() => {
+                this.disabled = false;
+                this.innerHTML = '<i class="bx bx-refresh me-1"></i> 데이터 새로고침';
+                // 실제로는 여기서 새로운 데이터를 가져와 지도를 업데이트
+            }, 1500);
+        });
+    });
+</script>
+{% endblock %} 

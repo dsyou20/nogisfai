@@ -1,0 +1,498 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">AI 처방</h5>
+                    <div>
+                        <select class="form-select form-select-sm me-2 d-inline-block" style="width: auto;">
+                            <option selected>김제지구 - 1구역</option>
+                            <option>김제지구 - 2구역</option>
+                            <option>김제지구 - 3구역</option>
+                            <option>태안지구 - 1구역</option>
+                        </select>
+                        <button class="btn btn-primary" id="generatePrescription">
+                            <i class="bx bx-first-aid me-1"></i> 처방 생성
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="bx bx-info-circle me-2"></i>
+                        AI 처방은 작물 상태 진단을 바탕으로 최적의 관리 방안을 제시합니다. 처방을 생성하려면 오른쪽 상단의 '처방 생성' 버튼을 클릭하세요.
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">작물 상태 요약</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="flex-shrink-0">
+                                            <span class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                <i class="bx bx-check text-white"></i>
+                                            </span>
+                                        </div>
+                                        <div class="ms-3">
+                                            <h6 class="mb-1">전체 건강 상태</h6>
+                                            <p class="mb-0 text-muted">양호 (85/100)</p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="flex-shrink-0">
+                                            <span class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                <i class="bx bx-error text-white"></i>
+                                            </span>
+                                        </div>
+                                        <div class="ms-3">
+                                            <h6 class="mb-1">주의 항목</h6>
+                                            <p class="mb-0 text-muted">성장 속도 저하</p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
+                                            <span class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                <i class="bx bx-calendar text-primary"></i>
+                                            </span>
+                                        </div>
+                                        <div class="ms-3">
+                                            <h6 class="mb-1">생육 단계</h6>
+                                            <p class="mb-0 text-muted">개화기 (55일차)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-8 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">환경 데이터 그래프</h6>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="nav nav-tabs mb-3" id="environmentTabs" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="temperature-tab" data-bs-toggle="tab" data-bs-target="#temperature" type="button" role="tab" aria-controls="temperature" aria-selected="true">온도</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="moisture-tab" data-bs-toggle="tab" data-bs-target="#moisture" type="button" role="tab" aria-controls="moisture" aria-selected="false">수분</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="nutrients-tab" data-bs-toggle="tab" data-bs-target="#nutrients" type="button" role="tab" aria-controls="nutrients" aria-selected="false">영양소</button>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content" id="environmentTabsContent">
+                                        <div class="tab-pane fade show active" id="temperature" role="tabpanel" aria-labelledby="temperature-tab">
+                                            <div id="temperatureChart" class="chart-container"></div>
+                                        </div>
+                                        <div class="tab-pane fade" id="moisture" role="tabpanel" aria-labelledby="moisture-tab">
+                                            <div id="moistureChart" class="chart-container"></div>
+                                        </div>
+                                        <div class="tab-pane fade" id="nutrients" role="tabpanel" aria-labelledby="nutrients-tab">
+                                            <div id="nutrientsChart" class="chart-container"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row" id="prescriptionResults" style="display: none;">
+                        <div class="col-12 mb-4">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0">AI 처방 결과</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert alert-primary">
+                                        <i class="bx bx-info-circle me-2"></i>
+                                        <strong>처방 요약:</strong> AI 분석 결과, 작물 성장률 개선을 위한 처방이 필요합니다. 아래 3가지 조치를 제안합니다.
+                                    </div>
+                                    
+                                    <div class="row mt-4">
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100 border-0 shadow-sm">
+                                                <div class="card-body">
+                                                    <div class="d-flex align-items-center mb-3">
+                                                        <div class="flex-shrink-0">
+                                                            <span class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                                                <i class="bx bx-water text-white fs-4"></i>
+                                                            </span>
+                                                        </div>
+                                                        <div class="ms-3">
+                                                            <h5 class="card-title mb-0">수분 관리</h5>
+                                                        </div>
+                                                    </div>
+                                                    <p class="card-text">현재의 관수 일정을 유지하되, 다음 1주일간은 오전 관수 시간을 10% 늘리세요.</p>
+                                                    <div class="d-grid gap-2">
+                                                        <button class="btn btn-outline-primary btn-sm" data-action="apply" data-type="irrigation">
+                                                            <i class="bx bx-check me-1"></i> 적용하기
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100 border-0 shadow-sm">
+                                                <div class="card-body">
+                                                    <div class="d-flex align-items-center mb-3">
+                                                        <div class="flex-shrink-0">
+                                                            <span class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                                                <i class="bx bx-leaf text-white fs-4"></i>
+                                                            </span>
+                                                        </div>
+                                                        <div class="ms-3">
+                                                            <h5 class="card-title mb-0">영양 공급</h5>
+                                                        </div>
+                                                    </div>
+                                                    <p class="card-text">질소 함량이 높은 비료를 추가로 공급하세요. 권장: 10-5-5 비료 2kg/100㎡</p>
+                                                    <div class="d-grid gap-2">
+                                                        <button class="btn btn-outline-success btn-sm" data-action="apply" data-type="fertilizer">
+                                                            <i class="bx bx-check me-1"></i> 적용하기
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100 border-0 shadow-sm">
+                                                <div class="card-body">
+                                                    <div class="d-flex align-items-center mb-3">
+                                                        <div class="flex-shrink-0">
+                                                            <span class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                                                <i class="bx bx-shield-quarter text-white fs-4"></i>
+                                                            </span>
+                                                        </div>
+                                                        <div class="ms-3">
+                                                            <h5 class="card-title mb-0">예방 조치</h5>
+                                                        </div>
+                                                    </div>
+                                                    <p class="card-text">향후 1주일간 야간 온도가 낮을 것으로 예상됩니다. 필요시 방풍 장치를 준비하세요.</p>
+                                                    <div class="d-grid gap-2">
+                                                        <button class="btn btn-outline-warning btn-sm" data-action="apply" data-type="prevention">
+                                                            <i class="bx bx-check me-1"></i> 적용하기
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <div class="card border-0 bg-light">
+                                                <div class="card-body">
+                                                    <h6 class="card-title mb-3">처방 일정</h6>
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>조치</th>
+                                                                    <th>시작 일시</th>
+                                                                    <th>빈도</th>
+                                                                    <th>기간</th>
+                                                                    <th>상태</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>관수량 증가 (10%)</td>
+                                                                    <td>2023-07-15 08:00</td>
+                                                                    <td>매일</td>
+                                                                    <td>7일</td>
+                                                                    <td><span class="badge bg-secondary">대기 중</span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>질소 비료 공급</td>
+                                                                    <td>2023-07-15 10:00</td>
+                                                                    <td>1회</td>
+                                                                    <td>즉시</td>
+                                                                    <td><span class="badge bg-secondary">대기 중</span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>방풍 장치 설치</td>
+                                                                    <td>2023-07-16 17:00</td>
+                                                                    <td>필요시</td>
+                                                                    <td>7일</td>
+                                                                    <td><span class="badge bg-secondary">대기 중</span></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <div class="mt-3 text-end">
+                                                        <button class="btn btn-primary" id="applyAllPrescriptions">
+                                                            <i class="bx bx-check-double me-1"></i> 모든 처방 적용
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const generatePrescriptionBtn = document.getElementById('generatePrescription');
+        const prescriptionResults = document.getElementById('prescriptionResults');
+        const applyAllBtn = document.getElementById('applyAllPrescriptions');
+        const applyBtns = document.querySelectorAll('[data-action="apply"]');
+        
+        // 처방 생성 버튼 클릭 이벤트
+        generatePrescriptionBtn.addEventListener('click', function() {
+            generatePrescriptionBtn.disabled = true;
+            generatePrescriptionBtn.innerHTML = '<i class="bx bx-loader-circle bx-spin me-1"></i> 처방 생성 중...';
+            
+            // 로딩 시뮬레이션 (실제 환경에서는 API 호출로 대체)
+            setTimeout(function() {
+                prescriptionResults.style.display = 'block';
+                
+                generatePrescriptionBtn.disabled = false;
+                generatePrescriptionBtn.innerHTML = '<i class="bx bx-refresh me-1"></i> 처방 다시 생성';
+                
+                // 차트 초기화
+                initCharts();
+            }, 2000);
+        });
+        
+        // 개별 처방 적용 버튼 클릭 이벤트
+        applyBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const type = this.getAttribute('data-type');
+                this.disabled = true;
+                this.innerHTML = '<i class="bx bx-loader-circle bx-spin me-1"></i> 적용 중...';
+                
+                // 로딩 시뮬레이션 (실제 환경에서는 API 호출로 대체)
+                setTimeout(() => {
+                    this.innerHTML = '<i class="bx bx-check-double me-1"></i> 적용됨';
+                    this.classList.remove('btn-outline-' + getColorByType(type));
+                    this.classList.add('btn-' + getColorByType(type));
+                }, 1500);
+            });
+        });
+        
+        // 모든 처방 적용 버튼 클릭 이벤트
+        applyAllBtn.addEventListener('click', function() {
+            this.disabled = true;
+            this.innerHTML = '<i class="bx bx-loader-circle bx-spin me-1"></i> 적용 중...';
+            
+            const statusBadges = document.querySelectorAll('tbody .badge');
+            
+            // 로딩 시뮬레이션 (실제 환경에서는 API 호출로 대체)
+            setTimeout(() => {
+                applyBtns.forEach(btn => {
+                    const type = btn.getAttribute('data-type');
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="bx bx-check-double me-1"></i> 적용됨';
+                    btn.classList.remove('btn-outline-' + getColorByType(type));
+                    btn.classList.add('btn-' + getColorByType(type));
+                });
+                
+                statusBadges.forEach(badge => {
+                    badge.textContent = '적용됨';
+                    badge.classList.remove('bg-secondary');
+                    badge.classList.add('bg-success');
+                });
+                
+                this.innerHTML = '<i class="bx bx-check-double me-1"></i> 모든 처방 적용됨';
+            }, 2000);
+        });
+        
+        // 차트 초기화 함수
+        function initCharts() {
+            // 온도 차트
+            const temperatureOptions = {
+                chart: {
+                    type: 'line',
+                    height: 300,
+                    toolbar: {
+                        show: false
+                    }
+                },
+                series: [{
+                    name: '실제 온도',
+                    data: [22, 21, 23, 22, 24, 23, 21]
+                }, {
+                    name: '적정 범위 (최저)',
+                    data: [18, 18, 18, 18, 18, 18, 18]
+                }, {
+                    name: '적정 범위 (최고)',
+                    data: [25, 25, 25, 25, 25, 25, 25]
+                }],
+                xaxis: {
+                    categories: ['7/8', '7/9', '7/10', '7/11', '7/12', '7/13', '7/14']
+                },
+                yaxis: {
+                    title: {
+                        text: '온도 (°C)'
+                    }
+                },
+                colors: ['#4CAF50', '#90CAF9', '#F44336'],
+                stroke: {
+                    width: [3, 1, 1],
+                    dashArray: [0, 3, 3]
+                },
+                markers: {
+                    size: [4, 0, 0]
+                },
+                tooltip: {
+                    y: {
+                        formatter: function(val) {
+                            return val + '°C';
+                        }
+                    }
+                }
+            };
+            
+            new ApexCharts(document.querySelector("#temperatureChart"), temperatureOptions).render();
+            
+            // 수분 차트
+            const moistureOptions = {
+                chart: {
+                    type: 'area',
+                    height: 300,
+                    toolbar: {
+                        show: false
+                    }
+                },
+                series: [{
+                    name: '토양 수분',
+                    data: [45, 46, 43, 42, 43, 41, 40]
+                }],
+                xaxis: {
+                    categories: ['7/8', '7/9', '7/10', '7/11', '7/12', '7/13', '7/14']
+                },
+                yaxis: {
+                    title: {
+                        text: '수분 (%)'
+                    },
+                    min: 30,
+                    max: 60
+                },
+                colors: ['#2196F3'],
+                stroke: {
+                    width: 3
+                },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.7,
+                        opacityTo: 0.2,
+                        stops: [0, 90, 100]
+                    }
+                },
+                markers: {
+                    size: 4
+                },
+                tooltip: {
+                    y: {
+                        formatter: function(val) {
+                            return val + '%';
+                        }
+                    }
+                },
+                annotations: {
+                    yaxis: [{
+                        y: 40,
+                        y2: 55,
+                        borderColor: '#4CAF50',
+                        fillColor: '#4CAF50',
+                        opacity: 0.1,
+                        label: {
+                            borderColor: '#4CAF50',
+                            style: {
+                                color: '#fff',
+                                background: '#4CAF50'
+                            },
+                            text: '적정 범위'
+                        }
+                    }]
+                }
+            };
+            
+            new ApexCharts(document.querySelector("#moistureChart"), moistureOptions).render();
+            
+            // 영양소 차트
+            const nutrientsOptions = {
+                chart: {
+                    type: 'bar',
+                    height: 300,
+                    toolbar: {
+                        show: false
+                    }
+                },
+                series: [{
+                    name: '현재 수치',
+                    data: [80, 65, 92, 85]
+                }, {
+                    name: '적정 수치',
+                    data: [100, 75, 90, 80]
+                }],
+                xaxis: {
+                    categories: ['질소 (N)', '인 (P)', '칼륨 (K)', '칼슘 (Ca)']
+                },
+                yaxis: {
+                    title: {
+                        text: '함량 (%)'
+                    }
+                },
+                colors: ['#FF9800', '#4CAF50'],
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded'
+                    },
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function(val) {
+                            return val + '%';
+                        }
+                    }
+                }
+            };
+            
+            new ApexCharts(document.querySelector("#nutrientsChart"), nutrientsOptions).render();
+        }
+        
+        // 처방 유형별 색상 반환 함수
+        function getColorByType(type) {
+            switch(type) {
+                case 'irrigation': return 'primary';
+                case 'fertilizer': return 'success';
+                case 'prevention': return 'warning';
+                default: return 'primary';
+            }
+        }
+    });
+</script>
+{% endblock %} 

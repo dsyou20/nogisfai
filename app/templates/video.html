@@ -1,0 +1,297 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5>영상 분석</h5>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info" role="alert">
+            <i class="bx bx-info-circle me-2"></i>
+            영상 분석 페이지입니다. 여기서 작물 생육 상태, 병해충 감지, 생장 추적 등의 영상 기반 분석을 확인할 수 있습니다.
+        </div>
+        
+        <!-- 카메라 선택 및 컨트롤 -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="form-group d-flex">
+                    <select class="form-select me-2">
+                        <option selected>메인 카메라</option>
+                        <option>A구역 카메라 1</option>
+                        <option>A구역 카메라 2</option>
+                        <option>B구역 카메라 1</option>
+                        <option>드론 카메라</option>
+                    </select>
+                    <button class="btn btn-primary">연결</button>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-secondary">
+                        <i class="bx bx-analyse"></i> 분석 실행
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary">
+                        <i class="bx bx-camera"></i> 스냅샷
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary">
+                        <i class="bx bx-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 메인 카메라 피드 및 분석 결과 -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>라이브 뷰</div>
+                            <div>
+                                <span class="badge bg-success">활성화됨</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body text-center p-3">
+                        <img src="https://via.placeholder.com/800x450/4CAF50/FFFFFF?text=작물+영상+피드" class="img-fluid rounded">
+                        <div class="mt-3 text-start">
+                            <div class="mb-2 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="badge bg-primary me-2">메인 카메라</span>
+                                    <small class="text-muted">최근 업데이트: 12초 전</small>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-secondary me-1">확대</button>
+                                    <button class="btn btn-sm btn-outline-secondary">전체화면</button>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <p><strong>해상도: </strong> 1080p</p>
+                                <p><strong>프레임레이트: </strong> 24fps</p>
+                                <p><strong>마지막 분석: </strong> 오늘 15:45</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="results-tab" data-bs-toggle="tab" href="#results" role="tab">분석 결과</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="history-tab" data-bs-toggle="tab" href="#history" role="tab">기록</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="results" role="tabpanel">
+                                <p class="text-center mb-3">
+                                    <span class="badge bg-success p-2 mb-2 d-block fs-6">건강한 상태</span>
+                                </p>
+                                <div class="mb-3">
+                                    <h6>생육 진행도</h6>
+                                    <div class="progress mb-2" style="height: 20px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">85%</div>
+                                    </div>
+                                    <small class="text-muted">개화기 (R2 단계)</small>
+                                </div>
+                                <div class="mb-3">
+                                    <h6>추정 초장</h6>
+                                    <p class="mb-1">평균 45.2cm (정상 범위)</p>
+                                    <small class="text-muted">지난주 대비 +2.5cm</small>
+                                </div>
+                                <div class="mb-3">
+                                    <h6>잎 상태</h6>
+                                    <p class="mb-1">양호 (짙은 녹색)</p>
+                                    <div class="progress mb-2" style="height: 8px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 95%;" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <h6>병해충 감지</h6>
+                                    <p class="mb-1 text-success">감지되지 않음</p>
+                                </div>
+                                <button class="btn btn-primary w-100 mt-3">새로운 분석 실행</button>
+                            </div>
+                            <div class="tab-pane fade" id="history" role="tabpanel">
+                                <div class="list-group list-group-flush">
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">오늘 15:45</h6>
+                                            <small class="text-success">양호</small>
+                                        </div>
+                                        <p class="mb-1">정기 분석 - 생육 상태 양호</p>
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">오늘 09:30</h6>
+                                            <small class="text-success">양호</small>
+                                        </div>
+                                        <p class="mb-1">정기 분석 - 생육 상태 양호</p>
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">어제 15:45</h6>
+                                            <small class="text-warning">주의</small>
+                                        </div>
+                                        <p class="mb-1">질소 부족 징후 확인 (시비 권장)</p>
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">어제 09:30</h6>
+                                            <small class="text-success">양호</small>
+                                        </div>
+                                        <p class="mb-1">정기 분석 - 생육 상태 양호</p>
+                                    </a>
+                                </div>
+                                <button class="btn btn-outline-primary w-100 mt-3">전체 기록 보기</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 성장 추적 및 이미지 분석 -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>성장 추적</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container" style="height: 300px;">
+                            <canvas id="growthChart"></canvas>
+                        </div>
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6>평균 일일 성장률</h6>
+                                    <p class="mb-0">0.4cm/일</p>
+                                </div>
+                                <div>
+                                    <h6>예상 최대 초장</h6>
+                                    <p class="mb-0">65cm</p>
+                                </div>
+                                <div>
+                                    <h6>예상 개화 완료</h6>
+                                    <p class="mb-0">D-5일</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>이미지 분석</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-header py-2 px-3 bg-light">
+                                        <small>엽록소 지수 분석</small>
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <img src="https://via.placeholder.com/300x200/2196F3/FFFFFF?text=엽록소+지수+맵" class="img-fluid rounded">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-header py-2 px-3 bg-light">
+                                        <small>병해충 감지</small>
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <img src="https://via.placeholder.com/300x200/4CAF50/FFFFFF?text=병해충+감지+맵" class="img-fluid rounded">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-header py-2 px-3 bg-light">
+                                        <small>열 스트레스 분석</small>
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <img src="https://via.placeholder.com/300x200/FF9800/FFFFFF?text=열+스트레스+맵" class="img-fluid rounded">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-header py-2 px-3 bg-light">
+                                        <small>수분 스트레스 분석</small>
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <img src="https://via.placeholder.com/300x200/2196F3/FFFFFF?text=수분+스트레스+맵" class="img-fluid rounded">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 성장 추적 차트
+        const growthCtx = document.getElementById('growthChart');
+        if (growthCtx) {
+            const growthChart = new Chart(growthCtx, {
+                type: 'line',
+                data: {
+                    labels: ['6/1', '6/8', '6/15', '6/22', '6/29', '7/6', '7/13', '7/20', '7/27', '8/3', '오늘'],
+                    datasets: [
+                        {
+                            label: '초장 (cm)',
+                            data: [12, 18, 24, 28, 33, 36, 38, 40, 42, 44, 45.2],
+                            borderColor: '#4CAF50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: '잎 면적 (cm²)',
+                            data: [20, 40, 80, 120, 160, 180, 200, 220, 230, 240, 245],
+                            borderColor: '#2196F3',
+                            backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 탭 기능 활성화
+        const triggerTabList = [].slice.call(document.querySelectorAll('a[data-bs-toggle="tab"]'));
+        triggerTabList.forEach(function (triggerEl) {
+            const tabTrigger = new bootstrap.Tab(triggerEl);
+            triggerEl.addEventListener('click', function (event) {
+                event.preventDefault();
+                tabTrigger.show();
+            });
+        });
+    });
+</script>
+{% endblock %} 

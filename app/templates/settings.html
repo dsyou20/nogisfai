@@ -1,0 +1,499 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5>설정</h5>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info" role="alert">
+            <i class="bx bx-info-circle me-2"></i>
+            시스템 설정 페이지입니다. 계정, 농장, 알림, 시스템 등의 설정을 관리할 수 있습니다.
+        </div>
+        
+        <!-- 세팅 탭 네비게이션 -->
+        <ul class="nav nav-tabs mb-4" id="settingsTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="account-tab" data-bs-toggle="tab" data-bs-target="#account" type="button" role="tab" aria-selected="true">계정</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="farm-tab" data-bs-toggle="tab" data-bs-target="#farm" type="button" role="tab" aria-selected="false">농장 관리</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications" type="button" role="tab" aria-selected="false">알림</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="system-tab" data-bs-toggle="tab" data-bs-target="#system" type="button" role="tab" aria-selected="false">시스템</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="api-tab" data-bs-toggle="tab" data-bs-target="#api" type="button" role="tab" aria-selected="false">API</button>
+            </li>
+        </ul>
+        
+        <!-- 탭 컨텐츠 -->
+        <div class="tab-content" id="settingsTabContent">
+            <!-- 계정 설정 -->
+            <div class="tab-pane fade show active" id="account" role="tabpanel" aria-labelledby="account-tab">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card mb-4">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <img src="https://via.placeholder.com/150" class="rounded-circle img-thumbnail" alt="프로필 이미지">
+                                </div>
+                                <h5 class="mb-1">홍길동</h5>
+                                <p class="text-muted mb-3">관리자</p>
+                                <button class="btn btn-outline-primary btn-sm">프로필 이미지 변경</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">계정 정보</h6>
+                            </div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">이름</label>
+                                            <input type="text" class="form-control" value="홍길동">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">이메일</label>
+                                            <input type="email" class="form-control" value="hong@example.com">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">전화번호</label>
+                                            <input type="tel" class="form-control" value="010-1234-5678">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">언어</label>
+                                            <select class="form-select">
+                                                <option selected>한국어</option>
+                                                <option>English</option>
+                                                <option>日本語</option>
+                                                <option>中文</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">새 비밀번호</label>
+                                            <input type="password" class="form-control" placeholder="새 비밀번호">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">비밀번호 확인</label>
+                                            <input type="password" class="form-control" placeholder="비밀번호 확인">
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-primary">저장</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 농장 관리 -->
+            <div class="tab-pane fade" id="farm" role="tabpanel" aria-labelledby="farm-tab">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">등록된 농장</h6>
+                        <button class="btn btn-sm btn-primary">
+                            <i class="bx bx-plus me-1"></i> 새 농장 추가
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>농장 이름</th>
+                                        <th>위치</th>
+                                        <th>면적</th>
+                                        <th>등록일</th>
+                                        <th>센서</th>
+                                        <th>액션</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>스마트팜 A</td>
+                                        <td>경기도 화성시</td>
+                                        <td>3,500㎡</td>
+                                        <td>2023-05-15</td>
+                                        <td>
+                                            <span class="badge bg-success">15 활성</span>
+                                        </td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm" type="button" data-bs-toggle="dropdown">
+                                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#">편집</a></li>
+                                                    <li><a class="dropdown-item" href="#">센서 설정</a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#">삭제</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>스마트팜 B</td>
+                                        <td>전라북도 익산시</td>
+                                        <td>2,800㎡</td>
+                                        <td>2023-08-20</td>
+                                        <td>
+                                            <span class="badge bg-warning">2 점검 필요</span>
+                                        </td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm" type="button" data-bs-toggle="dropdown">
+                                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#">편집</a></li>
+                                                    <li><a class="dropdown-item" href="#">센서 설정</a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#">삭제</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">센서 설정</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>센서 ID</th>
+                                        <th>유형</th>
+                                        <th>위치</th>
+                                        <th>상태</th>
+                                        <th>데이터 수집 주기</th>
+                                        <th>배터리</th>
+                                        <th>액션</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>SEN-001</td>
+                                        <td>온도/습도</td>
+                                        <td>A구역 중앙</td>
+                                        <td><span class="badge bg-success">활성</span></td>
+                                        <td>5분</td>
+                                        <td>92%</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-secondary me-1">편집</button>
+                                            <button class="btn btn-sm btn-outline-danger">재설정</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>SEN-002</td>
+                                        <td>토양 수분</td>
+                                        <td>A구역 북측</td>
+                                        <td><span class="badge bg-warning">점검 필요</span></td>
+                                        <td>10분</td>
+                                        <td>45%</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-secondary me-1">편집</button>
+                                            <button class="btn btn-sm btn-outline-danger">재설정</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 알림 설정 -->
+            <div class="tab-pane fade" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">알림 설정</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h6 class="mb-3">알림 채널</h6>
+                            <div class="mb-3 form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="emailNotif" checked>
+                                <label class="form-check-label" for="emailNotif">이메일 알림</label>
+                            </div>
+                            <div class="mb-3 form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="smsNotif" checked>
+                                <label class="form-check-label" for="smsNotif">SMS 알림</label>
+                            </div>
+                            <div class="mb-3 form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="pushNotif" checked>
+                                <label class="form-check-label" for="pushNotif">앱 푸시 알림</label>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="mb-4">
+                            <h6 class="mb-3">알림 이벤트</h6>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <h6 class="mb-0">센서 이상 감지</h6>
+                                        <small class="text-muted">센서가 정상 범위를 벗어날 경우 알림</small>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="sensorAlertSwitch" checked>
+                                    </div>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="tempAlert" checked>
+                                            <label class="form-check-label" for="tempAlert">온도</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="humidityAlert" checked>
+                                            <label class="form-check-label" for="humidityAlert">습도</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="soilAlert" checked>
+                                            <label class="form-check-label" for="soilAlert">토양 상태</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <h6 class="mb-0">병해충 감지</h6>
+                                        <small class="text-muted">영상 분석에서 병해충 감지 시 알림</small>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="pestAlert" checked>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <h6 class="mb-0">시스템 업데이트</h6>
+                                        <small class="text-muted">시스템 업데이트 또는 유지보수 알림</small>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="systemAlert" checked>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <h6 class="mb-0">수확량 예측 변경</h6>
+                                        <small class="text-muted">수확량 예측이 5% 이상 변경될 경우 알림</small>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="yieldAlert" checked>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-end">
+                            <button type="button" class="btn btn-primary">저장</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 시스템 설정 -->
+            <div class="tab-pane fade" id="system" role="tabpanel" aria-labelledby="system-tab">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">일반 설정</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">시간대</label>
+                                <select class="form-select">
+                                    <option selected>아시아/서울 (GMT+9)</option>
+                                    <option>아시아/도쿄 (GMT+9)</option>
+                                    <option>미국/뉴욕 (GMT-5)</option>
+                                    <option>유럽/런던 (GMT+0)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">날짜 형식</label>
+                                <select class="form-select">
+                                    <option selected>YYYY-MM-DD</option>
+                                    <option>DD/MM/YYYY</option>
+                                    <option>MM/DD/YYYY</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">온도 단위</label>
+                                <select class="form-select">
+                                    <option selected>섭씨 (°C)</option>
+                                    <option>화씨 (°F)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">데이터 저장 기간</label>
+                                <select class="form-select">
+                                    <option>30일</option>
+                                    <option>90일</option>
+                                    <option selected>1년</option>
+                                    <option>무제한</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">백업 및 복원</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <p class="mb-3">마지막 백업: <strong>2023-09-15 08:30:45</strong></p>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary">
+                                    <i class="bx bx-download me-1"></i> 데이터 백업
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary">
+                                    <i class="bx bx-upload me-1"></i> 백업 복원
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="autoBackup" checked>
+                            <label class="form-check-label" for="autoBackup">자동 백업 활성화 (매일 자정)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- API 설정 -->
+            <div class="tab-pane fade" id="api" role="tabpanel" aria-labelledby="api-tab">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">API 키 관리</h6>
+                        <button class="btn btn-sm btn-primary">
+                            <i class="bx bx-plus me-1"></i> 새 API 키 생성
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning" role="alert">
+                            <i class="bx bx-shield-quarter me-2"></i>
+                            API 키는 외부 서비스와의 통합에 사용됩니다. 키를 안전하게 보관하고 공유하지 마세요.
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>설명</th>
+                                        <th>API 키</th>
+                                        <th>생성일</th>
+                                        <th>마지막 사용</th>
+                                        <th>상태</th>
+                                        <th>액션</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>날씨 API 연동</td>
+                                        <td>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control form-control-sm" value="sk_test_51MKzzBH7BnpICBu" readonly>
+                                                <button class="btn btn-sm btn-outline-secondary" type="button">보기</button>
+                                                <button class="btn btn-sm btn-outline-secondary" type="button">복사</button>
+                                            </div>
+                                        </td>
+                                        <td>2023-08-01</td>
+                                        <td>오늘 08:45</td>
+                                        <td><span class="badge bg-success">활성</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-danger">폐기</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>모바일 앱 연동</td>
+                                        <td>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control form-control-sm" value="pk_live_51MKzzBH7BnpICBu" readonly>
+                                                <button class="btn btn-sm btn-outline-secondary" type="button">보기</button>
+                                                <button class="btn btn-sm btn-outline-secondary" type="button">복사</button>
+                                            </div>
+                                        </td>
+                                        <td>2023-09-15</td>
+                                        <td>어제 15:30</td>
+                                        <td><span class="badge bg-success">활성</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-danger">폐기</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>테스트 API</td>
+                                        <td>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control form-control-sm" value="sk_test_62LJzBNp2Icbq" readonly>
+                                                <button class="btn btn-sm btn-outline-secondary" type="button">보기</button>
+                                                <button class="btn btn-sm btn-outline-secondary" type="button">복사</button>
+                                            </div>
+                                        </td>
+                                        <td>2023-07-23</td>
+                                        <td>2023-08-05</td>
+                                        <td><span class="badge bg-secondary">비활성</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-danger">폐기</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 탭 처리
+        const triggerTabList = [].slice.call(document.querySelectorAll('#settingsTabs button'));
+        triggerTabList.forEach(function (triggerEl) {
+            const tabTrigger = new bootstrap.Tab(triggerEl);
+            triggerEl.addEventListener('click', function (event) {
+                event.preventDefault();
+                tabTrigger.show();
+            });
+        });
+    });
+</script>
+{% endblock %} 

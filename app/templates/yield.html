@@ -1,0 +1,334 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5>수확량 예측</h5>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info" role="alert">
+            <i class="bx bx-info-circle me-2"></i>
+            수확량 예측 페이지입니다. 인공지능 알고리즘을 활용해 작물의 생육 상태, 기상 조건, 재배 이력 등을 분석하여 예상 수확량을 예측합니다.
+        </div>
+        
+        <!-- 현재 상태 요약 -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card border-0 bg-light">
+                    <div class="card-body p-3">
+                        <div class="row align-items-center">
+                            <div class="col-md-2 text-center">
+                                <i class="bx bx-line-chart" style="font-size: 4rem; color: #4CAF50;"></i>
+                            </div>
+                            <div class="col-md-10">
+                                <h4 class="mb-1">현재 예상 수확량: <span class="text-success">325kg/10a</span></h4>
+                                <div class="progress mb-2" style="height: 10px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <small>최저 예상: 290kg/10a</small>
+                                    <small>목표 수확량: 320kg/10a</small>
+                                    <small>최대 예상: 340kg/10a</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 예측 차트 및 데이터 -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">수확량 예측 추이</h5>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-outline-secondary">주간</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary active">월간</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary">계절별</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container" style="height: 350px;">
+                            <canvas id="yieldPredictionChart"></canvas>
+                        </div>
+                        <div class="d-flex justify-content-between mt-3">
+                            <div class="text-center">
+                                <h6>전년 대비</h6>
+                                <p class="text-success mb-0"><i class="bx bx-up-arrow-alt"></i> +8.3%</p>
+                            </div>
+                            <div class="text-center">
+                                <h6>지역 평균 대비</h6>
+                                <p class="text-success mb-0"><i class="bx bx-up-arrow-alt"></i> +12.1%</p>
+                            </div>
+                            <div class="text-center">
+                                <h6>예측 신뢰도</h6>
+                                <p class="mb-0">87%</p>
+                            </div>
+                            <div class="text-center">
+                                <h6>최근 업데이트</h6>
+                                <p class="mb-0">오늘 09:45</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">주요 영향 요인</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h6>긍정적 요인</h6>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                    <span><i class="bx bx-water text-primary me-2"></i> 최적의 관수 관리</span>
+                                    <span class="badge bg-success rounded-pill">+8%</span>
+                                </li>
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                    <span><i class="bx bx-sun text-warning me-2"></i> 일조량 충분</span>
+                                    <span class="badge bg-success rounded-pill">+5%</span>
+                                </li>
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                    <span><i class="bx bx-leaf text-success me-2"></i> 병해충 관리 양호</span>
+                                    <span class="badge bg-success rounded-pill">+4%</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h6>부정적 요인</h6>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                    <span><i class="bx bx-cloud-rain text-secondary me-2"></i> 7월 강우량 과다</span>
+                                    <span class="badge bg-danger rounded-pill">-3%</span>
+                                </li>
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                    <span><i class="bx bx-wind text-secondary me-2"></i> 개화기 강풍</span>
+                                    <span class="badge bg-danger rounded-pill">-2%</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h6>AI 추천 사항</h6>
+                            <div class="alert alert-success py-2 mb-2">
+                                <small><i class="bx bx-check-circle me-1"></i> 질소 비료 투입량 5% 증가 (8월 15일까지)</small>
+                            </div>
+                            <div class="alert alert-success py-2 mb-2">
+                                <small><i class="bx bx-check-circle me-1"></i> 오후 관수 시간 30분 연장</small>
+                            </div>
+                            <div class="alert alert-warning py-2">
+                                <small><i class="bx bx-error-circle me-1"></i> 비가 올 경우 배수로 점검 필요</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 세부 분석 및 비교 데이터 -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">성장 단계별 예측</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>성장 단계</th>
+                                    <th>상태</th>
+                                    <th>목표 대비</th>
+                                    <th>예측 수확량</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>초기 생육기 (VE~V3)</td>
+                                    <td><span class="badge bg-success">완료</span></td>
+                                    <td><span class="text-success">103%</span></td>
+                                    <td>예상 310kg/10a</td>
+                                </tr>
+                                <tr>
+                                    <td>생육 중기 (V4~R1)</td>
+                                    <td><span class="badge bg-success">완료</span></td>
+                                    <td><span class="text-success">105%</span></td>
+                                    <td>예상 318kg/10a</td>
+                                </tr>
+                                <tr>
+                                    <td>개화기 (R2~R3)</td>
+                                    <td><span class="badge bg-primary">진행중</span></td>
+                                    <td><span class="text-success">102%</span></td>
+                                    <td>예상 325kg/10a</td>
+                                </tr>
+                                <tr>
+                                    <td>착협기 (R4~R5)</td>
+                                    <td><span class="badge bg-secondary">예정</span></td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>성숙기 (R6~R8)</td>
+                                    <td><span class="badge bg-secondary">예정</span></td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">품질 지표 예측</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <h6>단백질 함량</h6>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-3" style="height: 8px;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <span>42.5%</span>
+                                    </div>
+                                    <small class="text-muted">목표: 40-45%</small>
+                                </div>
+                                <div class="mb-4">
+                                    <h6>지방 함량</h6>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-3" style="height: 8px;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <span>19.8%</span>
+                                    </div>
+                                    <small class="text-muted">목표: 18-23%</small>
+                                </div>
+                                <div class="mb-4">
+                                    <h6>수분 함량</h6>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-3" style="height: 8px;">
+                                            <div class="progress-bar bg-warning" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <span>14.2%</span>
+                                    </div>
+                                    <small class="text-muted">목표: 11-13%</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <h6>입자 크기</h6>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-3" style="height: 8px;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: 90%;" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <span>우수</span>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <h6>색상 균일성</h6>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-3" style="height: 8px;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: 95%;" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <span>우수</span>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <h6>불순물</h6>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-3" style="height: 8px;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: 95%;" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <span>낮음</span>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info py-2 mt-4">
+                                    <small><i class="bx bx-info-circle me-1"></i> 품질 등급 예상: 1등급 (특상)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 수확량 예측 차트
+        const yieldCtx = document.getElementById('yieldPredictionChart');
+        if (yieldCtx) {
+            const yieldChart = new Chart(yieldCtx, {
+                type: 'line',
+                data: {
+                    labels: ['6월', '7월 1주', '7월 2주', '7월 3주', '7월 4주', '8월 1주', '8월 2주(현재)', '8월 3주(예측)', '8월 4주(예측)', '9월(예측)', '10월(예측)'],
+                    datasets: [
+                        {
+                            label: '예상 수확량 (kg/10a)',
+                            data: [280, 295, 300, 305, 310, 315, 325, 330, 328, 330, 330],
+                            borderColor: '#4CAF50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: '목표 수확량 (kg/10a)',
+                            data: [320, 320, 320, 320, 320, 320, 320, 320, 320, 320, 320],
+                            borderColor: '#FFC107',
+                            backgroundColor: 'transparent',
+                            borderDash: [5, 5],
+                            tension: 0,
+                            fill: false
+                        },
+                        {
+                            label: '전년도 수확량 (kg/10a)',
+                            data: [270, 275, 282, 290, 295, 298, 300, 302, 300, 305, 306],
+                            borderColor: '#9E9E9E',
+                            backgroundColor: 'transparent',
+                            tension: 0.3,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 250,
+                            max: 350
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                footer: function(tooltipItems) {
+                                    const currentValue = tooltipItems[0].parsed.y;
+                                    const targetValue = tooltipItems[1] ? tooltipItems[1].parsed.y : 320;
+                                    const percentage = ((currentValue - targetValue) / targetValue * 100).toFixed(1);
+                                    return `목표 대비: ${percentage}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,112 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5>ESG 분석</h5>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info" role="alert">
+            <i class="bx bx-info-circle me-2"></i>
+            ESG 분석 페이지입니다. 환경(E) 측면에서 재배 시스템의 지속가능성을 평가합니다.
+        </div>
+        
+        <!-- ESG 점수 요약 -->
+        <div class="row mb-4">
+            <div class="col-md-12 mb-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0">환경 점수</h6>
+                                <h2 class="my-2">86<small>/100</small></h2>
+                                <span class="badge bg-white text-success">우수</span>
+                            </div>
+                            <i class="bx bx-leaf" style="font-size: 3rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 환경 지표 -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>환경(E) 지표</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <h6>물 사용량</h6>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="progress flex-grow-1 me-3" style="height: 8px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 90%;" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <span>90/100</span>
+                            </div>
+                            <p class="text-muted small">드립 관수 시스템과 센서 기반 자동화를 통해 물 사용 효율성이 높습니다.</p>
+                        </div>
+                        <div class="mb-4">
+                            <h6>에너지 효율</h6>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="progress flex-grow-1 me-3" style="height: 8px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <span>85/100</span>
+                            </div>
+                            <p class="text-muted small">태양광 발전을 통한 에너지 자급률 65% 달성.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <h6>농약 사용량</h6>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="progress flex-grow-1 me-3" style="height: 8px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 88%;" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <span>88/100</span>
+                            </div>
+                            <p class="text-muted small">생물학적 방제와 정밀 농업 기술로 화학 농약 사용 최소화.</p>
+                        </div>
+                        <div class="mb-4">
+                            <h6>탄소 발자국</h6>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="progress flex-grow-1 me-3" style="height: 8px;">
+                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <span>75/100</span>
+                            </div>
+                            <p class="text-muted small">개선 필요: 화석 연료 기반 농기계 사용 감소 권장.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 개선 권장 사항 -->
+        <div class="card">
+            <div class="card-header">
+                <h5>AI 추천 환경 개선 사항</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <div class="alert alert-success h-100 mb-0">
+                            <h6><i class="bx bx-leaf me-2"></i>환경 개선</h6>
+                            <ul class="ps-3 mb-0">
+                                <li>태양광 발전 시스템 확대 (ROI: 4년)</li>
+                                <li>우수 수집 시스템 설치 검토</li>
+                                <li>농기계 전기화 계획 수립</li>
+                                <li>생물학적 병해충 방제 확대</li>
+                                <li>작물 다양성 증대를 통한 토양 활력 증가</li>
+                                <li>유기농 비료 사용 비율 증가</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

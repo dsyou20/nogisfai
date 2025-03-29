@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.40.0/dist/apexcharts.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #388E3C;
+            --primary-light: #C8E6C9;
+            --accent-color: #8BC34A;
+            --text-color: #212121;
+            --secondary-text: #757575;
+            --divider-color: #BDBDBD;
+            --white: #FFFFFF;
+            --danger: #F44336;
+            --warning: #FFC107;
+            --info: #2196F3;
+            --sidebar-width: 280px;
+        }
+        
+        body {
+            font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+            overflow-x: hidden;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: var(--primary-dark);
+            color: var(--white);
+            padding: 1rem;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            text-align: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+        
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-menu i {
+            margin-right: 0.75rem;
+            font-size: 1.5rem;
+        }
+        
+        .content {
+            margin-left: var(--sidebar-width);
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .topbar {
+            background-color: var(--white);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-radius: 0.5rem;
+        }
+        
+        .page-heading {
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin: 0;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--divider-color);
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+        }
+        
+        .status-card {
+            background-color: var(--white);
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+        
+        .status-card-icon {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            font-size: 5rem;
+            opacity: 0.1;
+            color: var(--primary-dark);
+        }
+        
+        .status-card-title {
+            font-size: 1rem;
+            color: var(--secondary-text);
+            margin-bottom: 0.5rem;
+        }
+        
+        .status-card-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .status-card-trend {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+        
+        .trend-up {
+            color: var(--primary-color);
+        }
+        
+        .trend-down {
+            color: var(--danger);
+        }
+        
+        .chart-container {
+            height: 350px;
+        }
+        
+        .sensor-reading {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--divider-color);
+        }
+        
+        .sensor-reading:last-child {
+            border-bottom: none;
+        }
+        
+        .sensor-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .sensor-info {
+            flex: 1;
+        }
+        
+        .sensor-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .sensor-value {
+            color: var(--secondary-text);
+            font-size: 0.875rem;
+        }
+        
+        .control-action {
+            background-color: var(--white);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .action-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .action-title {
+            font-weight: 600;
+        }
+        
+        .action-status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background-color: var(--warning);
+            color: #856404;
+        }
+        
+        .status-executing {
+            background-color: var(--info);
+            color: #004085;
+        }
+        
+        .status-completed {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+        
+        .status-failed {
+            background-color: var(--danger);
+            color: #721c24;
+        }
+        
+        .action-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: var(--secondary-text);
+            margin-top: 0.5rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .detail-item i {
+            font-size: 1rem;
+            margin-right: 0.5rem;
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            background-color: #f5f5f5;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .message {
+            margin-bottom: 1rem;
+            max-width: 80%;
+        }
+        
+        .message-user {
+            margin-left: auto;
+            background-color: var(--primary-light);
+            color: var(--text-color);
+            border-radius: 1rem 1rem 0 1rem;
+            padding: 0.75rem 1rem;
+        }
+        
+        .message-bot {
+            margin-right: auto;
+            background-color: var(--white);
+            color: var(--text-color);
+            border-radius: 1rem 1rem 1rem 0;
+            padding: 0.75rem 1rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .chat-input {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--divider-color);
+            border-radius: 0.5rem;
+        }
+        
+        .nav-tabs .nav-link {
+            color: var(--secondary-text);
+            border: none;
+            padding: 0.75rem 1rem;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .dropdown-toggle::after {
+            display: none;
+        }
+        
+        .farm-selector {
+            padding: 0.75rem;
+            background-color: var(--primary-light);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .weather-widget {
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .weather-temp {
+            font-size: 3rem;
+            font-weight: 700;
+        }
+        
+        .weather-icon {
+            font-size: 3rem;
+        }
+        
+        .weather-detail {
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        
+        /* 농장 지도 및 드론 경로 관련 스타일 */
+        .farm-map-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .farm-map-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .zone-marker {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .zone-marker:hover {
+            transform: scale(1.2);
+        }
+        
+        .zone-info {
+            border-left: 3px solid var(--primary-color);
+            padding-left: 10px;
+        }
+        
+        /* 지역 마커 관련 스타일 */
+        .korea-map-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .region-marker-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .region-marker {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .region-marker i {
+            font-size: 18px;
+        }
+        
+        .region-marker:hover {
+            transform: scale(1.15);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+        }
+        
+        .region-info {
+            border-left: 3px solid var(--primary-color);
+            padding-left: 10px;
+            margin-bottom: 10px;
+        }
+        
+        /* 푸터 스타일 */
+        .footer {
+            background-color: var(--white);
+            padding-bottom: 20px;
+            margin-left: var(--sidebar-width);
+            transition: all 0.3s;
+        }
+        
+        .footer hr {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-color: var(--divider-color);
+        }
+        
+        .footer-logo {
+            width: 32px;
+            height: 32px;
+            margin-right: 8px;
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 0.5rem;
+            }
+            
+            .sidebar-header h3, .sidebar-menu span {
+                display: none;
+            }
+            
+            .content {
+                margin-left: 70px;
+            }
+            
+            .sidebar-menu a {
+                justify-content: center;
+            }
+            
+            .sidebar-menu i {
+                margin-right: 0;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- 사이드바 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>노지스마트팜<br>AI관리시스템</h3>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li>
+                    <a href="/dashboard" data-page="dashboard" class="{{ 'active' if active_page == 'dashboard' }}">
+                        <i class="bx bxs-dashboard"></i>
+                        <span>대시보드</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/overview" data-page="overview" class="{{ 'active' if active_page == 'overview' }}">
+                        <i class="bx bx-map-alt"></i>
+                        <span>전체현황</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/control" data-page="control" class="{{ 'active' if active_page == 'control' }}">
+                        <i class="bx bx-droplet"></i>
+                        <span>자동 제어</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-bs-toggle="collapse" data-bs-target="#aiSubmenu" aria-expanded="{{ 'true' if active_page in ['ai-diagnosis', 'ai-prescription', 'ai-knowledge'] else 'false' }}" class="{{ 'active' if active_page in ['ai-diagnosis', 'ai-prescription', 'ai-knowledge'] }}">
+                        <i class="bx bx-brain"></i>
+                        <span>AI 진단</span>
+                        <i class="bx bx-chevron-down ms-auto"></i>
+                    </a>
+                    <ul class="collapse {{ 'show' if active_page in ['ai-diagnosis', 'ai-prescription', 'ai-knowledge'] }}" id="aiSubmenu" style="list-style: none; padding-left: 2.5rem;">
+                        <li>
+                            <a href="/ai-diagnosis" data-page="ai-diagnosis" class="{{ 'active' if active_page == 'ai-diagnosis' }}" style="padding: 0.5rem 0;">
+                                <i class="bx bx-analyse"></i>
+                                <span>AI 진단</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/ai-prescription" data-page="ai-prescription" class="{{ 'active' if active_page == 'ai-prescription' }}" style="padding: 0.5rem 0;">
+                                <i class="bx bx-first-aid"></i>
+                                <span>AI 처방</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/ai-knowledge" data-page="ai-knowledge" class="{{ 'active' if active_page == 'ai-knowledge' }}" style="padding: 0.5rem 0;">
+                                <i class="bx bx-book-content"></i>
+                                <span>AI 지식</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="/video" data-page="video" class="{{ 'active' if active_page == 'video' }}">
+                        <i class="bx bx-camera"></i>
+                        <span>영상 분석</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/yield" data-page="yield" class="{{ 'active' if active_page == 'yield' }}">
+                        <i class="bx bx-line-chart"></i>
+                        <span>수확량 예측</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/esg" data-page="esg" class="{{ 'active' if active_page == 'esg' }}">
+                        <i class="bx bx-leaf"></i>
+                        <span>ESG 분석</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/chatbot" data-page="chatbot" class="{{ 'active' if active_page == 'chatbot' }}">
+                        <i class="bx bx-bot"></i>
+                        <span>AI 챗봇</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/settings" data-page="settings" class="{{ 'active' if active_page == 'settings' }}">
+                        <i class="bx bx-cog"></i>
+                        <span>설정</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 메인 컨텐츠 -->
+    <div class="content">
+        <!-- 상단바 -->
+        <div class="topbar">
+            <h3 class="page-heading">
+                {% if active_page == 'control' %}
+                    자동 제어
+                {% elif active_page == 'video' %}
+                    영상 분석
+                {% elif active_page == 'yield' %}
+                    수확량 예측
+                {% elif active_page == 'esg' %}
+                    ESG 분석
+                {% elif active_page == 'chatbot' %}
+                    AI 챗봇
+                {% elif active_page == 'settings' %}
+                    설정
+                {% elif active_page == 'ai-diagnosis' %}
+                    AI 진단
+                {% elif active_page == 'ai-prescription' %}
+                    AI 처방
+                {% elif active_page == 'ai-knowledge' %}
+                    AI 지식 데이터베이스
+                {% elif active_page == 'overview' %}
+                    전체현황 - 김제시 죽산면
+                {% else %}
+                    노지스마트팜<br>AI관리시스템 대시보드
+                {% endif %}
+            </h3>
+            <div class="d-flex align-items-center">
+                <div class="dropdown me-3">
+                    <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" id="farmSelector" data-bs-toggle="dropdown">
+                        <i class="bx bx-map me-2"></i> 김제지구
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">김제지구</a></li>
+                        <li><a class="dropdown-item" href="#">태안지구</a></li>
+                    </ul>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary rounded-circle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                        <i class="bx bx-user"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">내 정보</a></li>
+                        <li><a class="dropdown-item" href="/settings">설정</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/">로그아웃</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 날씨 및 환경 정보 -->
+        <div class="farm-selector">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="mb-1">김제지구 - 1구역</h5>
+                    <p class="mb-0">현재 상태: 정상 · 작물: 콩 (개화기)</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="d-inline-flex align-items-center me-3">
+                        <i class="bx bx-sun me-1" style="font-size: 1.5rem; color: #FFC107;"></i>
+                        <span>25°C</span>
+                    </div>
+                    <div class="d-inline-flex align-items-center">
+                        <i class="bx bx-droplet me-1" style="font-size: 1.5rem; color: #2196F3;"></i>
+                        <span>65% 습도</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- 페이지 푸터 -->
+    <footer class="footer mt-5">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <hr>
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center py-3">
+                        <div class="mb-3 mb-md-0">
+                            <p class="text-muted mb-0">© 2023 노지스마트팜<br>AI관리시스템 - 트랜스포머 콘소시엄</p>
+                        </div>
+                        <div class="d-flex flex-column flex-md-row align-items-center">
+                            <div class="d-flex align-items-center me-md-4 mb-2 mb-md-0">
+                                <span class="bg-success d-flex align-items-center justify-content-center rounded-circle me-2" style="width: 32px; height: 32px;">
+                                    <i class="bx bx-leaf text-white"></i>
+                                </span>
+                                <span class="text-muted small">국립식량작물원</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="bg-info d-flex align-items-center justify-content-center rounded-circle me-2" style="width: 32px; height: 32px;">
+                                    <i class="bx bx-broadcast text-white"></i>
+                                </span>
+                                <span class="text-muted small">한국정보통신진흥원</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.40.0/dist/apexcharts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    
+    <script>
+        // 현재 활성화된 페이지 정보
+        const activePage = "{{ active_page|default('dashboard') }}";
+        
+        // 현재 활성화된 메뉴 표시
+        document.addEventListener('DOMContentLoaded', function() {
+            // 활성 페이지 메뉴 아이템 활성화
+            const activeMenu = document.querySelector(`.sidebar-menu a[data-page="${activePage}"]`);
+            if (activeMenu) {
+                activeMenu.classList.add('active');
+                
+                // 서브메뉴 항목이 활성화되어 있으면 상위 메뉴도 활성화
+                const parentSubmenu = activeMenu.closest('.collapse');
+                if (parentSubmenu) {
+                    const parentMenu = document.querySelector(`[data-bs-target="#${parentSubmenu.id}"]`);
+                    parentMenu.classList.add('active');
+                    parentSubmenu.classList.add('show');
+                }
+            }
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

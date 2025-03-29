@@ -1,0 +1,467 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- 상단 헤더 및 검색 영역 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">AI 지식 데이터베이스</h5>
+                    <div>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="키워드 검색..." aria-label="Search keywords">
+                            <button class="btn btn-primary" type="button">
+                                <i class="bx bx-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="bx bx-info-circle me-2"></i>
+                        AI 지식 데이터베이스는 콩 재배에 관한 환경 데이터, 제어 이력, 생육 패턴, 그리고 농업경영체의 경험을 축적합니다. 이 지식은 더 나은 AI 진단과 처방을 위한 기반이 됩니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 데이터 필터링 영역 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">데이터 필터링</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">지역</label>
+                            <select class="form-select">
+                                <option value="all" selected>전체 지역</option>
+                                <option value="gimje">김제지구</option>
+                                <option value="taean">태안지구</option>
+                                <option value="haenam">해남지구</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">데이터 유형</label>
+                            <select class="form-select">
+                                <option value="all" selected>전체 유형</option>
+                                <option value="environment">환경 데이터</option>
+                                <option value="control">제어 이력</option>
+                                <option value="growth">생육 데이터</option>
+                                <option value="experience">경험 지식</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">기간</label>
+                            <select class="form-select">
+                                <option value="all" selected>전체 기간</option>
+                                <option value="week">지난 1주일</option>
+                                <option value="month">지난 1개월</option>
+                                <option value="year">지난 1년</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">정렬 기준</label>
+                            <select class="form-select">
+                                <option value="date_desc" selected>최신순</option>
+                                <option value="date_asc">오래된순</option>
+                                <option value="relevance">관련성순</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12 text-end">
+                            <button class="btn btn-primary">
+                                <i class="bx bx-filter-alt me-1"></i> 필터 적용
+                            </button>
+                            <button class="btn btn-outline-secondary ms-2">
+                                <i class="bx bx-reset me-1"></i> 초기화
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 통계 요약 카드 -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <span class="bg-primary bg-opacity-10 text-primary rounded p-3">
+                                <i class="bx bx-line-chart fs-4"></i>
+                            </span>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="mb-1">환경 데이터</h6>
+                            <h4 class="mb-0">12,485</h4>
+                            <small class="text-muted">데이터 포인트</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <span class="bg-success bg-opacity-10 text-success rounded p-3">
+                                <i class="bx bx-cog fs-4"></i>
+                            </span>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="mb-1">제어 이력</h6>
+                            <h4 class="mb-0">3,651</h4>
+                            <small class="text-muted">제어 작업</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <span class="bg-warning bg-opacity-10 text-warning rounded p-3">
+                                <i class="bx bx-leaf fs-4"></i>
+                            </span>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="mb-1">생육 데이터</h6>
+                            <h4 class="mb-0">589</h4>
+                            <small class="text-muted">생육 기록</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <span class="bg-info bg-opacity-10 text-info rounded p-3">
+                                <i class="bx bx-brain fs-4"></i>
+                            </span>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="mb-1">경험 지식</h6>
+                            <h4 class="mb-0">127</h4>
+                            <small class="text-muted">지식 항목</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 최근 데이터 및 지식 테이블 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">최근 데이터 및 지식</h6>
+                    <div>
+                        <button class="btn btn-sm btn-primary">
+                            <i class="bx bx-export me-1"></i> 내보내기
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary ms-2">
+                            <i class="bx bx-plus me-1"></i> 새 경험 지식 추가
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">유형</th>
+                                    <th scope="col">제목/설명</th>
+                                    <th scope="col">지역</th>
+                                    <th scope="col">날짜</th>
+                                    <th scope="col">조치</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">KB1023</th>
+                                    <td><span class="badge bg-info">경험 지식</span></td>
+                                    <td>개화기 때 개미 발생 시 자연 방제법</td>
+                                    <td>김제지구</td>
+                                    <td>2023-07-12</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">보기</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">ENV8765</th>
+                                    <td><span class="badge bg-primary">환경 데이터</span></td>
+                                    <td>7월 첫째 주 이상 고온 현상 데이터</td>
+                                    <td>태안지구</td>
+                                    <td>2023-07-10</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">보기</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">CTL4532</th>
+                                    <td><span class="badge bg-success">제어 이력</span></td>
+                                    <td>김제지구 자동 관수 시스템 최적화 이력</td>
+                                    <td>김제지구</td>
+                                    <td>2023-07-08</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">보기</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">GRW2291</th>
+                                    <td><span class="badge bg-warning">생육 데이터</span></td>
+                                    <td>태안지구 콩 잎 크기 측정 데이터</td>
+                                    <td>태안지구</td>
+                                    <td>2023-07-07</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">보기</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">KB1022</th>
+                                    <td><span class="badge bg-info">경험 지식</span></td>
+                                    <td>비 온 후 질소 비료 공급 시기 최적화</td>
+                                    <td>전체 지역</td>
+                                    <td>2023-07-05</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">보기</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div>
+                            <p class="text-muted mb-0">총 16,852개 항목 중 1-5 표시</p>
+                        </div>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 지식 기여 및 분석 섹션 -->
+    <div class="row">
+        <div class="col-md-6 mb-4 mb-md-0">
+            <div class="card h-100">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">지식 기여하기</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">귀하의 콩 재배 경험과 지식을 공유하여 AI 시스템의 개선에 기여하세요.</p>
+                    <form>
+                        <div class="mb-3">
+                            <label for="knowledgeTitle" class="form-label">제목</label>
+                            <input type="text" class="form-control" id="knowledgeTitle" placeholder="지식의 제목을 입력하세요">
+                        </div>
+                        <div class="mb-3">
+                            <label for="knowledgeCategory" class="form-label">카테고리</label>
+                            <select class="form-select" id="knowledgeCategory">
+                                <option selected>카테고리 선택</option>
+                                <option>수분 관리</option>
+                                <option>병해충 관리</option>
+                                <option>영양 관리</option>
+                                <option>환경 조절</option>
+                                <option>수확 관리</option>
+                                <option>기타</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="knowledgeContent" class="form-label">내용</label>
+                            <textarea class="form-control" id="knowledgeContent" rows="5" placeholder="귀하의 경험과 지식을 상세히 기술해주세요"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="knowledgeRegion" class="form-label">관련 지역</label>
+                            <select class="form-select" id="knowledgeRegion">
+                                <option selected>전체 지역</option>
+                                <option>김제지구</option>
+                                <option>태안지구</option>
+                                <option>해남지구</option>
+                                <option>기타 지역</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="knowledgeMedia" class="form-label">미디어 첨부 (선택사항)</label>
+                            <input class="form-control" type="file" id="knowledgeMedia">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bx bx-share-alt me-1"></i> 지식 공유하기
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">지식 통계 분석</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs mb-3" id="knowledgeTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="region-tab" data-bs-toggle="tab" data-bs-target="#region" type="button" role="tab" aria-controls="region" aria-selected="true">지역별</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="category-tab" data-bs-toggle="tab" data-bs-target="#category" type="button" role="tab" aria-controls="category" aria-selected="false">카테고리별</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="time-tab" data-bs-toggle="tab" data-bs-target="#time" type="button" role="tab" aria-controls="time" aria-selected="false">시간별</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="knowledgeTabsContent">
+                        <div class="tab-pane fade show active" id="region" role="tabpanel" aria-labelledby="region-tab">
+                            <div id="regionChart" style="height: 300px;"></div>
+                        </div>
+                        <div class="tab-pane fade" id="category" role="tabpanel" aria-labelledby="category-tab">
+                            <div id="categoryChart" style="height: 300px;"></div>
+                        </div>
+                        <div class="tab-pane fade" id="time" role="tabpanel" aria-labelledby="time-tab">
+                            <div id="timeChart" style="height: 300px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 지역별 차트
+        const regionOptions = {
+            chart: {
+                type: 'pie',
+                height: 300,
+                toolbar: {
+                    show: false
+                }
+            },
+            series: [42, 35, 23],
+            labels: ['김제지구', '태안지구', '해남지구'],
+            colors: ['#4CAF50', '#2196F3', '#FF9800'],
+            legend: {
+                position: 'bottom'
+            },
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 200
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }]
+        };
+        
+        // 카테고리별 차트
+        const categoryOptions = {
+            chart: {
+                type: 'bar',
+                height: 300,
+                toolbar: {
+                    show: false
+                }
+            },
+            series: [{
+                name: '지식 항목',
+                data: [28, 22, 19, 15, 12, 8]
+            }],
+            xaxis: {
+                categories: ['수분 관리', '병해충 관리', '영양 관리', '환경 조절', '수확 관리', '기타'],
+                position: 'bottom'
+            },
+            colors: ['#2196F3'],
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '55%',
+                    endingShape: 'rounded'
+                },
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                show: true,
+                width: 2,
+                colors: ['transparent']
+            },
+            fill: {
+                opacity: 1
+            }
+        };
+        
+        // 시간별 차트
+        const timeOptions = {
+            chart: {
+                type: 'line',
+                height: 300,
+                toolbar: {
+                    show: false
+                }
+            },
+            series: [{
+                name: '데이터 항목',
+                data: [30, 40, 45, 50, 49, 60, 70, 91]
+            }],
+            xaxis: {
+                categories: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월']
+            },
+            colors: ['#4CAF50'],
+            stroke: {
+                curve: 'smooth',
+                width: 3
+            },
+            markers: {
+                size: 4
+            }
+        };
+        
+        // 차트 렌더링
+        setTimeout(() => {
+            new ApexCharts(document.querySelector("#regionChart"), regionOptions).render();
+            new ApexCharts(document.querySelector("#categoryChart"), categoryOptions).render();
+            new ApexCharts(document.querySelector("#timeChart"), timeOptions).render();
+        }, 100);
+    });
+</script>
+{% endblock %} 
