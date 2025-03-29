@@ -3,72 +3,251 @@
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h5>영상 분석</h5>
+        <h5>영상분석</h5>
     </div>
     <div class="card-body">
         <div class="alert alert-info" role="alert">
             <i class="bx bx-info-circle me-2"></i>
-            영상 분석 페이지입니다. 여기서 작물 생육 상태, 병해충 감지, 생장 추적 등의 영상 기반 분석을 확인할 수 있습니다.
+            김제 죽산면 일대의 인공위성 및 드론 촬영 영상을 기반으로 NDVI(정규식생지수), 병해충 탐지, 초분광 수분 현황을 시각화하여 보여줍니다.
         </div>
         
-        <!-- 카메라 선택 및 컨트롤 -->
+        <!-- 날짜 선택 및 분석 유형 컨트롤 -->
         <div class="row mb-4">
             <div class="col-md-8">
-                <div class="form-group d-flex">
-                    <select class="form-select me-2">
-                        <option selected>메인 카메라</option>
-                        <option>A구역 카메라 1</option>
-                        <option>A구역 카메라 2</option>
-                        <option>B구역 카메라 1</option>
-                        <option>드론 카메라</option>
-                    </select>
-                    <button class="btn btn-primary">연결</button>
+                <div class="d-flex align-items-center">
+                    <div class="input-group me-3" style="max-width: 240px;">
+                        <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+                        <input type="date" class="form-control" id="analysisDate" value="2023-08-15">
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="timeRange" id="daily" value="daily" checked>
+                        <label class="form-check-label" for="daily">일간</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="timeRange" id="weekly" value="weekly">
+                        <label class="form-check-label" for="weekly">주간</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="timeRange" id="monthly" value="monthly">
+                        <label class="form-check-label" for="monthly">월간</label>
+                    </div>
+                    <button class="btn btn-primary ms-2" id="applyDateRange">적용</button>
                 </div>
             </div>
             <div class="col-md-4 text-end">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-outline-secondary">
-                        <i class="bx bx-analyse"></i> 분석 실행
+                    <button type="button" class="btn btn-outline-secondary" id="refreshAnalysis">
+                        <i class="bx bx-refresh"></i> 최신 데이터
                     </button>
-                    <button type="button" class="btn btn-outline-secondary">
-                        <i class="bx bx-camera"></i> 스냅샷
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary">
-                        <i class="bx bx-cog"></i>
+                    <button type="button" class="btn btn-outline-secondary" id="downloadReport">
+                        <i class="bx bx-download"></i> 보고서
                     </button>
                 </div>
             </div>
         </div>
         
-        <!-- 메인 카메라 피드 및 분석 결과 -->
-        <div class="row">
-            <div class="col-md-8">
+        <!-- 시계열 타임라인 -->
+        <div class="row mb-4">
+            <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>라이브 뷰</div>
-                            <div>
-                                <span class="badge bg-success">활성화됨</span>
-                            </div>
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">시계열 현황</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="timelineChart" style="height: 120px;"></div>
+                        <div class="d-flex justify-content-between mt-2 text-muted small">
+                            <div>← 이전</div>
+                            <div class="text-center">2023년 8월 15일 기준 데이터</div>
+                            <div>이후 →</div>
                         </div>
                     </div>
-                    <div class="card-body text-center p-3">
-                        <img src="https://via.placeholder.com/800x450/4CAF50/FFFFFF?text=작물+영상+피드" class="img-fluid rounded">
-                        <div class="mt-3 text-start">
-                            <div class="mb-2 d-flex justify-content-between align-items-center">
-                                <div>
-                                    <span class="badge bg-primary me-2">메인 카메라</span>
-                                    <small class="text-muted">최근 업데이트: 12초 전</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 위성 영상 및 분석 결과 -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="ndvi-tab" data-bs-toggle="tab" href="#ndvi" role="tab">NDVI 지수</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="pest-tab" data-bs-toggle="tab" href="#pest" role="tab">병해충 탐지</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="moisture-tab" data-bs-toggle="tab" href="#moisture" role="tab">수분 현황</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="satellite-tab" data-bs-toggle="tab" href="#satellite" role="tab">위성 원본</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="ndvi" role="tabpanel">
+                                <div class="position-relative">
+                                    <img src="https://via.placeholder.com/800x600/4CAF50/FFFFFF?text=김제+죽산면+NDVI+지수+맵" class="img-fluid rounded">
+                                    <div class="position-absolute bottom-0 end-0 p-3 bg-white bg-opacity-75 rounded-start">
+                                        <div class="d-flex align-items-center">
+                                            <div class="ndvi-legend me-2" style="width: 150px; height: 15px; background: linear-gradient(to right, #ff0000, #ffff00, #00ff00);"></div>
+                                            <div class="d-flex justify-content-between w-100 small">
+                                                <span>낮음</span>
+                                                <span>높음</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <button class="btn btn-sm btn-outline-secondary me-1">확대</button>
-                                    <button class="btn btn-sm btn-outline-secondary">전체화면</button>
+                                <div class="mt-3">
+                                    <h6>NDVI 정규식생지수</h6>
+                                    <p class="text-muted">식생의 건강도와 밀도를 나타내는 지수로, 값이 높을수록(녹색) 건강한 식생을 의미합니다.</p>
+                                    <div class="row mt-3">
+                                        <div class="col-md-4">
+                                            <div class="card bg-light">
+                                                <div class="card-body py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>평균 NDVI</div>
+                                                        <div class="text-success">0.82</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card bg-light">
+                                                <div class="card-body py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>최고 지역</div>
+                                                        <div class="text-success">A3 구역</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card bg-light">
+                                                <div class="card-body py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>주간 변화</div>
+                                                        <div class="text-success">+0.04</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="d-flex justify-content-between">
-                                <p><strong>해상도: </strong> 1080p</p>
-                                <p><strong>프레임레이트: </strong> 24fps</p>
-                                <p><strong>마지막 분석: </strong> 오늘 15:45</p>
+                            
+                            <div class="tab-pane fade" id="pest" role="tabpanel">
+                                <div class="position-relative">
+                                    <img src="https://via.placeholder.com/800x600/F44336/FFFFFF?text=김제+죽산면+병해충+탐지+맵" class="img-fluid rounded">
+                                    <div class="position-absolute bottom-0 end-0 p-3 bg-white bg-opacity-75 rounded-start">
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge bg-success me-2">●</span>
+                                            <small class="me-3">안전</small>
+                                            <span class="badge bg-warning me-2">●</span>
+                                            <small class="me-3">관찰 필요</small>
+                                            <span class="badge bg-danger me-2">●</span>
+                                            <small>위험</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <h6>병해충 탐지 현황</h6>
+                                    <p class="text-muted">인공지능 분석을 통해 잠재적인 병해충 발생 구역을 표시합니다. 위험 지역은 즉시 점검이 필요합니다.</p>
+                                    <div class="row mt-3">
+                                        <div class="col-md-4">
+                                            <div class="card bg-light">
+                                                <div class="card-body py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>안전 구역</div>
+                                                        <div class="text-success">92%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card bg-light">
+                                                <div class="card-body py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>관찰 필요</div>
+                                                        <div class="text-warning">7%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card bg-light">
+                                                <div class="card-body py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>위험 구역</div>
+                                                        <div class="text-danger">1%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="moisture" role="tabpanel">
+                                <div class="position-relative">
+                                    <img src="https://via.placeholder.com/800x600/2196F3/FFFFFF?text=김제+죽산면+수분+현황+맵" class="img-fluid rounded">
+                                    <div class="position-absolute bottom-0 end-0 p-3 bg-white bg-opacity-75 rounded-start">
+                                        <div class="d-flex align-items-center">
+                                            <div class="moisture-legend me-2" style="width: 150px; height: 15px; background: linear-gradient(to right, #0000ff, #ffff00, #ff0000);"></div>
+                                            <div class="d-flex justify-content-between w-100 small">
+                                                <span>건조</span>
+                                                <span>적절</span>
+                                                <span>과습</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <h6>초분광 수분 현황</h6>
+                                    <p class="text-muted">초분광 센서를 사용하여 작물의 수분 상태를 측정하고 시각화합니다. 적절한 수분 상태는 녹색으로 표시됩니다.</p>
+                                    <div class="row mt-3">
+                                        <div class="col-md-4">
+                                            <div class="card bg-light">
+                                                <div class="card-body py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>평균 수분 상태</div>
+                                                        <div class="text-success">적절</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card bg-light">
+                                                <div class="card-body py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>건조 구역</div>
+                                                        <div class="text-warning">5%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card bg-light">
+                                                <div class="card-body py-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>과습 구역</div>
+                                                        <div class="text-danger">2%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="satellite" role="tabpanel">
+                                <div class="position-relative">
+                                    <img src="https://via.placeholder.com/800x600/9E9E9E/FFFFFF?text=김제+죽산면+위성+원본+영상" class="img-fluid rounded">
+                                </div>
+                                <div class="mt-3">
+                                    <h6>위성 원본 영상</h6>
+                                    <p class="text-muted">실제 위성 촬영 영상을 확인할 수 있습니다. 다른 분석 결과와 함께 참고하여 더 정확한 판단을 할 수 있습니다.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -79,76 +258,120 @@
                     <div class="card-header">
                         <ul class="nav nav-tabs card-header-tabs" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" id="results-tab" data-bs-toggle="tab" href="#results" role="tab">분석 결과</a>
+                                <a class="nav-link active" id="summary-tab" data-bs-toggle="tab" href="#summary" role="tab">요약</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="history-tab" data-bs-toggle="tab" href="#history" role="tab">기록</a>
+                                <a class="nav-link" id="trends-tab" data-bs-toggle="tab" href="#trends" role="tab">추세</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="actions-tab" data-bs-toggle="tab" href="#actions" role="tab">권장조치</a>
                             </li>
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
-                            <div class="tab-pane fade show active" id="results" role="tabpanel">
-                                <p class="text-center mb-3">
-                                    <span class="badge bg-success p-2 mb-2 d-block fs-6">건강한 상태</span>
-                                </p>
-                                <div class="mb-3">
-                                    <h6>생육 진행도</h6>
-                                    <div class="progress mb-2" style="height: 20px;">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">85%</div>
+                            <div class="tab-pane fade show active" id="summary" role="tabpanel">
+                                <h6 class="mb-3 border-bottom pb-2">김제 죽산면 분석 요약</h6>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="me-3">
+                                        <span class="badge rounded-circle bg-success p-2">
+                                            <i class="bx bx-check fs-5"></i>
+                                        </span>
                                     </div>
-                                    <small class="text-muted">개화기 (R2 단계)</small>
-                                </div>
-                                <div class="mb-3">
-                                    <h6>추정 초장</h6>
-                                    <p class="mb-1">평균 45.2cm (정상 범위)</p>
-                                    <small class="text-muted">지난주 대비 +2.5cm</small>
-                                </div>
-                                <div class="mb-3">
-                                    <h6>잎 상태</h6>
-                                    <p class="mb-1">양호 (짙은 녹색)</p>
-                                    <div class="progress mb-2" style="height: 8px;">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 95%;" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div>
+                                        <h6 class="mb-0">전체 건강도</h6>
+                                        <p class="mb-0 text-muted small">양호 (85점/100점)</p>
                                     </div>
                                 </div>
+                                
                                 <div class="mb-3">
-                                    <h6>병해충 감지</h6>
-                                    <p class="mb-1 text-success">감지되지 않음</p>
+                                    <h6 class="mb-2">구역별 현황</h6>
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>구역</th>
+                                                <th>NDVI</th>
+                                                <th>병해충</th>
+                                                <th>수분</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>A 구역</td>
+                                                <td><span class="text-success">0.85</span></td>
+                                                <td><span class="text-success">안전</span></td>
+                                                <td><span class="text-success">적절</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>B 구역</td>
+                                                <td><span class="text-success">0.83</span></td>
+                                                <td><span class="text-warning">관찰</span></td>
+                                                <td><span class="text-success">적절</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>C 구역</td>
+                                                <td><span class="text-warning">0.76</span></td>
+                                                <td><span class="text-success">안전</span></td>
+                                                <td><span class="text-warning">건조</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <button class="btn btn-primary w-100 mt-3">새로운 분석 실행</button>
+                                
+                                <div class="alert alert-primary" role="alert">
+                                    <i class="bx bx-info-circle me-2"></i>
+                                    C 구역의 건조 상태가 감지되었습니다. 관수 일정을 확인해 주세요.
+                                </div>
                             </div>
-                            <div class="tab-pane fade" id="history" role="tabpanel">
-                                <div class="list-group list-group-flush">
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1">오늘 15:45</h6>
-                                            <small class="text-success">양호</small>
-                                        </div>
-                                        <p class="mb-1">정기 분석 - 생육 상태 양호</p>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1">오늘 09:30</h6>
-                                            <small class="text-success">양호</small>
-                                        </div>
-                                        <p class="mb-1">정기 분석 - 생육 상태 양호</p>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1">어제 15:45</h6>
-                                            <small class="text-warning">주의</small>
-                                        </div>
-                                        <p class="mb-1">질소 부족 징후 확인 (시비 권장)</p>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1">어제 09:30</h6>
-                                            <small class="text-success">양호</small>
-                                        </div>
-                                        <p class="mb-1">정기 분석 - 생육 상태 양호</p>
-                                    </a>
+                            
+                            <div class="tab-pane fade" id="trends" role="tabpanel">
+                                <h6 class="mb-3 border-bottom pb-2">시계열 추세 분석</h6>
+                                <div class="mb-3">
+                                    <div id="ndviTrendChart" style="height: 180px;"></div>
+                                    <div class="text-center text-muted small mt-1">NDVI 추세 (최근 30일)</div>
                                 </div>
-                                <button class="btn btn-outline-primary w-100 mt-3">전체 기록 보기</button>
+                                <div class="mb-3">
+                                    <div id="moistureTrendChart" style="height: 180px;"></div>
+                                    <div class="text-center text-muted small mt-1">수분 추세 (최근 30일)</div>
+                                </div>
+                                <div class="alert alert-info" role="alert">
+                                    <i class="bx bx-info-circle me-2"></i>
+                                    최근 7일간 NDVI 지수가 2% 증가했습니다. 작물 생육 상태가 개선되고 있습니다.
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="actions" role="tabpanel">
+                                <h6 class="mb-3 border-bottom pb-2">AI 추천 조치사항</h6>
+                                <div class="card mb-3 bg-light border-start border-success border-3">
+                                    <div class="card-body py-2">
+                                        <h6 class="mb-1">C 구역 관수 필요</h6>
+                                        <p class="mb-0 small">C 구역의 수분 상태가 낮게 측정되었습니다. 24시간 이내 추가 관수를 실시하세요.</p>
+                                        <div class="d-flex justify-content-between mt-2">
+                                            <span class="badge bg-warning">중요</span>
+                                            <button class="btn btn-sm btn-outline-success">자동제어 일정 등록</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card mb-3 bg-light border-start border-primary border-3">
+                                    <div class="card-body py-2">
+                                        <h6 class="mb-1">B 구역 병해충 모니터링</h6>
+                                        <p class="mb-0 small">B 구역에서 경미한 병해충 징후가 감지되었습니다. 현장 점검을 통해 확인하세요.</p>
+                                        <div class="d-flex justify-content-between mt-2">
+                                            <span class="badge bg-info">정보</span>
+                                            <button class="btn btn-sm btn-outline-primary">체크리스트</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card mb-3 bg-light border-start border-info border-3">
+                                    <div class="card-body py-2">
+                                        <h6 class="mb-1">정기 영양분 공급 시기</h6>
+                                        <p class="mb-0 small">생육 단계에 맞는 영양분 공급 시기입니다. 질소 함량이 높은 비료를 공급하세요.</p>
+                                        <div class="d-flex justify-content-between mt-2">
+                                            <span class="badge bg-info">정보</span>
+                                            <button class="btn btn-sm btn-outline-primary">상세정보</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -156,83 +379,77 @@
             </div>
         </div>
         
-        <!-- 성장 추적 및 이미지 분석 -->
+        <!-- 비교 분석 및 보고서 -->
         <div class="row mt-4">
-            <div class="col-md-6">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5>성장 추적</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart-container" style="height: 300px;">
-                            <canvas id="growthChart"></canvas>
-                        </div>
-                        <div class="mt-3">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h6>평균 일일 성장률</h6>
-                                    <p class="mb-0">0.4cm/일</p>
-                                </div>
-                                <div>
-                                    <h6>예상 최대 초장</h6>
-                                    <p class="mb-0">65cm</p>
-                                </div>
-                                <div>
-                                    <h6>예상 개화 완료</h6>
-                                    <p class="mb-0">D-5일</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h5>이미지 분석</h5>
+                        <h5>시계열 비교 분석</h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <div class="card">
-                                    <div class="card-header py-2 px-3 bg-light">
-                                        <small>엽록소 지수 분석</small>
+                                    <div class="card-header py-2 px-3 bg-light d-flex justify-content-between align-items-center">
+                                        <small>1개월 전 (2023-07-15)</small>
+                                        <span class="badge bg-primary">과거</span>
                                     </div>
                                     <div class="card-body p-2">
-                                        <img src="https://via.placeholder.com/300x200/2196F3/FFFFFF?text=엽록소+지수+맵" class="img-fluid rounded">
+                                        <img src="https://via.placeholder.com/300x200/9E9E9E/FFFFFF?text=1개월+전+NDVI" class="img-fluid rounded">
+                                        <div class="mt-2 text-center small">
+                                            <span class="d-block">평균 NDVI: 0.72</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <div class="card">
-                                    <div class="card-header py-2 px-3 bg-light">
-                                        <small>병해충 감지</small>
+                                    <div class="card-header py-2 px-3 bg-light d-flex justify-content-between align-items-center">
+                                        <small>2주 전 (2023-08-01)</small>
+                                        <span class="badge bg-primary">과거</span>
                                     </div>
                                     <div class="card-body p-2">
-                                        <img src="https://via.placeholder.com/300x200/4CAF50/FFFFFF?text=병해충+감지+맵" class="img-fluid rounded">
+                                        <img src="https://via.placeholder.com/300x200/9E9E9E/FFFFFF?text=2주+전+NDVI" class="img-fluid rounded">
+                                        <div class="mt-2 text-center small">
+                                            <span class="d-block">평균 NDVI: 0.78</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <div class="card">
-                                    <div class="card-header py-2 px-3 bg-light">
-                                        <small>열 스트레스 분석</small>
+                                    <div class="card-header py-2 px-3 bg-light d-flex justify-content-between align-items-center">
+                                        <small>현재 (2023-08-15)</small>
+                                        <span class="badge bg-success">현재</span>
                                     </div>
                                     <div class="card-body p-2">
-                                        <img src="https://via.placeholder.com/300x200/FF9800/FFFFFF?text=열+스트레스+맵" class="img-fluid rounded">
+                                        <img src="https://via.placeholder.com/300x200/4CAF50/FFFFFF?text=현재+NDVI" class="img-fluid rounded">
+                                        <div class="mt-2 text-center small">
+                                            <span class="d-block">평균 NDVI: 0.82</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <div class="card">
-                                    <div class="card-header py-2 px-3 bg-light">
-                                        <small>수분 스트레스 분석</small>
+                                    <div class="card-header py-2 px-3 bg-light d-flex justify-content-between align-items-center">
+                                        <small>예측 (2023-08-29)</small>
+                                        <span class="badge bg-warning">예측</span>
                                     </div>
                                     <div class="card-body p-2">
-                                        <img src="https://via.placeholder.com/300x200/2196F3/FFFFFF?text=수분+스트레스+맵" class="img-fluid rounded">
+                                        <img src="https://via.placeholder.com/300x200/FF9800/FFFFFF?text=예측+NDVI" class="img-fluid rounded">
+                                        <div class="mt-2 text-center small">
+                                            <span class="d-block">예상 NDVI: 0.85</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <p class="text-muted">김제 죽산면의 작물 건강도는 지난 1개월간 꾸준히 개선되고 있습니다.</p>
+                            <button class="btn btn-primary">
+                                <i class="bx bx-download me-1"></i> 전체 분석 보고서 다운로드
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -245,45 +462,138 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // 성장 추적 차트
-        const growthCtx = document.getElementById('growthChart');
-        if (growthCtx) {
-            const growthChart = new Chart(growthCtx, {
+        // 날짜 선택기 초기화
+        const analysisDate = document.getElementById('analysisDate');
+        const now = new Date();
+        analysisDate.valueAsDate = now;
+
+        // 시계열 타임라인 차트
+        const timelineData = {
+            labels: ['8/1', '8/2', '8/3', '8/4', '8/5', '8/6', '8/7', '8/8', '8/9', '8/10', 
+                    '8/11', '8/12', '8/13', '8/14', '8/15', '8/16', '8/17', '8/18', '8/19', '8/20'],
+            datasets: [{
+                label: 'NDVI 지수',
+                data: [0.76, 0.77, 0.77, 0.78, 0.78, 0.79, 0.79, 0.80, 0.80, 0.81, 
+                      0.81, 0.81, 0.82, 0.82, 0.82, null, null, null, null, null],
+                borderColor: '#4CAF50',
+                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                borderWidth: 2,
+                pointRadius: 3,
+                fill: false,
+                tension: 0.2
+            }]
+        };
+        
+        const timelineCtx = document.getElementById('timelineChart');
+        if (timelineCtx) {
+            const timelineChart = new Chart(timelineCtx, {
                 type: 'line',
-                data: {
-                    labels: ['6/1', '6/8', '6/15', '6/22', '6/29', '7/6', '7/13', '7/20', '7/27', '8/3', '오늘'],
-                    datasets: [
-                        {
-                            label: '초장 (cm)',
-                            data: [12, 18, 24, 28, 33, 36, 38, 40, 42, 44, 45.2],
-                            borderColor: '#4CAF50',
-                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                            tension: 0.3,
-                            fill: true
-                        },
-                        {
-                            label: '잎 면적 (cm²)',
-                            data: [20, 40, 80, 120, 160, 180, 200, 220, 230, 240, 245],
-                            borderColor: '#2196F3',
-                            backgroundColor: 'rgba(33, 150, 243, 0.1)',
-                            tension: 0.3,
-                            fill: true
-                        }
-                    ]
-                },
+                data: timelineData,
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
                     scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        },
                         y: {
-                            beginAtZero: true
+                            min: 0.7,
+                            max: 0.9,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
                         }
                     }
                 }
             });
         }
         
-        // 탭 기능 활성화
+        // NDVI 추세 차트
+        const ndviTrendData = {
+            labels: ['7/15', '7/20', '7/25', '7/30', '8/5', '8/10', '8/15'],
+            datasets: [{
+                label: 'NDVI 평균',
+                data: [0.72, 0.74, 0.76, 0.78, 0.80, 0.81, 0.82],
+                borderColor: '#4CAF50',
+                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                fill: true
+            }]
+        };
+        
+        const ndviTrendCtx = document.getElementById('ndviTrendChart');
+        if (ndviTrendCtx) {
+            const ndviTrendChart = new Chart(ndviTrendCtx, {
+                type: 'line',
+                data: ndviTrendData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 0.6,
+                            max: 0.9
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 수분 추세 차트
+        const moistureTrendData = {
+            labels: ['7/15', '7/20', '7/25', '7/30', '8/5', '8/10', '8/15'],
+            datasets: [{
+                label: '토양 수분',
+                data: [68, 65, 62, 58, 55, 60, 62],
+                borderColor: '#2196F3',
+                backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                fill: true
+            }]
+        };
+        
+        const moistureTrendCtx = document.getElementById('moistureTrendChart');
+        if (moistureTrendCtx) {
+            const moistureTrendChart = new Chart(moistureTrendCtx, {
+                type: 'line',
+                data: moistureTrendData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 40,
+                            max: 80
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 날짜 선택 적용 버튼 이벤트
+        document.getElementById('applyDateRange').addEventListener('click', function() {
+            const selectedDate = analysisDate.value;
+            const timeRange = document.querySelector('input[name="timeRange"]:checked').value;
+            
+            alert(`선택한 날짜: ${selectedDate}, 기간: ${timeRange}\n(실제 구현 시에는 이 날짜에 해당하는 데이터로 페이지를 갱신합니다)`);
+        });
+        
+        // 탭 전환 이벤트
         const triggerTabList = [].slice.call(document.querySelectorAll('a[data-bs-toggle="tab"]'));
         triggerTabList.forEach(function (triggerEl) {
             const tabTrigger = new bootstrap.Tab(triggerEl);

@@ -1,0 +1,422 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5>영양분석</h5>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info" role="alert">
+            <i class="bx bx-info-circle me-2"></i>
+            김제 죽산면 일대의 미량 영양소, 토양 산도, 유기물 함량 등 정밀 영양 분석을 통해 작물 생육 최적화를 지원합니다.
+        </div>
+        
+        <!-- 날짜 선택 및 분석 유형 컨트롤 -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="d-flex align-items-center">
+                    <div class="input-group me-3" style="max-width: 240px;">
+                        <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+                        <input type="date" class="form-control" id="analysisDate" value="2023-08-15">
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="timeRange" id="monthly" value="monthly" checked>
+                        <label class="form-check-label" for="monthly">월간</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="timeRange" id="quarterly" value="quarterly">
+                        <label class="form-check-label" for="quarterly">분기</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="timeRange" id="yearly" value="yearly">
+                        <label class="form-check-label" for="yearly">연간</label>
+                    </div>
+                    <button class="btn btn-primary ms-2" id="applyDateRange">적용</button>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-secondary" id="refreshAnalysis">
+                        <i class="bx bx-refresh"></i> 최신 데이터
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" id="downloadReport">
+                        <i class="bx bx-download"></i> 보고서
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 영양분석 탭 컨텐츠 -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="micronutrient-tab" data-bs-toggle="tab" href="#micronutrient-content" role="tab">미량 영양소</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="soilph-tab" data-bs-toggle="tab" href="#soilph-content" role="tab">토양 산도</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="organic-tab" data-bs-toggle="tab" href="#organic-content" role="tab">유기물 함량</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <!-- 미량 영양소 탭 -->
+                            <div class="tab-pane fade show active" id="micronutrient-content" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="position-relative">
+                                            <img src="https://via.placeholder.com/800x500/4CAF50/FFFFFF?text=미량+영양소+분석+맵" class="img-fluid rounded">
+                                            <div class="position-absolute bottom-0 end-0 p-3 bg-white bg-opacity-75 rounded-start">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="micronutrient-legend me-2" style="width: 150px; height: 15px; background: linear-gradient(to right, #ff0000, #ffff00, #00ff00);"></div>
+                                                    <div class="d-flex justify-content-between w-100 small">
+                                                        <span>결핍</span>
+                                                        <span>적정</span>
+                                                        <span>과다</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h6 class="mb-3">미량 영양소 현황</h6>
+                                        <div class="mb-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">미량 영양소 분석</h6>
+                                                    <div id="micronutrientChart" style="height: 250px;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="alert alert-warning" role="alert">
+                                            <i class="bx bx-test-tube me-2"></i>
+                                            B구역의 아연(Zn) 함량이 임계치 이하입니다. 엽면시비를 고려하세요.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 토양 산도 탭 -->
+                            <div class="tab-pane fade" id="soilph-content" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="position-relative">
+                                            <img src="https://via.placeholder.com/800x500/2196F3/FFFFFF?text=토양+산도+분포" class="img-fluid rounded">
+                                            <div class="position-absolute bottom-0 end-0 p-3 bg-white bg-opacity-75 rounded-start">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="ph-legend me-2" style="width: 150px; height: 15px; background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #ff0000);"></div>
+                                                    <div class="d-flex justify-content-between w-100 small">
+                                                        <span>산성(4.5)</span>
+                                                        <span>중성(7.0)</span>
+                                                        <span>알칼리(9.5)</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h6 class="mb-3">토양 pH 현황</h6>
+                                        <div class="mb-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">구역별 pH 분포</h6>
+                                                    <div id="phChart" style="height: 250px;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="alert alert-info" role="alert">
+                                            <i class="bx bx-vial me-2"></i>
+                                            A구역의 토양 pH가 5.2로 다소 산성입니다. 석회 시비를 통한 조정이 필요합니다.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 유기물 함량 탭 -->
+                            <div class="tab-pane fade" id="organic-content" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card mb-4">
+                                            <div class="card-header">유기물 함량 추이 (최근 3년)</div>
+                                            <div class="card-body">
+                                                <div id="organicTrendChart" style="height: 300px;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card mb-4">
+                                            <div class="card-header">유기물 구성 분석</div>
+                                            <div class="card-body">
+                                                <div id="organicCompositionChart" style="height: 300px;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="alert alert-success" role="alert">
+                                            <i class="bx bx-leaf me-2"></i>
+                                            유기 퇴비 시비로 2024년 유기물 함량이 전년 대비 12% 증가했습니다. 미생물 활성도가 향상되었습니다.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 영양 관리 권장사항 -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>영양소 보충 전략</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="card border-start border-warning border-3 mb-3">
+                            <div class="card-body py-2 px-3">
+                                <h6>미량 영양소 보충</h6>
+                                <p class="small mb-2">B구역의 작물은 아연 결핍 증상이 관찰됩니다. 아연 킬레이트 엽면시비를 권장합니다.</p>
+                                <button class="btn btn-sm btn-outline-primary">시비 방법 확인</button>
+                            </div>
+                        </div>
+                        <div class="card border-start border-info border-3 mb-3">
+                            <div class="card-body py-2 px-3">
+                                <h6>토양 pH 조정</h6>
+                                <p class="small mb-2">A구역은 석회 처리(500kg/ha)가 필요합니다. D구역은 유황 처리(200kg/ha)를 통한 pH 저감이 필요합니다.</p>
+                                <button class="btn btn-sm btn-outline-info">세부 계획 확인</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>토양 개량 권장사항</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="card border-start border-success border-3 mb-3">
+                            <div class="card-body py-2 px-3">
+                                <h6>유기물 증대 방안</h6>
+                                <p class="small mb-2">녹비작물 재배와 유기 퇴비 시비로 토양 유기물 함량을 증가시키는 3개년 계획을 수립하세요.</p>
+                                <button class="btn btn-sm btn-outline-success">3개년 계획 보기</button>
+                            </div>
+                        </div>
+                        <div class="card border-start border-primary border-3 mb-3">
+                            <div class="card-body py-2 px-3">
+                                <h6>토양 구조 개선</h6>
+                                <p class="small mb-2">C구역은 심토파쇄 작업을 통한 토양 통기성 개선이 필요합니다. 지하수위 조절도 병행하세요.</p>
+                                <button class="btn btn-sm btn-outline-primary">작업 방법 확인</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 차트 데이터 초기화
+        const micronutrientChartData = {
+            series: [{
+                name: '철(Fe)',
+                data: [76, 68, 82, 75, 72]
+            }, {
+                name: '망간(Mn)',
+                data: [82, 75, 78, 69, 80]
+            }, {
+                name: '아연(Zn)',
+                data: [65, 42, 68, 58, 63]
+            }, {
+                name: '구리(Cu)',
+                data: [72, 65, 70, 68, 74]
+            }, {
+                name: '붕소(B)',
+                data: [68, 65, 67, 70, 72]
+            }],
+            chart: {
+                type: 'radar',
+                height: 250,
+                toolbar: {
+                    show: false
+                }
+            },
+            stroke: {
+                width: 2
+            },
+            fill: {
+                opacity: 0.2
+            },
+            markers: {
+                size: 4
+            },
+            xaxis: {
+                categories: ['A구역', 'B구역', 'C구역', 'D구역', 'E구역']
+            }
+        };
+        
+        const phChartData = {
+            series: [{
+                name: 'pH 수치',
+                data: [5.2, 6.1, 6.8, 7.3, 6.5]
+            }],
+            chart: {
+                type: 'bar',
+                height: 250,
+                toolbar: {
+                    show: false
+                }
+            },
+            plotOptions: {
+                bar: {
+                    borderRadius: 4,
+                    horizontal: false,
+                    columnWidth: '55%',
+                    distributed: true
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: function (val) {
+                    return val.toFixed(1);
+                }
+            },
+            legend: {
+                show: false
+            },
+            colors: ['#FF4560', '#FF9800', '#FFC107', '#4CAF50', '#00E396'],
+            xaxis: {
+                categories: ['A구역', 'B구역', 'C구역', 'D구역', 'E구역'],
+            },
+            yaxis: {
+                min: 4,
+                max: 8,
+                title: {
+                    text: 'pH 값'
+                }
+            }
+        };
+        
+        const organicTrendData = {
+            series: [{
+                name: '유기물 함량(%)',
+                data: [1.8, 2.1, 2.4, 2.9, 3.2, 3.6]
+            }],
+            chart: {
+                type: 'area',
+                height: 300,
+                toolbar: {
+                    show: false
+                }
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 3
+            },
+            colors: ['#4CAF50'],
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shade: 'dark',
+                    type: 'vertical',
+                    shadeIntensity: 0.3,
+                    opacityFrom: 0.7,
+                    opacityTo: 0.2
+                }
+            },
+            xaxis: {
+                categories: ['2022 봄', '2022 가을', '2023 봄', '2023 가을', '2024 봄', '2024 가을'],
+            },
+            yaxis: {
+                min: 1,
+                max: 5,
+                title: {
+                    text: '유기물 함량(%)'
+                }
+            }
+        };
+        
+        const organicCompositionData = {
+            series: [45, 25, 20, 10],
+            chart: {
+                type: 'donut',
+                height: 300,
+                toolbar: {
+                    show: false
+                }
+            },
+            labels: ['부식질', '섬유질', '미생물 바이오매스', '기타 유기물'],
+            colors: ['#775DD0', '#4CAF50', '#FFC107', '#FF4560'],
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 200
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }],
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '55%'
+                    }
+                }
+            }
+        };
+        
+        // 차트 렌더링
+        if (document.getElementById('micronutrientChart')) {
+            const micronutrientChart = new ApexCharts(document.getElementById('micronutrientChart'), micronutrientChartData);
+            micronutrientChart.render();
+        }
+        
+        if (document.getElementById('phChart')) {
+            const phChart = new ApexCharts(document.getElementById('phChart'), phChartData);
+            phChart.render();
+        }
+        
+        if (document.getElementById('organicTrendChart')) {
+            const organicTrendChart = new ApexCharts(document.getElementById('organicTrendChart'), organicTrendData);
+            organicTrendChart.render();
+        }
+        
+        if (document.getElementById('organicCompositionChart')) {
+            const organicCompositionChart = new ApexCharts(document.getElementById('organicCompositionChart'), organicCompositionData);
+            organicCompositionChart.render();
+        }
+        
+        // 날짜 선택 적용 버튼 이벤트
+        document.getElementById('applyDateRange').addEventListener('click', function() {
+            const selectedDate = document.getElementById('analysisDate').value;
+            const timeRange = document.querySelector('input[name="timeRange"]:checked').value;
+            
+            alert(`선택한 날짜: ${selectedDate}, 기간: ${timeRange}\n(실제 구현 시에는 이 날짜에 해당하는 데이터로 페이지를 갱신합니다)`);
+        });
+        
+        // 탭 전환 이벤트
+        const triggerTabList = [].slice.call(document.querySelectorAll('a[data-bs-toggle="tab"]'));
+        triggerTabList.forEach(function (triggerEl) {
+            const tabTrigger = new bootstrap.Tab(triggerEl);
+            triggerEl.addEventListener('click', function (event) {
+                event.preventDefault();
+                tabTrigger.show();
+            });
+        });
+    });
+</script>
+{% endblock %} 

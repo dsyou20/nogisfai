@@ -1,0 +1,435 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5>수분분석</h5>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info" role="alert">
+            <i class="bx bx-info-circle me-2"></i>
+            김제 죽산면 일대의 토양 수분 및 양분 상태를 센서 데이터와 위성/드론 영상을 기반으로 분석합니다.
+        </div>
+        
+        <!-- 날짜 선택 및 분석 유형 컨트롤 -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="d-flex align-items-center">
+                    <div class="input-group me-3" style="max-width: 240px;">
+                        <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+                        <input type="date" class="form-control" id="analysisDate" value="2023-08-15">
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="timeRange" id="daily" value="daily" checked>
+                        <label class="form-check-label" for="daily">일간</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="timeRange" id="weekly" value="weekly">
+                        <label class="form-check-label" for="weekly">주간</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="timeRange" id="monthly" value="monthly">
+                        <label class="form-check-label" for="monthly">월간</label>
+                    </div>
+                    <button class="btn btn-primary ms-2" id="applyDateRange">적용</button>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-secondary" id="refreshAnalysis">
+                        <i class="bx bx-refresh"></i> 최신 데이터
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" id="downloadReport">
+                        <i class="bx bx-download"></i> 보고서
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 수분 및 양분 탭 컨텐츠 -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="moisture-tab" data-bs-toggle="tab" href="#moisture-content" role="tab">토양 수분</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="nutrition-tab" data-bs-toggle="tab" href="#nutrition-content" role="tab">양분 상태</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="trend-tab" data-bs-toggle="tab" href="#trend-content" role="tab">추세 분석</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <!-- 토양 수분 탭 -->
+                            <div class="tab-pane fade show active" id="moisture-content" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="position-relative">
+                                            <img src="https://via.placeholder.com/800x500/2196F3/FFFFFF?text=토양+수분+맵" class="img-fluid rounded">
+                                            <div class="position-absolute bottom-0 end-0 p-3 bg-white bg-opacity-75 rounded-start">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="moisture-legend me-2" style="width: 150px; height: 15px; background: linear-gradient(to right, #ff0000, #ffff00, #00ff00);"></div>
+                                                    <div class="d-flex justify-content-between w-100 small">
+                                                        <span>건조</span>
+                                                        <span>적정</span>
+                                                        <span>과습</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h6 class="mb-3">토양 수분 현황</h6>
+                                        <div class="mb-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">구역별 평균 수분 함량</h6>
+                                                    <div id="moistureChart" style="height: 250px;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="alert alert-warning" role="alert">
+                                            <i class="bx bx-water me-2"></i>
+                                            C구역의 수분 함량이 낮습니다. 관수 일정을 확인하세요.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 양분 상태 탭 -->
+                            <div class="tab-pane fade" id="nutrition-content" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="position-relative">
+                                            <img src="https://via.placeholder.com/800x500/4CAF50/FFFFFF?text=양분+상태+맵" class="img-fluid rounded">
+                                            <div class="position-absolute bottom-0 end-0 p-3 bg-white bg-opacity-75 rounded-start">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="nutrition-legend me-2" style="width: 150px; height: 15px; background: linear-gradient(to right, #ff0000, #ffff00, #00ff00);"></div>
+                                                    <div class="d-flex justify-content-between w-100 small">
+                                                        <span>결핍</span>
+                                                        <span>적정</span>
+                                                        <span>과다</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h6 class="mb-3">토양 양분 현황</h6>
+                                        <div class="mb-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">주요 영양소 분포</h6>
+                                                    <div id="nutritionChart" style="height: 250px;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="alert alert-info" role="alert">
+                                            <i class="bx bx-test-tube me-2"></i>
+                                            질소 함량이 전반적으로 적정 수준입니다.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 추세 분석 탭 -->
+                            <div class="tab-pane fade" id="trend-content" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card mb-4">
+                                            <div class="card-header">토양 수분 추세 (최근 30일)</div>
+                                            <div class="card-body">
+                                                <div id="moistureTrendChart" style="height: 300px;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card mb-4">
+                                            <div class="card-header">양분 추세 (최근 30일)</div>
+                                            <div class="card-body">
+                                                <div id="nutritionTrendChart" style="height: 300px;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="alert alert-success" role="alert">
+                                            <i class="bx bx-line-chart me-2"></i>
+                                            지난 10일 동안 질소 수치가 5% 증가했습니다. 이는 최근 비료 작업의 효과로 추정됩니다.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 분석 보고서 및 권장사항 -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>권장 조치</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="card border-start border-warning border-3 mb-3">
+                            <div class="card-body py-2 px-3">
+                                <h6>C구역 관수 필요</h6>
+                                <p class="small mb-2">토양 수분 함량이 임계치 이하입니다. 24시간 이내 관수를 실시하세요.</p>
+                                <button class="btn btn-sm btn-outline-primary">자동제어 일정 등록</button>
+                            </div>
+                        </div>
+                        <div class="card border-start border-info border-3 mb-3">
+                            <div class="card-body py-2 px-3">
+                                <h6>B구역 토양 검사</h6>
+                                <p class="small mb-2">인산 함량이 적정치보다 낮습니다. 토양 샘플링을 통한 정밀 검사를 권장합니다.</p>
+                                <button class="btn btn-sm btn-outline-secondary">검사 요청</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>맞춤 비료 추천</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="fertilizerType" class="form-label">비료 유형</label>
+                            <select class="form-select" id="fertilizerType">
+                                <option value="nitrogen">질소 중심</option>
+                                <option value="phosphorus">인 중심</option>
+                                <option value="potassium">칼륨 중심</option>
+                                <option value="balanced" selected>균형 비료</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="applicationArea" class="form-label">적용 구역</label>
+                            <select class="form-select" id="applicationArea">
+                                <option value="all">전체 구역</option>
+                                <option value="zone-a">A구역</option>
+                                <option value="zone-b" selected>B구역</option>
+                                <option value="zone-c">C구역</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="applicationAmount" class="form-label">권장 적용량: <span id="amountValue">25</span> kg/ha</label>
+                            <input type="range" class="form-range" min="10" max="50" value="25" id="applicationAmount">
+                        </div>
+                        <button class="btn btn-primary w-100">비료 일정 등록</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 차트 데이터 초기화
+        const moistureChartData = {
+            series: [{
+                name: '수분 함량(%)',
+                data: [65, 72, 45, 68, 56]
+            }],
+            chart: {
+                type: 'bar',
+                height: 250,
+                toolbar: {
+                    show: false
+                }
+            },
+            plotOptions: {
+                bar: {
+                    borderRadius: 4,
+                    horizontal: false,
+                    columnWidth: '55%'
+                }
+            },
+            colors: ['#2196F3'],
+            dataLabels: {
+                enabled: false
+            },
+            xaxis: {
+                categories: ['A구역', 'B구역', 'C구역', 'D구역', 'E구역'],
+            },
+            yaxis: {
+                min: 0,
+                max: 100,
+                title: {
+                    text: '수분 함량(%)'
+                }
+            },
+            tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return val + "%";
+                    }
+                }
+            }
+        };
+        
+        const nutritionChartData = {
+            series: [{
+                name: '질소 (N)',
+                data: [85, 62, 78, 91, 70]
+            }, {
+                name: '인 (P)',
+                data: [55, 42, 65, 72, 60]
+            }, {
+                name: '칼륨 (K)',
+                data: [70, 68, 75, 82, 65]
+            }],
+            chart: {
+                type: 'radar',
+                height: 250,
+                toolbar: {
+                    show: false
+                }
+            },
+            stroke: {
+                width: 2
+            },
+            fill: {
+                opacity: 0.2
+            },
+            markers: {
+                size: 4
+            },
+            xaxis: {
+                categories: ['A구역', 'B구역', 'C구역', 'D구역', 'E구역']
+            }
+        };
+        
+        // 차트 렌더링
+        if (document.getElementById('moistureChart')) {
+            const moistureChart = new ApexCharts(document.getElementById('moistureChart'), moistureChartData);
+            moistureChart.render();
+        }
+        
+        if (document.getElementById('nutritionChart')) {
+            const nutritionChart = new ApexCharts(document.getElementById('nutritionChart'), nutritionChartData);
+            nutritionChart.render();
+        }
+        
+        // 트렌드 차트 데이터
+        const moistureTrendData = {
+            series: [{
+                name: '평균 수분',
+                data: [68, 65, 62, 60, 58, 56, 55, 53, 52, 50, 49, 48, 50, 52, 54, 56, 58, 62, 65, 68, 70, 72, 70, 68, 65, 64, 62, 60, 58, 55]
+            }],
+            chart: {
+                type: 'line',
+                height: 300,
+                toolbar: {
+                    show: false
+                }
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 3
+            },
+            colors: ['#2196F3'],
+            xaxis: {
+                categories: Array.from({length: 30}, (_, i) => `${i+1}일차`),
+                labels: {
+                    show: false
+                }
+            },
+            yaxis: {
+                min: 40,
+                max: 80,
+                title: {
+                    text: '토양 수분(%)'
+                }
+            },
+            markers: {
+                size: 0
+            },
+            tooltip: {
+                x: {
+                    show: false
+                }
+            }
+        };
+        
+        const nutritionTrendData = {
+            series: [{
+                name: '질소 (N)',
+                data: [70, 71, 72, 72, 73, 73, 74, 74, 75, 75, 76, 76, 76, 77, 77, 78, 79, 80, 81, 82, 83, 84, 85, 85, 85, 85, 84, 84, 83, 83]
+            }, {
+                name: '인 (P)',
+                data: [60, 60, 61, 61, 62, 62, 63, 63, 64, 64, 65, 65, 65, 66, 66, 67, 67, 68, 68, 68, 68, 67, 67, 66, 66, 65, 65, 64, 64, 63]
+            }, {
+                name: '칼륨 (K)',
+                data: [75, 75, 75, 74, 74, 74, 73, 73, 72, 72, 72, 71, 71, 70, 70, 70, 71, 71, 72, 72, 73, 73, 74, 74, 75, 75, 75, 75, 75, 75]
+            }],
+            chart: {
+                type: 'line',
+                height: 300,
+                toolbar: {
+                    show: false
+                }
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2
+            },
+            colors: ['#4CAF50', '#FFC107', '#F44336'],
+            xaxis: {
+                categories: Array.from({length: 30}, (_, i) => `${i+1}일차`),
+                labels: {
+                    show: false
+                }
+            },
+            yaxis: {
+                min: 40,
+                max: 90,
+                title: {
+                    text: '영양소 수준 (상대값)'
+                }
+            },
+            markers: {
+                size: 0
+            },
+            tooltip: {
+                x: {
+                    show: false
+                }
+            }
+        };
+        
+        // 트렌드 차트 렌더링
+        if (document.getElementById('moistureTrendChart')) {
+            const moistureTrendChart = new ApexCharts(document.getElementById('moistureTrendChart'), moistureTrendData);
+            moistureTrendChart.render();
+        }
+        
+        if (document.getElementById('nutritionTrendChart')) {
+            const nutritionTrendChart = new ApexCharts(document.getElementById('nutritionTrendChart'), nutritionTrendData);
+            nutritionTrendChart.render();
+        }
+        
+        // 적용량 슬라이더 이벤트
+        const applicationAmount = document.getElementById('applicationAmount');
+        const amountValue = document.getElementById('amountValue');
+        
+        if (applicationAmount && amountValue) {
+            applicationAmount.addEventListener('input', function() {
+                amountValue.textContent = applicationAmount.value;
+            });
+        }
+    });
+</script>
+{% endblock %} 
