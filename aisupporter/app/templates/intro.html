@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>노지 AI재배관리시스템</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #388E3C;
+            --primary-light: #C8E6C9;
+            --accent-color: #8BC34A;
+            --text-color: #212121;
+            --secondary-text: #757575;
+            --divider-color: #BDBDBD;
+            --white: #FFFFFF;
+        }
+        
+        body {
+            font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+            overflow-x: hidden;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #388E3C, #8BC34A);
+            padding: 100px 0;
+            color: var(--white);
+        }
+        
+        .features-section {
+            padding: 80px 0;
+            background-color: var(--white);
+        }
+        
+        .feature-card {
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .cta-section {
+            background-color: var(--primary-light);
+            padding: 80px 0;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .footer {
+            padding: 40px 0;
+            background-color: #333;
+            color: #fff;
+        }
+        
+        .partner-logo {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .shadow-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .shadow-hover:hover {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 섹션 -->
+    <header class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-7 mb-5 mb-lg-0">
+                    <h1 class="display-3 fw-bold mb-4">노지 AI재배관리시스템</h1>
+                    <p class="fs-4 mb-4">AI·센서·영상·챗봇·ESG 분석을 통합한 재배관리 지원시스템</p>
+                    <p class="lead mb-5">최신 센서 기술과 인공지능을 활용하여 농작물 재배 과정의 자동화, 정밀화, 최적화를 구현합니다.</p>
+                    <div class="d-flex gap-3">
+                        <a href="/dashboard" class="btn btn-light btn-lg px-4">대시보드 보기</a>
+                        <a href="#features" class="btn btn-outline-light btn-lg px-4">자세히 알아보기</a>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-none d-lg-block text-center">
+                    <img src="/static/images/intro/smart_farm.svg" alt="노지 AI재배관리시스템" class="img-fluid" style="max-height: 400px;">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 협력 기관 배너 -->
+    <div class="bg-light py-3">
+        <div class="container">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-auto">
+                    <div class="d-flex align-items-center">
+                        <span class="bg-secondary partner-logo me-2"><i class="bx bx-group text-white"></i></span>
+                        <span>트랜스포머 씨더스 엘컴텍</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 특징 섹션 -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">시스템 구성 요소</h2>
+                <p class="lead text-muted">노지 AI재배관리시스템은 다양한 모듈로 구성되어 있습니다.</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="bx bx-water feature-icon"></i>
+                            <h4 class="card-title mb-3">정밀 관수 관리</h4>
+                            <p class="card-text">토양 수분 센서와 기상 데이터를 통합하여 최적의 관수 시기와 양을 자동으로 결정합니다.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="bx bx-test-tube feature-icon"></i>
+                            <h4 class="card-title mb-3">스마트 영양 관리</h4>
+                            <p class="card-text">토양 분석과 작물 생육 상태에 따라 필요한 영양분을 적시에 공급합니다.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="bx bx-spray-can feature-icon"></i>
+                            <h4 class="card-title mb-3">정밀 약제 살포</h4>
+                            <p class="card-text">병해충 발생 예측과 AI 진단 기반으로 최적의 약제 살포 시기와 방법을 제안합니다.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="bx bx-camera feature-icon"></i>
+                            <h4 class="card-title mb-3">영상 분석</h4>
+                            <p class="card-text">드론과 고정 카메라의 이미지를 AI로 분석하여 병해충 발생과 작물 생육 상태를 모니터링합니다.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="bx bx-bot feature-icon"></i>
+                            <h4 class="card-title mb-3">AI 챗봇 컨설팅</h4>
+                            <p class="card-text">농업 전문 지식을 갖춘 AI 챗봇이 24시간 농작물 관리에 대한 질문에 답변합니다.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="bx bx-line-chart feature-icon"></i>
+                            <h4 class="card-title mb-3">수확 예측</h4>
+                            <p class="card-text">축적된 데이터와 기계학습 알고리즘을 통해 수확량과 품질을 예측합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 대표 사례 섹션 -->
+    <section class="bg-light py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">적용 사례</h2>
+                <p class="lead text-muted">노지 AI재배관리시스템은 이미 여러 지역에서 성공적으로 적용되고 있습니다.</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card shadow-hover h-100 border-0">
+                        <div class="card-body p-4">
+                            <h4 class="card-title">김제시 콩 노지 재배단지</h4>
+                            <p class="text-muted mb-3">50헥타르 규모</p>
+                            <p class="card-text">시스템 적용 결과, 1년차에 생산량 22% 증가, 에너지 비용 18% 절감 달성</p>
+                            <div class="d-flex mt-3 gap-2">
+                                <span class="badge bg-success py-2 px-3">생산성 22% ↑</span>
+                                <span class="badge bg-primary py-2 px-3">비용 18% ↓</span>
+                                <span class="badge bg-info py-2 px-3">품질 등급 향상</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="card shadow-hover h-100 border-0">
+                        <div class="card-body p-4">
+                            <h4 class="card-title">태안군 밭작물 협동조합</h4>
+                            <p class="text-muted mb-3">15개 농가 참여</p>
+                            <p class="card-text">협동 모델 적용으로 관리 효율성 증대 및 공동 출하를 통한 유통 마진 개선</p>
+                            <div class="d-flex mt-3 gap-2">
+                                <span class="badge bg-success py-2 px-3">노동력 35% ↓</span>
+                                <span class="badge bg-primary py-2 px-3">유통 마진 15% ↑</span>
+                                <span class="badge bg-warning py-2 px-3">농가 수익 27% ↑</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA 섹션 -->
+    <section class="cta-section">
+        <div class="container text-center">
+            <h2 class="display-5 fw-bold mb-4">지금 바로 시작하세요</h2>
+            <p class="lead mb-4">노지 AI재배관리시스템과 함께 더 스마트한 농업의 미래를 경험해보세요.</p>
+            <a href="/dashboard" class="btn btn-primary btn-lg px-5 py-3 shadow">대시보드 바로가기</a>
+        </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5 class="text-white mb-4">노지 AI재배관리시스템</h5>
+                    <p class="text-white-50">농업의 디지털 전환을 선도하는 종합 솔루션</p>
+                    <p class="text-white-50">© 2025 트랜스포머 콘소시엄</p>
+                </div>
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5 class="text-white mb-4">협력 기관</h5>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-secondary partner-logo">
+                            <i class="bx bx-group text-white"></i>
+                        </div>
+                        <span class="text-white-50">트랜스포머 씨더스 엘컴텍</span>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <h5 class="text-white mb-4">기술 문의</h5>
+                    <p class="text-white-50">
+                        <i class="bx bx-envelope me-2"></i> contact@nogi-ai.kr
+                    </p>
+                    <p class="text-white-50">
+                        <i class="bx bx-phone me-2"></i> 042-123-4567
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 이미지가 없을 경우를 대비한 오류 처리
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                img.onerror = function() {
+                    this.src = '/static/images/placeholder.png';
+                };
+            });
+            
+            // 스크롤 애니메이션
+            const smoothScroll = function(target, duration) {
+                const targetElement = document.querySelector(target);
+                const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+                const startPosition = window.pageYOffset;
+                const distance = targetPosition - startPosition;
+                let startTime = null;
+                
+                function animation(currentTime) {
+                    if (startTime === null) startTime = currentTime;
+                    const timeElapsed = currentTime - startTime;
+                    const run = ease(timeElapsed, startPosition, distance, duration);
+                    window.scrollTo(0, run);
+                    if (timeElapsed < duration) requestAnimationFrame(animation);
+                }
+                
+                function ease(t, b, c, d) {
+                    t /= d / 2;
+                    if (t < 1) return c / 2 * t * t + b;
+                    t--;
+                    return -c / 2 * (t * (t - 2) - 1) + b;
+                }
+                
+                requestAnimationFrame(animation);
+            };
+            
+            // 자세히 알아보기 버튼 클릭 시 부드러운 스크롤
+            const learnMoreBtn = document.querySelector('a[href="#features"]');
+            if (learnMoreBtn) {
+                learnMoreBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    smoothScroll('#features', 1000);
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,124 @@
+<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
+  <!-- 배경 -->
+  <rect width="800" height="400" fill="#F5F5F5"/>
+  
+  <!-- 계층 그룹 -->
+  <!-- 데이터 수집 계층 -->
+  <rect x="50" y="50" width="700" height="60" rx="5" ry="5" fill="#E3F2FD" stroke="#2196F3" stroke-width="1"/>
+  <text x="400" y="85" font-family="Arial" font-size="16" text-anchor="middle" fill="#0D47A1" font-weight="bold">데이터 수집 계층</text>
+  
+  <!-- 데이터 처리 계층 -->
+  <rect x="50" y="130" width="700" height="60" rx="5" ry="5" fill="#E8F5E9" stroke="#4CAF50" stroke-width="1"/>
+  <text x="400" y="165" font-family="Arial" font-size="16" text-anchor="middle" fill="#1B5E20" font-weight="bold">데이터 처리 계층</text>
+  
+  <!-- AI 분석 계층 -->
+  <rect x="50" y="210" width="700" height="60" rx="5" ry="5" fill="#FFF3E0" stroke="#FF9800" stroke-width="1"/>
+  <text x="400" y="245" font-family="Arial" font-size="16" text-anchor="middle" fill="#E65100" font-weight="bold">AI 분석 계층</text>
+  
+  <!-- 서비스 계층 -->
+  <rect x="50" y="290" width="700" height="60" rx="5" ry="5" fill="#E8EAF6" stroke="#3F51B5" stroke-width="1"/>
+  <text x="400" y="325" font-family="Arial" font-size="16" text-anchor="middle" fill="#1A237E" font-weight="bold">서비스 계층</text>
+  
+  <!-- 아이콘 및 라벨 - 데이터 수집 계층 -->
+  <!-- 센서 -->
+  <rect x="100" y="60" width="100" height="40" rx="5" ry="5" fill="#BBDEFB" stroke="#2196F3" stroke-width="1"/>
+  <text x="150" y="85" font-family="Arial" font-size="12" text-anchor="middle" fill="#0D47A1">센서 네트워크</text>
+  
+  <!-- 카메라 -->
+  <rect x="250" y="60" width="100" height="40" rx="5" ry="5" fill="#BBDEFB" stroke="#2196F3" stroke-width="1"/>
+  <text x="300" y="85" font-family="Arial" font-size="12" text-anchor="middle" fill="#0D47A1">영상 수집</text>
+  
+  <!-- 외부 데이터 -->
+  <rect x="400" y="60" width="100" height="40" rx="5" ry="5" fill="#BBDEFB" stroke="#2196F3" stroke-width="1"/>
+  <text x="450" y="85" font-family="Arial" font-size="12" text-anchor="middle" fill="#0D47A1">외부 API</text>
+  
+  <!-- 사용자 입력 -->
+  <rect x="550" y="60" width="100" height="40" rx="5" ry="5" fill="#BBDEFB" stroke="#2196F3" stroke-width="1"/>
+  <text x="600" y="85" font-family="Arial" font-size="12" text-anchor="middle" fill="#0D47A1">사용자 입력</text>
+  
+  <!-- 아이콘 및 라벨 - 데이터 처리 계층 -->
+  <!-- 전처리 -->
+  <rect x="100" y="140" width="100" height="40" rx="5" ry="5" fill="#C8E6C9" stroke="#4CAF50" stroke-width="1"/>
+  <text x="150" y="165" font-family="Arial" font-size="12" text-anchor="middle" fill="#1B5E20">데이터 전처리</text>
+  
+  <!-- 저장소 -->
+  <rect x="250" y="140" width="100" height="40" rx="5" ry="5" fill="#C8E6C9" stroke="#4CAF50" stroke-width="1"/>
+  <text x="300" y="165" font-family="Arial" font-size="12" text-anchor="middle" fill="#1B5E20">데이터 저장</text>
+  
+  <!-- 변환 -->
+  <rect x="400" y="140" width="100" height="40" rx="5" ry="5" fill="#C8E6C9" stroke="#4CAF50" stroke-width="1"/>
+  <text x="450" y="165" font-family="Arial" font-size="12" text-anchor="middle" fill="#1B5E20">데이터 변환</text>
+  
+  <!-- 통합 -->
+  <rect x="550" y="140" width="100" height="40" rx="5" ry="5" fill="#C8E6C9" stroke="#4CAF50" stroke-width="1"/>
+  <text x="600" y="165" font-family="Arial" font-size="12" text-anchor="middle" fill="#1B5E20">데이터 통합</text>
+  
+  <!-- 아이콘 및 라벨 - AI 분석 계층 -->
+  <!-- 이미지 분석 -->
+  <rect x="100" y="220" width="100" height="40" rx="5" ry="5" fill="#FFE0B2" stroke="#FF9800" stroke-width="1"/>
+  <text x="150" y="245" font-family="Arial" font-size="12" text-anchor="middle" fill="#E65100">이미지 분석</text>
+  
+  <!-- 시계열 예측 -->
+  <rect x="250" y="220" width="100" height="40" rx="5" ry="5" fill="#FFE0B2" stroke="#FF9800" stroke-width="1"/>
+  <text x="300" y="245" font-family="Arial" font-size="12" text-anchor="middle" fill="#E65100">시계열 예측</text>
+  
+  <!-- 자연어 처리 -->
+  <rect x="400" y="220" width="100" height="40" rx="5" ry="5" fill="#FFE0B2" stroke="#FF9800" stroke-width="1"/>
+  <text x="450" y="245" font-family="Arial" font-size="12" text-anchor="middle" fill="#E65100">자연어 처리</text>
+  
+  <!-- 제어 알고리즘 -->
+  <rect x="550" y="220" width="100" height="40" rx="5" ry="5" fill="#FFE0B2" stroke="#FF9800" stroke-width="1"/>
+  <text x="600" y="245" font-family="Arial" font-size="12" text-anchor="middle" fill="#E65100">제어 알고리즘</text>
+  
+  <!-- 아이콘 및 라벨 - 서비스 계층 -->
+  <!-- 대시보드 -->
+  <rect x="100" y="300" width="100" height="40" rx="5" ry="5" fill="#C5CAE9" stroke="#3F51B5" stroke-width="1"/>
+  <text x="150" y="325" font-family="Arial" font-size="12" text-anchor="middle" fill="#1A237E">대시보드</text>
+  
+  <!-- 제어 시스템 -->
+  <rect x="250" y="300" width="100" height="40" rx="5" ry="5" fill="#C5CAE9" stroke="#3F51B5" stroke-width="1"/>
+  <text x="300" y="325" font-family="Arial" font-size="12" text-anchor="middle" fill="#1A237E">제어 시스템</text>
+  
+  <!-- 챗봇 -->
+  <rect x="400" y="300" width="100" height="40" rx="5" ry="5" fill="#C5CAE9" stroke="#3F51B5" stroke-width="1"/>
+  <text x="450" y="325" font-family="Arial" font-size="12" text-anchor="middle" fill="#1A237E">AI 챗봇</text>
+  
+  <!-- 분석 보고서 -->
+  <rect x="550" y="300" width="100" height="40" rx="5" ry="5" fill="#C5CAE9" stroke="#3F51B5" stroke-width="1"/>
+  <text x="600" y="325" font-family="Arial" font-size="12" text-anchor="middle" fill="#1A237E">분석 보고서</text>
+  
+  <!-- 연결선 -->
+  <!-- 데이터 수집 -> 처리 -->
+  <line x1="150" y1="100" x2="150" y2="140" stroke="#757575" stroke-width="1.5" stroke-dasharray="3 2"/>
+  <line x1="300" y1="100" x2="300" y2="140" stroke="#757575" stroke-width="1.5" stroke-dasharray="3 2"/>
+  <line x1="450" y1="100" x2="450" y2="140" stroke="#757575" stroke-width="1.5" stroke-dasharray="3 2"/>
+  <line x1="600" y1="100" x2="600" y2="140" stroke="#757575" stroke-width="1.5" stroke-dasharray="3 2"/>
+  
+  <!-- 데이터 처리 -> AI 분석 -->
+  <line x1="150" y1="180" x2="150" y2="220" stroke="#757575" stroke-width="1.5" stroke-dasharray="3 2"/>
+  <line x1="300" y1="180" x2="300" y2="220" stroke="#757575" stroke-width="1.5" stroke-dasharray="3 2"/>
+  <line x1="450" y1="180" x2="450" y2="220" stroke="#757575" stroke-width="1.5" stroke-dasharray="3 2"/>
+  <line x1="600" y1="180" x2="600" y2="220" stroke="#757575" stroke-width="1.5" stroke-dasharray="3 2"/>
+  
+  <!-- AI 분석 -> 서비스 -->
+  <line x1="150" y1="260" x2="150" y2="300" stroke="#757575" stroke-width="1.5" stroke-dasharray="3 2"/>
+  <line x1="300" y1="260" x2="300" y2="300" stroke="#757575" stroke-width="1.5" stroke-dasharray="3 2"/>
+  <line x1="450" y1="260" x2="450" y2="300" stroke="#757575" stroke-width="1.5" stroke-dasharray="3 2"/>
+  <line x1="600" y1="260" x2="600" y2="300" stroke="#757575" stroke-width="1.5" stroke-dasharray="3 2"/>
+  
+  <!-- 타이틀 -->
+  <text x="400" y="30" font-family="Arial" font-size="20" text-anchor="middle" fill="#212121" font-weight="bold">노지AI재배관리시스템 아키텍처</text>
+  
+  <!-- 범례 -->
+  <rect x="50" y="370" width="150" height="20" rx="3" ry="3" fill="#E3F2FD" stroke="#2196F3" stroke-width="1"/>
+  <text x="125" y="385" font-family="Arial" font-size="12" text-anchor="middle" fill="#0D47A1">데이터 수집</text>
+  
+  <rect x="250" y="370" width="150" height="20" rx="3" ry="3" fill="#E8F5E9" stroke="#4CAF50" stroke-width="1"/>
+  <text x="325" y="385" font-family="Arial" font-size="12" text-anchor="middle" fill="#1B5E20">데이터 처리</text>
+  
+  <rect x="450" y="370" width="150" height="20" rx="3" ry="3" fill="#FFF3E0" stroke="#FF9800" stroke-width="1"/>
+  <text x="525" y="385" font-family="Arial" font-size="12" text-anchor="middle" fill="#E65100">AI 분석</text>
+  
+  <rect x="650" y="370" width="150" height="20" rx="3" ry="3" fill="#E8EAF6" stroke="#3F51B5" stroke-width="1"/>
+  <text x="725" y="385" font-family="Arial" font-size="12" text-anchor="middle" fill="#1A237E">서비스</text>
+</svg> 

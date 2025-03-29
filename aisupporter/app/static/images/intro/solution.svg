@@ -1,0 +1,141 @@
+<svg width="800" height="500" xmlns="http://www.w3.org/2000/svg">
+  <!-- 배경 -->
+  <rect width="800" height="500" fill="#f0f9f0" rx="10" ry="10" />
+  
+  <!-- 제목 -->
+  <text x="400" y="40" font-family="Arial" font-size="24" fill="#388E3C" text-anchor="middle" font-weight="bold">노지 AI재배관리시스템 솔루션</text>
+  
+  <!-- 중앙 메인 시스템 -->
+  <g transform="translate(400, 250)">
+    <!-- 메인 시스템 원 -->
+    <circle cx="0" cy="0" r="120" fill="#C8E6C9" stroke="#4CAF50" stroke-width="3" />
+    <circle cx="0" cy="0" r="90" fill="#A5D6A7" stroke="#4CAF50" stroke-width="2" />
+    <circle cx="0" cy="0" r="60" fill="#81C784" stroke="#4CAF50" stroke-width="2" />
+    
+    <!-- 메인 시스템 텍스트 -->
+    <text x="0" y="-20" font-family="Arial" font-size="18" fill="#1B5E20" text-anchor="middle" font-weight="bold">노지</text>
+    <text x="0" y="5" font-family="Arial" font-size="18" fill="#1B5E20" text-anchor="middle" font-weight="bold">AI재배관리</text>
+    <text x="0" y="30" font-family="Arial" font-size="18" fill="#1B5E20" text-anchor="middle" font-weight="bold">시스템</text>
+  </g>
+  
+  <!-- 모듈 1: 센서 데이터 수집 -->
+  <g transform="translate(200, 130)">
+    <circle cx="0" cy="0" r="60" fill="#E1F5FE" stroke="#0288D1" stroke-width="2" />
+    <text x="0" y="-15" font-family="Arial" font-size="14" fill="#01579B" text-anchor="middle" font-weight="bold">센서 데이터</text>
+    <text x="0" y="10" font-family="Arial" font-size="14" fill="#01579B" text-anchor="middle" font-weight="bold">수집</text>
+    
+    <!-- 아이콘 -->
+    <g transform="translate(0, 30)">
+      <circle cx="0" cy="0" r="15" fill="#29B6F6" />
+      <line x1="-7" y1="-7" x2="7" y2="7" stroke="white" stroke-width="2" />
+      <line x1="-7" y1="7" x2="7" y2="-7" stroke="white" stroke-width="2" />
+    </g>
+  </g>
+  
+  <!-- 모듈 2: 영상 분석 -->
+  <g transform="translate(150, 300)">
+    <circle cx="0" cy="0" r="60" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2" />
+    <text x="0" y="-15" font-family="Arial" font-size="14" fill="#4A148C" text-anchor="middle" font-weight="bold">영상</text>
+    <text x="0" y="10" font-family="Arial" font-size="14" fill="#4A148C" text-anchor="middle" font-weight="bold">분석</text>
+    
+    <!-- 아이콘 -->
+    <g transform="translate(0, 30)">
+      <rect x="-12" y="-9" width="24" height="18" fill="#9C27B0" rx="2" ry="2" />
+      <circle cx="0" cy="0" r="5" fill="white" />
+    </g>
+  </g>
+  
+  <!-- 모듈 3: 자동 제어 -->
+  <g transform="translate(650, 130)">
+    <circle cx="0" cy="0" r="60" fill="#FFECB3" stroke="#FFA000" stroke-width="2" />
+    <text x="0" y="-15" font-family="Arial" font-size="14" fill="#E65100" text-anchor="middle" font-weight="bold">자동</text>
+    <text x="0" y="10" font-family="Arial" font-size="14" fill="#E65100" text-anchor="middle" font-weight="bold">제어</text>
+    
+    <!-- 아이콘 -->
+    <g transform="translate(0, 30)">
+      <rect x="-10" y="-10" width="20" height="20" fill="#FFB300" rx="2" ry="2" />
+      <line x1="-5" y1="-5" x2="5" y2="5" stroke="white" stroke-width="2" />
+      <line x1="-5" y1="0" x2="5" y2="0" stroke="white" stroke-width="2" />
+      <line x1="-5" y1="5" x2="5" y2="-5" stroke="white" stroke-width="2" />
+    </g>
+  </g>
+  
+  <!-- 모듈 4: AI 챗봇 -->
+  <g transform="translate(650, 300)">
+    <circle cx="0" cy="0" r="60" fill="#E0F7FA" stroke="#00ACC1" stroke-width="2" />
+    <text x="0" y="-15" font-family="Arial" font-size="14" fill="#006064" text-anchor="middle" font-weight="bold">AI</text>
+    <text x="0" y="10" font-family="Arial" font-size="14" fill="#006064" text-anchor="middle" font-weight="bold">챗봇</text>
+    
+    <!-- 아이콘 -->
+    <g transform="translate(0, 30)">
+      <rect x="-12" y="-8" width="24" height="16" fill="#00BCD4" rx="8" ry="8" />
+      <circle cx="-4" cy="0" r="2" fill="white" />
+      <circle cx="0" cy="0" r="2" fill="white" />
+      <circle cx="4" cy="0" r="2" fill="white" />
+    </g>
+  </g>
+  
+  <!-- 모듈 5: ESG 분석 -->
+  <g transform="translate(400, 400)">
+    <circle cx="0" cy="0" r="60" fill="#DCEDC8" stroke="#7CB342" stroke-width="2" />
+    <text x="0" y="-15" font-family="Arial" font-size="14" fill="#33691E" text-anchor="middle" font-weight="bold">ESG</text>
+    <text x="0" y="10" font-family="Arial" font-size="14" fill="#33691E" text-anchor="middle" font-weight="bold">분석</text>
+    
+    <!-- 아이콘 -->
+    <g transform="translate(0, 30)">
+      <circle cx="0" cy="0" r="15" fill="#8BC34A" />
+      <text x="0" y="5" font-family="Arial" font-size="14" fill="white" text-anchor="middle" font-weight="bold">E</text>
+    </g>
+  </g>
+  
+  <!-- 연결선 -->
+  <g stroke="#90A4AE" stroke-width="2" stroke-dasharray="5,3">
+    <!-- 센서 -> 메인 -->
+    <line x1="250" y1="150" x2="320" y2="200" />
+    
+    <!-- 영상 -> 메인 -->
+    <line x1="200" y1="280" x2="310" y2="250" />
+    
+    <!-- 자동제어 -> 메인 -->
+    <line x1="600" y1="150" x2="480" y2="200" />
+    
+    <!-- 챗봇 -> 메인 -->
+    <line x1="600" y1="280" x2="490" y2="250" />
+    
+    <!-- ESG -> 메인 -->
+    <line x1="400" y1="350" x2="400" y2="300" />
+  </g>
+  
+  <!-- 설명 텍스트 -->
+  <g font-family="Arial" font-size="12" fill="#546E7A">
+    <!-- 센서 설명 -->
+    <text x="120" y="80" text-anchor="middle">토양 센서</text>
+    <text x="180" y="80" text-anchor="middle">기상 센서</text>
+    <text x="240" y="80" text-anchor="middle">수분 센서</text>
+    
+    <!-- 영상 설명 -->
+    <text x="80" y="330" text-anchor="middle">드론 이미지</text>
+    <text x="90" y="350" text-anchor="middle">생육 상태 분석</text>
+    
+    <!-- 자동제어 설명 -->
+    <text x="650" y="80" text-anchor="middle">자동 관수</text>
+    <text x="700" y="80" text-anchor="middle">자동 관비</text>
+    <text x="600" y="80" text-anchor="middle">약제 살포</text>
+    
+    <!-- 챗봇 설명 -->
+    <text x="650" y="350" text-anchor="middle">농업 컨설팅</text>
+    <text x="700" y="370" text-anchor="middle">질의응답</text>
+    
+    <!-- ESG 설명 -->
+    <text x="360" y="440" text-anchor="middle">환경영향</text>
+    <text x="440" y="440" text-anchor="middle">지속가능성</text>
+  </g>
+  
+  <!-- 성과 지표 -->
+  <g transform="translate(400, 470)">
+    <rect x="-350" y="-15" width="700" height="30" rx="15" ry="15" fill="#E8F5E9" stroke="#4CAF50" stroke-width="1" />
+    <text x="0" y="5" font-family="Arial" font-size="14" fill="#2E7D32" text-anchor="middle" font-weight="bold">
+      생산성 향상 20% | 비용 절감 15% | 노동력 절감 30% | 품질 개선 25% | 환경영향 감소 40%
+    </text>
+  </g>
+</svg> 

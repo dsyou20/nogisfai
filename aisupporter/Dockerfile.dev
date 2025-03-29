@@ -1,28 +1,71 @@
-FROM python:3.10-slim
+FROM dsyou20/pinner-base:2.2.0
+LABEL maintainer="dsyou20@gmail.com"
 
-WORKDIR /app
+# 필요한 환경 변수 설정
+ENV DEBIAN_FRONTEND=noninteractive
+ENV NB_USER=jovyan
+ENV NB_UID=1000
+ENV HOME=/home/$NB_USER
+ENV NB_PREFIX=/
+ENV PATH=$HOME/.local/bin:$PATH
 
-# 개발 환경을 위한 패키지 설치
+# 기본 도구 및 라이브러리 설치
+USER root
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    build-essential \
+    wget \
     curl \
     git \
+    build-essential \
+    ca-certificates \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# 필요한 Python 패키지 설치
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# tini 직접 설치
+ARG TINI_VERSION=v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/local/bin/tini
+RUN chmod +x /usr/local/bin/tini
 
-# 애플리케이션 코드 복사
-COPY . .
+# Miniconda 설치 및 파이썬 3.10 설정
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh && \
+    bash miniconda.sh -b -p /opt/conda && \
+    rm miniconda.sh && \
+    /opt/conda/bin/conda install -y python=3.10 && \
+    /opt/conda/bin/conda clean -ya
 
-# 개발용 환경 변수 설정
-ENV ENV=development
-ENV DEBUG=true
+# 환경 변수 설정
+ENV PATH /opt/conda/bin:$PATH
 
-# 포트 설정
+# 사용자 생성
+RUN useradd -m -s /bin/bash -N -u $NB_UID $NB_USER || echo "User already exists"
+
+# CUDA 환경 변수 설정 (필요한 경우)
+ENV CUDA_HOME=/usr/local/cuda
+ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:${LD_LIBRARY_PATH}
+ENV CUDA_VISIBLE_DEVICES=0
+ENV PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:512
+
+# 필요한 파이썬 패키지 설치
+COPY --chown=$NB_USER:users ./requirements.txt /tmp/
+#RUN pip install --no-cache-dir -r /tmp/requirements.txt -f https://download.pytorch.org/whl/torch_stable.html
+RUN pip install --no-cache-dir -r /tmp/requirements.txt 
+
+# 도커 자격 증명 설정 (필요한 경우)
+RUN mkdir -p $HOME/.docker && chown -R $NB_USER:users $HOME
+
+
+
+# 컨테이너 시작 구성
 EXPOSE 8000
+EXPOSE 8888
+USER $NB_USER
+WORKDIR $HOME
 
-# 애플리케이션 실행
-CMD ["python", "app.py"] 
+
+# # # 시작 스크립트 복사
+COPY --chown=$NB_USER:users ./start.sh $HOME
+RUN chmod 777 ${HOME}/start.sh
+
+
+ENTRYPOINT ["/usr/local/bin/tini", "--"]
+CMD ["sh","-c", "jupyter lab --notebook-dir=/home/${NB_USER} --ip=0.0.0.0 --no-browser --allow-root --port=8888 --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.allow_origin='*' --NotebookApp.base_url=${NB_PREFIX} --NotebookApp.max_buffer_size=10000000000 " ]

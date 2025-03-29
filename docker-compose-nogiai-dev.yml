@@ -1,18 +1,19 @@
-version: "3"
 services:
   web:
-    container_name: nogisfai-dev
+    container_name: nogisfai-web-dev
     restart: "always"
     build: 
       context: ./aisupporter
       dockerfile: ./Dockerfile.dev
     shm_size: '2gb'
     #runtime: nvidia
+    user: root  # 루트 사용자로 시작하여 권한 문제 해결
     ports:
-      - "17700:8000"  # 애플리케이션 포트
+      - "17700:8080"  # 애플리케이션 포트
       - "17751:8888"  # jupyter port (필요 시)
     volumes:        
-      - ./:/app
+      - ./aisupporter:/home/jovyan/bizlogic
+      - ./data:/home/jovyan/data
       - /DATA1/elcom_shared_data/ECTNFS_PINNER:/app/data:rw,z
     environment:
       - ENV=development
@@ -22,12 +23,19 @@ services:
       - redis
       - postgisdb
       - kafka
-      - geoserver
+      - geoserver   
 
   db:
-    image: duckdb/duckdb:latest
+    image: postgres:14-alpine
+    ports:
+      - "17752:5432"
     volumes:
-      - db_data:/var/lib/duckdb
+      - db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=nogi
+      - POSTGRES_PASSWORD=nogi1234
+      - POSTGRES_DB=nogidb
+    restart: always
   
   redis:
     image: redis:alpine
@@ -36,6 +44,7 @@ services:
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes
+    restart: always
   
   postgisdb:
     image: postgis/postgis:14-3.3

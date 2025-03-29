@@ -1,0 +1,123 @@
+<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
+  <!-- 배경 -->
+  <rect width="800" height="400" fill="#f5f5f5" rx="5" ry="5" />
+  
+  <!-- 제목 -->
+  <text x="400" y="40" font-family="Arial" font-size="24" fill="#333" text-anchor="middle" font-weight="bold">노지 AI재배관리시스템 아키텍처</text>
+  
+  <!-- 레이어 구분 -->
+  <g transform="translate(50, 80)">
+    <!-- 데이터 수집 레이어 -->
+    <rect width="700" height="60" fill="#D7EFEE" rx="5" ry="5" />
+    <text x="100" y="35" font-family="Arial" font-size="16" fill="#333" font-weight="bold">데이터 수집 레이어</text>
+    
+    <!-- 요소들 -->
+    <g transform="translate(250, 0)">
+      <rect x="0" y="15" width="90" height="30" fill="#9FDAF9" rx="5" ry="5" />
+      <text x="45" y="35" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">센서 네트워크</text>
+      
+      <rect x="120" y="15" width="90" height="30" fill="#9FDAF9" rx="5" ry="5" />
+      <text x="165" y="35" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">영상 수집</text>
+      
+      <rect x="240" y="15" width="90" height="30" fill="#9FDAF9" rx="5" ry="5" />
+      <text x="285" y="35" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">외부 API</text>
+      
+      <rect x="360" y="15" width="90" height="30" fill="#9FDAF9" rx="5" ry="5" />
+      <text x="405" y="35" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">사용자 입력</text>
+    </g>
+    
+    <!-- 데이터 처리 레이어 -->
+    <g transform="translate(0, 70)">
+      <rect width="700" height="60" fill="#C2DFFF" rx="5" ry="5" />
+      <text x="100" y="35" font-family="Arial" font-size="16" fill="#333" font-weight="bold">데이터 처리 레이어</text>
+      
+      <!-- 요소들 -->
+      <g transform="translate(250, 0)">
+        <rect x="0" y="15" width="90" height="30" fill="#7AC5E8" rx="5" ry="5" />
+        <text x="45" y="35" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">전처리</text>
+        
+        <rect x="120" y="15" width="90" height="30" fill="#7AC5E8" rx="5" ry="5" />
+        <text x="165" y="35" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">저장</text>
+        
+        <rect x="240" y="15" width="90" height="30" fill="#7AC5E8" rx="5" ry="5" />
+        <text x="285" y="35" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">변환</text>
+        
+        <rect x="360" y="15" width="90" height="30" fill="#7AC5E8" rx="5" ry="5" />
+        <text x="405" y="35" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">통합</text>
+      </g>
+    </g>
+    
+    <!-- AI 분석 레이어 -->
+    <g transform="translate(0, 140)">
+      <rect width="700" height="60" fill="#E2D8F5" rx="5" ry="5" />
+      <text x="100" y="35" font-family="Arial" font-size="16" fill="#333" font-weight="bold">AI 분석 레이어</text>
+      
+      <!-- 요소들 -->
+      <g transform="translate(250, 0)">
+        <rect x="0" y="15" width="90" height="30" fill="#B19CD9" rx="5" ry="5" />
+        <text x="45" y="35" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">영상 분석</text>
+        
+        <rect x="120" y="15" width="90" height="30" fill="#B19CD9" rx="5" ry="5" />
+        <text x="165" y="35" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">시계열 예측</text>
+        
+        <rect x="240" y="15" width="90" height="30" fill="#B19CD9" rx="5" ry="5" />
+        <text x="285" y="35" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">자연어 처리</text>
+        
+        <rect x="360" y="15" width="90" height="30" fill="#B19CD9" rx="5" ry="5" />
+        <text x="405" y="35" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">제어 알고리즘</text>
+      </g>
+    </g>
+    
+    <!-- 서비스 레이어 -->
+    <g transform="translate(0, 210)">
+      <rect width="700" height="60" fill="#E0F2D9" rx="5" ry="5" />
+      <text x="100" y="35" font-family="Arial" font-size="16" fill="#333" font-weight="bold">서비스 레이어</text>
+      
+      <!-- 요소들 -->
+      <g transform="translate(250, 0)">
+        <rect x="0" y="15" width="90" height="30" fill="#97D077" rx="5" ry="5" />
+        <text x="45" y="35" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">대시보드</text>
+        
+        <rect x="120" y="15" width="90" height="30" fill="#97D077" rx="5" ry="5" />
+        <text x="165" y="35" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">제어 시스템</text>
+        
+        <rect x="240" y="15" width="90" height="30" fill="#97D077" rx="5" ry="5" />
+        <text x="285" y="35" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">AI 챗봇</text>
+        
+        <rect x="360" y="15" width="90" height="30" fill="#97D077" rx="5" ry="5" />
+        <text x="405" y="35" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">분석 리포트</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- 연결 라인 -->
+  <g stroke="#666" stroke-width="1" stroke-dasharray="3,2">
+    <!-- 레이어 간 연결 -->
+    <line x1="400" y1="140" x2="400" y2="150" />
+    <line x1="400" y1="210" x2="400" y2="220" />
+    <line x1="400" y1="280" x2="400" y2="290" />
+    
+    <!-- 수평 연결선 -->
+    <line x1="300" y1="140" x2="500" y2="140" />
+    <line x1="300" y1="210" x2="500" y2="210" />
+    <line x1="300" y1="280" x2="500" y2="280" />
+    <line x1="300" y1="350" x2="500" y2="350" />
+  </g>
+  
+  <!-- 범례 -->
+  <g transform="translate(100, 365)">
+    <text font-family="Arial" font-size="12" fill="#333" font-weight="bold">범례:</text>
+    
+    <rect x="60" y="-12" width="12" height="12" fill="#D7EFEE" rx="2" ry="2" />
+    <text x="80" y="0" font-family="Arial" font-size="12" fill="#333">데이터 수집</text>
+    
+    <rect x="160" y="-12" width="12" height="12" fill="#C2DFFF" rx="2" ry="2" />
+    <text x="180" y="0" font-family="Arial" font-size="12" fill="#333">데이터 처리</text>
+    
+    <rect x="260" y="-12" width="12" height="12" fill="#E2D8F5" rx="2" ry="2" />
+    <text x="280" y="0" font-family="Arial" font-size="12" fill="#333">AI 분석</text>
+    
+    <rect x="360" y="-12" width="12" height="12" fill="#E0F2D9" rx="2" ry="2" />
+    <text x="380" y="0" font-family="Arial" font-size="12" fill="#333">서비스</text>
+  </g>
+</svg> 

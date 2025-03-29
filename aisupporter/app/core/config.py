@@ -13,7 +13,7 @@ class Settings(BaseModel):
     애플리케이션 설정 관리 클래스
     """
     # 기본 설정
-    APP_NAME: str = "스마트 콩 재배 AI 자동제어 시스템"
+    APP_NAME: str = "노지AI재배관리시스템"
     DEBUG: bool = os.getenv("DEBUG", "false").lower() == "true"
     HOST: str = os.getenv("HOST", "0.0.0.0")
     PORT: int = int(os.getenv("PORT", "8080"))
@@ -23,8 +23,8 @@ class Settings(BaseModel):
     CORS_ORIGINS: list = os.getenv("CORS_ORIGINS", "*").split(",")
     
     # 데이터베이스 설정
-    DB_PATH: str = os.getenv("DB_PATH", "data/soybean_farm.duckdb")
-    PARQUET_DIR: str = os.getenv("PARQUET_DIR", "data/parquet")
+    DB_PATH: str = os.getenv("DB_PATH", "/home/jovyan/data/soybean_farm.duckdb")
+    PARQUET_DIR: str = os.getenv("PARQUET_DIR", "/home/jovyan/data/parquet")
     
     # LLM 설정
     LLM_MODEL: str = os.getenv("LLM_MODEL", "openai/gpt-4o")
