@@ -277,7 +277,7 @@ def generate_sample_response(input_data: LLMControlInput) -> Dict[str, Any]:
                 "shade_level": 0.3
             },
             "priority": 2,
-            "reason": "온도가 28°C 이상으로 최적 범위를 초과했습니다. 환기 및 차광이 필요합니다."
+            "reason": "온도가 28°C 이상으로 최적 범위를 초과했습니다. 관수 및 관비가 필요합니다."
         })
         
         response["reasoning"] += "\n\n온도가 최적 범위(20-30°C)의 상단에 근접하고 있습니다. 과열을 방지하기 위한 환경 제어가 권장됩니다."
