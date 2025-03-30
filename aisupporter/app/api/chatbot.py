@@ -8,6 +8,7 @@ import uuid
 
 router = APIRouter()
 
+
 @router.post("/chat", response_model=Dict[str, Any])
 async def chat_with_bot(
     message: Dict[str, Any] = Body(..., 
