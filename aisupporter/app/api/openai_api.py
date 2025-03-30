@@ -6,12 +6,17 @@ OpenAI API 통합 모듈
 import os
 import json
 from typing import List, Dict, Any, Optional
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException, BackgroundTasks
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, BackgroundTasks, Depends
 from pydantic import BaseModel
 import httpx
 import asyncio
 from datetime import datetime
 from dotenv import load_dotenv
+from sqlalchemy.orm import Session
+
+from app.db.session import get_db
+from app.repositories.knowledge_repository import KnowledgeRepository
+from app.schemas.knowledge import KnowledgeItemCreate, KnowledgeItemList, KnowledgeItem
 
 # .env 파일 로드
 load_dotenv()
@@ -49,11 +54,14 @@ class GenerationPrompt(BaseModel):
     pages: List[ExtractedPage]
     pairs_per_page: int
     include_context: bool = True
+    save_to_database: bool = True  # 데이터베이스 저장 옵션 추가
+    category_id: Optional[int] = None  # 카테고리 ID 추가
 
 # PDF에서 추출한 텍스트로 파인튜닝 데이터 생성
-@router.post("/generate-training-data")
-async def generate_training_data(prompt: GenerationPrompt):
+@router.post("/generate-training-data", response_model=Dict[str, Any])
+async def generate_training_data(prompt: GenerationPrompt, db: Session = Depends(get_db)):
     all_data = []
+    db_items = []
     
     try:
         async with httpx.AsyncClient(timeout=60.0) as client:
@@ -88,13 +96,55 @@ async def generate_training_data(prompt: GenerationPrompt):
                     # 간단한 파싱 예시 (실제로는 더 강건한 파싱 로직 필요)
                     pairs = parse_qa_pairs(generated_text, prompt.pairs_per_page)
                     all_data.extend(pairs)
+                    
+                    # 데이터베이스에 저장 (옵션이 활성화된 경우)
+                    if prompt.save_to_database:
+                        for pair in pairs:
+                            # 질문과 답변 추출
+                            question = pair["messages"][0]["content"]
+                            answer = pair["messages"][1]["content"]
+                            
+                            # 지식 항목 생성
+                            item_create = KnowledgeItemCreate(
+                                question=question,
+                                answer=answer,
+                                source=f"Page {page.page_num}",
+                                source_page=page.page_num,
+                                category_id=prompt.category_id,
+                                confidence=0.85,  # 기본 신뢰도 설정
+                                tags=["AI생성", f"페이지{page.page_num}"]  # 기본 태그 설정
+                            )
+                            
+                            # 저장소를 통해 데이터베이스에 저장
+                            db_item = KnowledgeRepository.create_knowledge_item(
+                                db=db,
+                                question=item_create.question,
+                                answer=item_create.answer,
+                                source=item_create.source,
+                                source_page=item_create.source_page,
+                                category_id=item_create.category_id,
+                                tags=item_create.tags,
+                                confidence=item_create.confidence
+                            )
+                            
+                            db_items.append(db_item)
+                    
                 except Exception as e:
                     raise HTTPException(status_code=422, detail=f"응답 파싱 오류: {str(e)}")
     
     except httpx.RequestError as e:
         raise HTTPException(status_code=503, detail=f"OpenAI API 요청 실패: {str(e)}")
     
-    return {"data": all_data, "count": len(all_data)}
+    # 저장된 항목들의 ID 목록
+    saved_item_ids = [item.id for item in db_items] if db_items else []
+    
+    return {
+        "data": all_data,
+        "count": len(all_data),
+        "saved_to_database": prompt.save_to_database,
+        "saved_items": saved_item_ids,
+        "category_id": prompt.category_id
+    }
 
 # 파일 업로드 (파인튜닝용)
 @router.post("/upload-file")

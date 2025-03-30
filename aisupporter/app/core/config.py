@@ -26,6 +26,10 @@ class Settings(BaseModel):
     DB_PATH: str = os.getenv("DB_PATH", "/home/jovyan/data/soybean_farm.duckdb")
     PARQUET_DIR: str = os.getenv("PARQUET_DIR", "/home/jovyan/data/parquet")
     
+    # SQLAlchemy 데이터베이스 설정
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./app.db")
+    SQL_ECHO: bool = os.getenv("SQL_ECHO", "false").lower() == "true"
+    
     # LLM 설정
     LLM_MODEL: str = os.getenv("LLM_MODEL", "openai/gpt-4o")
     LLM_API_KEY: str = os.getenv("LLM_API_KEY", "")

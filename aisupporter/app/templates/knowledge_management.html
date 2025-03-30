@@ -1,0 +1,696 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- 상단 헤더 영역 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">경험지식 관리</h5>
+                    <div>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addKnowledgeModal">
+                            <i class="bx bx-plus me-1"></i> 새 경험지식 추가
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="bx bx-info-circle me-2"></i>
+                        <strong>경험지식은</strong> 농업경영체의 노하우와 경험을 체계적으로 기록하고 공유하기 위한 데이터베이스입니다. 질문과 답변 형태로 지식을 저장하고 관리할 수 있습니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 필터 및 검색 영역 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <input type="text" id="knowledge-search" class="form-control" placeholder="경험지식 검색...">
+                                <button class="btn btn-primary" type="button" id="search-btn">
+                                    <i class="bx bx-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex justify-content-end">
+                                <select class="form-select me-2" id="category-filter" style="max-width: 160px;">
+                                    <option value="">모든 카테고리</option>
+                                    <!-- 카테고리 동적 로드 -->
+                                </select>
+                                <select class="form-select" id="verified-filter" style="max-width: 160px;">
+                                    <option value="">모든 항목</option>
+                                    <option value="true">검증된 항목만</option>
+                                    <option value="false">미검증 항목만</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 경험지식 목록 영역 -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">경험지식 목록</h6>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="bx bx-export me-1"></i> 내보내기
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" id="export-csv">CSV 다운로드</a></li>
+                            <li><a class="dropdown-item" href="#" id="export-excel">Excel 다운로드</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="knowledge-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>질문</th>
+                                    <th>카테고리</th>
+                                    <th>태그</th>
+                                    <th>조회수</th>
+                                    <th>검증 여부</th>
+                                    <th>생성일</th>
+                                    <th>작업</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- 동적으로 데이터 로드 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 페이지네이션 -->
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="text-muted">총 <span id="total-items">0</span>개 항목</div>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination" id="pagination">
+                                <!-- 동적으로 페이지네이션 생성 -->
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 새 경험지식 추가 모달 -->
+<div class="modal fade" id="addKnowledgeModal" tabindex="-1" aria-labelledby="addKnowledgeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addKnowledgeModalLabel">새 경험지식 추가</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-knowledge-form">
+                    <div class="mb-3">
+                        <label for="question" class="form-label">질문 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="question" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="answer" class="form-label">답변 <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="answer" rows="5" required></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="category" class="form-label">카테고리</label>
+                            <select class="form-select" id="category">
+                                <option value="">카테고리 선택</option>
+                                <!-- 동적으로 카테고리 로드 -->
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="tags" class="form-label">태그 (쉼표로 구분)</label>
+                            <input type="text" class="form-control" id="tags" placeholder="태그1, 태그2, 태그3">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="source" class="form-label">출처</label>
+                            <input type="text" class="form-control" id="source">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="source-page" class="form-label">페이지 번호</label>
+                            <input type="number" class="form-control" id="source-page" min="1">
+                        </div>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="is-verified">
+                        <label class="form-check-label" for="is-verified">검증된 지식으로 표시</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-primary" id="save-knowledge">저장</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 경험지식 상세 모달 -->
+<div class="modal fade" id="viewKnowledgeModal" tabindex="-1" aria-labelledby="viewKnowledgeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewKnowledgeModalLabel">경험지식 상세 정보</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="knowledge-detail">
+                    <!-- 동적으로 상세 정보 로드 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" id="edit-knowledge">수정</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 경험지식 수정 모달 -->
+<div class="modal fade" id="editKnowledgeModal" tabindex="-1" aria-labelledby="editKnowledgeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editKnowledgeModalLabel">경험지식 수정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-knowledge-form">
+                    <input type="hidden" id="edit-id">
+                    <div class="mb-3">
+                        <label for="edit-question" class="form-label">질문 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="edit-question" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-answer" class="form-label">답변 <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="edit-answer" rows="5" required></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit-category" class="form-label">카테고리</label>
+                            <select class="form-select" id="edit-category">
+                                <option value="">카테고리 선택</option>
+                                <!-- 동적으로 카테고리 로드 -->
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit-tags" class="form-label">태그 (쉼표로 구분)</label>
+                            <input type="text" class="form-control" id="edit-tags" placeholder="태그1, 태그2, 태그3">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit-source" class="form-label">출처</label>
+                            <input type="text" class="form-control" id="edit-source">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit-source-page" class="form-label">페이지 번호</label>
+                            <input type="number" class="form-control" id="edit-source-page" min="1">
+                        </div>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="edit-is-verified">
+                        <label class="form-check-label" for="edit-is-verified">검증된 지식으로 표시</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-danger me-auto" id="delete-knowledge">삭제</button>
+                <button type="button" class="btn btn-primary" id="update-knowledge">저장</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 삭제 확인 모달 -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">삭제 확인</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>선택한 경험지식을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete">삭제</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 경험지식 목록 조회
+    let currentPage = 1;
+    let pageSize = 10;
+    let totalItems = 0;
+    let currentKnowledgeId = null;
+    
+    loadKnowledgeItems();
+    loadCategories();
+    
+    // 지식 항목 로드 함수
+    function loadKnowledgeItems(page = 1, limit = 10) {
+        const categoryId = document.getElementById('category-filter').value;
+        const verifiedOnly = document.getElementById('verified-filter').value;
+        const searchQuery = document.getElementById('knowledge-search').value;
+        
+        // API 호출
+        axios.get(`/api/knowledge/experience-knowledge`, {
+            params: {
+                skip: (page - 1) * limit,
+                limit: limit,
+                category_id: categoryId || undefined,
+                verified_only: verifiedOnly === 'true',
+                search: searchQuery || undefined
+            }
+        })
+        .then(response => {
+            const data = response.data;
+            totalItems = data.total;
+            currentPage = page;
+            pageSize = limit;
+            
+            // 테이블 업데이트
+            updateKnowledgeTable(data.items);
+            // 페이지네이션 업데이트
+            updatePagination();
+            
+            document.getElementById('total-items').textContent = totalItems;
+        })
+        .catch(error => {
+            console.error('경험지식 조회 중 오류 발생:', error);
+            alert('데이터를 불러오는 중 오류가 발생했습니다.');
+        });
+    }
+    
+    // 테이블 업데이트 함수
+    function updateKnowledgeTable(items) {
+        const tbody = document.querySelector('#knowledge-table tbody');
+        tbody.innerHTML = '';
+        
+        if (items.length === 0) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = '<td colspan="8" class="text-center">조회된 경험지식이 없습니다.</td>';
+            tbody.appendChild(tr);
+            return;
+        }
+        
+        items.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${item.id}</td>
+                <td>${item.question.length > 50 ? item.question.substring(0, 50) + '...' : item.question}</td>
+                <td>${item.category ? item.category.name : '-'}</td>
+                <td>${item.tags.map(tag => `<span class="badge bg-primary">${tag.name}</span>`).join(' ')}</td>
+                <td>${item.views}</td>
+                <td>${item.is_verified ? '<span class="badge bg-success">검증됨</span>' : '<span class="badge bg-secondary">미검증</span>'}</td>
+                <td>${new Date(item.created_at).toLocaleDateString()}</td>
+                <td>
+                    <button class="btn btn-sm btn-info view-btn" data-id="${item.id}">
+                        <i class="bx bx-show"></i>
+                    </button>
+                    <button class="btn btn-sm btn-primary edit-btn" data-id="${item.id}">
+                        <i class="bx bx-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-btn" data-id="${item.id}">
+                        <i class="bx bx-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+        
+        // 이벤트 리스너 추가
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                viewKnowledgeItem(id);
+            });
+        });
+        
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                editKnowledgeItem(id);
+            });
+        });
+        
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                confirmDeleteKnowledgeItem(id);
+            });
+        });
+    }
+    
+    // 페이지네이션 업데이트 함수
+    function updatePagination() {
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';
+        
+        const totalPages = Math.ceil(totalItems / pageSize);
+        
+        // 이전 페이지 버튼
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        prevLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage - 1}">이전</a>`;
+        pagination.appendChild(prevLi);
+        
+        // 페이지 번호
+        const maxVisiblePages = 5;
+        const halfVisible = Math.floor(maxVisiblePages / 2);
+        let startPage = Math.max(currentPage - halfVisible, 1);
+        let endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
+        
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(endPage - maxVisiblePages + 1, 1);
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+            const pageLi = document.createElement('li');
+            pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
+            pageLi.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
+            pagination.appendChild(pageLi);
+        }
+        
+        // 다음 페이지 버튼
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+        nextLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage + 1}">다음</a>`;
+        pagination.appendChild(nextLi);
+        
+        // 페이지 클릭 이벤트
+        document.querySelectorAll('.page-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                if (this.parentElement.classList.contains('disabled')) {
+                    return;
+                }
+                
+                const page = parseInt(this.getAttribute('data-page'));
+                loadKnowledgeItems(page, pageSize);
+            });
+        });
+    }
+    
+    // 카테고리 로드 함수
+    function loadCategories() {
+        axios.get('/api/knowledge/experience-knowledge/categories/list')
+            .then(response => {
+                const categories = response.data;
+                const categorySelects = [
+                    document.getElementById('category-filter'),
+                    document.getElementById('category'),
+                    document.getElementById('edit-category')
+                ];
+                
+                categorySelects.forEach(select => {
+                    if (!select) return;
+                    
+                    // 기존 옵션 유지 (첫 번째 옵션)
+                    const firstOption = select.querySelector('option:first-child');
+                    select.innerHTML = '';
+                    select.appendChild(firstOption);
+                    
+                    // 카테고리 옵션 추가
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = category.name;
+                        select.appendChild(option);
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('카테고리 로드 중 오류 발생:', error);
+            });
+    }
+    
+    // 경험지식 상세 조회 함수
+    function viewKnowledgeItem(id) {
+        axios.get(`/api/knowledge/experience-knowledge/${id}`)
+            .then(response => {
+                const item = response.data;
+                currentKnowledgeId = item.id;
+                
+                const detailContainer = document.getElementById('knowledge-detail');
+                detailContainer.innerHTML = `
+                    <div class="mb-4">
+                        <h5 class="text-primary">질문</h5>
+                        <p>${item.question}</p>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="text-primary">답변</h5>
+                        <p>${item.answer}</p>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="text-primary">카테고리</h5>
+                            <p>${item.category ? item.category.name : '-'}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-primary">태그</h5>
+                            <p>${item.tags.length > 0 ? item.tags.map(tag => `<span class="badge bg-primary">${tag.name}</span>`).join(' ') : '-'}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="text-primary">출처</h5>
+                            <p>${item.source || '-'}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-primary">페이지</h5>
+                            <p>${item.source_page || '-'}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h5 class="text-primary">조회수</h5>
+                            <p>${item.views}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="text-primary">검증 여부</h5>
+                            <p>${item.is_verified ? '<span class="badge bg-success">검증됨</span>' : '<span class="badge bg-secondary">미검증</span>'}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="text-primary">생성일</h5>
+                            <p>${new Date(item.created_at).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                `;
+                
+                // 수정 버튼 이벤트
+                document.getElementById('edit-knowledge').onclick = function() {
+                    $('#viewKnowledgeModal').modal('hide');
+                    editKnowledgeItem(item.id);
+                };
+                
+                // 모달 표시
+                $('#viewKnowledgeModal').modal('show');
+            })
+            .catch(error => {
+                console.error('경험지식 상세 조회 중 오류 발생:', error);
+                alert('데이터를 불러오는 중 오류가 발생했습니다.');
+            });
+    }
+    
+    // 경험지식 수정 모달 표시 함수
+    function editKnowledgeItem(id) {
+        axios.get(`/api/knowledge/experience-knowledge/${id}`)
+            .then(response => {
+                const item = response.data;
+                currentKnowledgeId = item.id;
+                
+                // 폼 필드 채우기
+                document.getElementById('edit-id').value = item.id;
+                document.getElementById('edit-question').value = item.question;
+                document.getElementById('edit-answer').value = item.answer;
+                document.getElementById('edit-source').value = item.source || '';
+                document.getElementById('edit-source-page').value = item.source_page || '';
+                document.getElementById('edit-is-verified').checked = item.is_verified;
+                
+                // 카테고리 선택
+                if (item.category) {
+                    document.getElementById('edit-category').value = item.category.id;
+                } else {
+                    document.getElementById('edit-category').value = '';
+                }
+                
+                // 태그 설정
+                if (item.tags && item.tags.length > 0) {
+                    document.getElementById('edit-tags').value = item.tags.map(tag => tag.name).join(', ');
+                } else {
+                    document.getElementById('edit-tags').value = '';
+                }
+                
+                // 모달 표시
+                $('#editKnowledgeModal').modal('show');
+            })
+            .catch(error => {
+                console.error('경험지식 조회 중 오류 발생:', error);
+                alert('데이터를 불러오는 중 오류가 발생했습니다.');
+            });
+    }
+    
+    // 경험지식 삭제 확인 함수
+    function confirmDeleteKnowledgeItem(id) {
+        currentKnowledgeId = id;
+        $('#deleteConfirmModal').modal('show');
+    }
+    
+    // 검색 기능
+    document.getElementById('search-btn').addEventListener('click', function() {
+        loadKnowledgeItems(1, pageSize);
+    });
+    
+    document.getElementById('knowledge-search').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            loadKnowledgeItems(1, pageSize);
+        }
+    });
+    
+    // 필터 변경 이벤트
+    document.getElementById('category-filter').addEventListener('change', function() {
+        loadKnowledgeItems(1, pageSize);
+    });
+    
+    document.getElementById('verified-filter').addEventListener('change', function() {
+        loadKnowledgeItems(1, pageSize);
+    });
+    
+    // 새 경험지식 저장
+    document.getElementById('save-knowledge').addEventListener('click', function() {
+        const question = document.getElementById('question').value;
+        const answer = document.getElementById('answer').value;
+        
+        if (!question || !answer) {
+            alert('질문과 답변은 필수 입력 항목입니다.');
+            return;
+        }
+        
+        const tagsInput = document.getElementById('tags').value;
+        const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+        
+        const data = {
+            question: question,
+            answer: answer,
+            category_id: document.getElementById('category').value || null,
+            source: document.getElementById('source').value || null,
+            source_page: document.getElementById('source-page').value || null,
+            is_verified: document.getElementById('is-verified').checked,
+            tags: tags
+        };
+        
+        axios.post('/api/knowledge/experience-knowledge', data)
+            .then(response => {
+                alert('경험지식이 성공적으로 저장되었습니다.');
+                $('#addKnowledgeModal').modal('hide');
+                document.getElementById('add-knowledge-form').reset();
+                loadKnowledgeItems(currentPage, pageSize);
+            })
+            .catch(error => {
+                console.error('경험지식 저장 중 오류 발생:', error);
+                alert('경험지식 저장에 실패했습니다.');
+            });
+    });
+    
+    // 경험지식 수정
+    document.getElementById('update-knowledge').addEventListener('click', function() {
+        const id = document.getElementById('edit-id').value;
+        const question = document.getElementById('edit-question').value;
+        const answer = document.getElementById('edit-answer').value;
+        
+        if (!question || !answer) {
+            alert('질문과 답변은 필수 입력 항목입니다.');
+            return;
+        }
+        
+        const tagsInput = document.getElementById('edit-tags').value;
+        const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+        
+        const data = {
+            question: question,
+            answer: answer,
+            category_id: document.getElementById('edit-category').value || null,
+            source: document.getElementById('edit-source').value || null,
+            source_page: document.getElementById('edit-source-page').value || null,
+            is_verified: document.getElementById('edit-is-verified').checked,
+            tags: tags
+        };
+        
+        axios.put(`/api/knowledge/experience-knowledge/${id}`, data)
+            .then(response => {
+                alert('경험지식이 성공적으로 수정되었습니다.');
+                $('#editKnowledgeModal').modal('hide');
+                loadKnowledgeItems(currentPage, pageSize);
+            })
+            .catch(error => {
+                console.error('경험지식 수정 중 오류 발생:', error);
+                alert('경험지식 수정에 실패했습니다.');
+            });
+    });
+    
+    // 삭제 버튼 클릭 시 - 삭제 확인 모달
+    document.getElementById('delete-knowledge').addEventListener('click', function() {
+        $('#editKnowledgeModal').modal('hide');
+        $('#deleteConfirmModal').modal('show');
+    });
+    
+    // 삭제 확인
+    document.getElementById('confirm-delete').addEventListener('click', function() {
+        if (!currentKnowledgeId) return;
+        
+        axios.delete(`/api/knowledge/experience-knowledge/${currentKnowledgeId}`)
+            .then(response => {
+                alert('경험지식이 성공적으로 삭제되었습니다.');
+                $('#deleteConfirmModal').modal('hide');
+                loadKnowledgeItems(currentPage, pageSize);
+            })
+            .catch(error => {
+                console.error('경험지식 삭제 중 오류 발생:', error);
+                alert('경험지식 삭제에 실패했습니다.');
+            });
+    });
+    
+    // CSV 내보내기
+    document.getElementById('export-csv').addEventListener('click', function(e) {
+        e.preventDefault();
+        alert('CSV 내보내기 기능은 개발 중입니다.');
+    });
+    
+    // Excel 내보내기
+    document.getElementById('export-excel').addEventListener('click', function(e) {
+        e.preventDefault();
+        alert('Excel 내보내기 기능은 개발 중입니다.');
+    });
+});
+</script>
+{% endblock %} 

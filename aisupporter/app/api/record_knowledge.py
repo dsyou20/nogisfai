@@ -11,6 +11,11 @@ import random
 from datetime import datetime, timedelta
 import numpy as np
 import traceback
+import logging
+
+# 로깅 설정
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # 프로젝트 유틸리티 가져오기
 from app.utils.parquet_generator import generate_parquet_data
@@ -73,8 +78,8 @@ async def get_record_knowledge(
         }
     
     except Exception as e:
-        print(f"기록지식 데이터 조회 오류: {str(e)}")
-        print(traceback.format_exc())
+        logger.error(f"기록지식 데이터 조회 오류: {str(e)}")
+        logger.error(traceback.format_exc())
         
         # 오류 시 샘플 데이터 반환 (개발/테스트용)
         return {
@@ -205,8 +210,8 @@ async def get_record_details(
         }
     
     except Exception as e:
-        print(f"상세 데이터 조회 오류: {str(e)}")
-        print(traceback.format_exc())
+        logger.error(f"상세 데이터 조회 오류: {str(e)}")
+        logger.error(traceback.format_exc())
         
         # 오류 시 샘플 데이터 반환 (개발/테스트용)
         return {
@@ -338,7 +343,7 @@ async def download_record_data(
                     df['data_type'] = data_type
                     dataframes.append(df)
             except Exception as e:
-                print(f"데이터 조회 오류({data_type}): {str(e)}")
+                logger.error(f"데이터 조회 오류({data_type}): {str(e)}")
         
         # 데이터가 없는 경우
         if not dataframes:
@@ -377,8 +382,8 @@ async def download_record_data(
         )
     
     except Exception as e:
-        print(f"데이터 다운로드 오류: {str(e)}")
-        print(traceback.format_exc())
+        logger.error(f"데이터 다운로드 오류: {str(e)}")
+        logger.error(traceback.format_exc())
         return JSONResponse(
             status_code=500,
             content={"success": False, "error": f"데이터 다운로드 중 오류 발생: {str(e)}"}
@@ -396,8 +401,8 @@ async def generate_parquet_data_api(days: int = Query(730, description="생성�
         
         return result
     except Exception as e:
-        print(f"데이터 생성 오류: {str(e)}")
-        print(traceback.format_exc())
+        logger.error(f"데이터 생성 오류: {str(e)}")
+        logger.error(traceback.format_exc())
         return {
             "success": False,
             "error": f"데이터 생성 중 오류 발생: {str(e)}"
@@ -418,7 +423,7 @@ def get_data_summary(conn):
                 summary = {column_names[i]: value for i, value in enumerate(result)}
                 return summary
         except Exception as e:
-            print(f"요약 데이터 조회 오류: {str(e)}")
+            logger.error(f"요약 데이터 조회 오류: {str(e)}")
     
     # 기본 요약 데이터 생성
     return generate_sample_summary()
@@ -438,6 +443,7 @@ def get_chart_data(conn, region, data_type, start_date, end_date):
                 break
         
         if not has_parquet_files:
+            logger.warning("Parquet 파일이 없습니다. 샘플 차트 데이터를 생성합니다.")
             return generate_sample_chart_data()
         
         # 환경 데이터 (온도, 습도)는 모든 시기에 표시
@@ -672,8 +678,8 @@ def get_chart_data(conn, region, data_type, start_date, end_date):
         return chart_data
     
     except Exception as e:
-        print(f"차트 데이터 조회 오류: {str(e)}")
-        print(traceback.format_exc())
+        logger.error(f"차트 데이터 조회 오류: {str(e)}")
+        logger.error(traceback.format_exc())
         return generate_sample_chart_data()
 
 def get_type_kr_name(data_type):
