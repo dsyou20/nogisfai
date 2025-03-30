@@ -1,0 +1,489 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- 상단 헤더 및 설명 영역 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">콩 재배달력</h5>
+                    <div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-primary">일반재배</button>
+                            <button type="button" class="btn btn-primary">콩 재배</button>
+                            <button type="button" class="btn btn-outline-primary">맞춤형 달력</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="bx bx-info-circle me-2"></i>
+                        콩 재배 시기별 주요 농작업 및 병충해 방제, 기상재해 예상 정보를 월별로 확인할 수 있습니다. 지역에 따라 시기가 다를 수 있으므로 참고용으로 활용하세요.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 재배달력 필터링 영역 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">재배달력 설정</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">지역</label>
+                            <select class="form-select" name="region">
+                                <option value="all" selected>전국</option>
+                                <option value="gimje">김제지구</option>
+                                <option value="miryang">밀양지구</option>
+                                <option value="taean">태안지구</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">작물</label>
+                            <select class="form-select" name="crop">
+                                <option value="soybean" selected>콩</option>
+                                <option value="rice">벼</option>
+                                <option value="wheat">밀</option>
+                                <option value="corn">옥수수</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">보기 방식</label>
+                            <select class="form-select" name="view">
+                                <option value="all" selected>전체 보기</option>
+                                <option value="cultivation">생육과정</option>
+                                <option value="disaster">기상재해</option>
+                                <option value="pest">병충해 방제</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 생육과정 달력 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0 text-primary">생육과정(주요작업)</h6>
+                </div>
+                <div class="card-body px-0 pb-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center mb-0 calendar-table" id="cultivation-calendar">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 8%;">1월</th>
+                                    <th style="width: 8%;">2월</th>
+                                    <th style="width: 8%;">3월</th>
+                                    <th style="width: 8%;">4월</th>
+                                    <th style="width: 8%;">5월</th>
+                                    <th style="width: 8%;">6월</th>
+                                    <th style="width: 8%;">7월</th>
+                                    <th style="width: 8%;">8월</th>
+                                    <th style="width: 8%;">9월</th>
+                                    <th style="width: 8%;">10월</th>
+                                    <th style="width: 8%;">11월</th>
+                                    <th style="width: 8%;">12월</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="height: 60px;">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="table-success">유묘, 신장기</td>
+                                    <td class="table-success">개화기</td>
+                                    <td class="table-warning">협성장기</td>
+                                    <td class="table-warning">등숙기</td>
+                                    <td class="table-danger">수확기</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr style="height: 60px;">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="table-success">파종, 초기 제초</td>
+                                    <td class="table-success">중기제초</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="table-danger">수확기</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr style="height: 60px;">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="table-primary">배수로정비</td>
+                                    <td class="table-primary">복주기</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 기상재해 및 예상되는 문제점 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0 text-primary">기상재해 및 예상되는 문제점</h6>
+                </div>
+                <div class="card-body px-0 pb-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center mb-0 calendar-table" id="disaster-calendar">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 8%;">1월</th>
+                                    <th style="width: 8%;">2월</th>
+                                    <th style="width: 8%;">3월</th>
+                                    <th style="width: 8%;">4월</th>
+                                    <th style="width: 8%;">5월</th>
+                                    <th style="width: 8%;">6월</th>
+                                    <th style="width: 8%;">7월</th>
+                                    <th style="width: 8%;">8월</th>
+                                    <th style="width: 8%;">9월</th>
+                                    <th style="width: 8%;">10월</th>
+                                    <th style="width: 8%;">11월</th>
+                                    <th style="width: 8%;">12월</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="height: 60px;">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="table-warning">가뭄</td>
+                                    <td class="table-danger">장마</td>
+                                    <td class="table-danger">집중호우</td>
+                                    <td class="table-warning">태풍, 조기낙엽</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr style="height: 60px;">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="table-primary">습해, 침수</td>
+                                    <td class="table-primary">탈립, 조기낙엽</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 병충해 방제 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0 text-primary">병충해 방제</h6>
+                </div>
+                <div class="card-body px-0 pb-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center mb-0 calendar-table" id="pest-calendar">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 8%;">1월</th>
+                                    <th style="width: 8%;">2월</th>
+                                    <th style="width: 8%;">3월</th>
+                                    <th style="width: 8%;">4월</th>
+                                    <th style="width: 8%;">5월</th>
+                                    <th style="width: 8%;">6월</th>
+                                    <th style="width: 8%;">7월</th>
+                                    <th style="width: 8%;">8월</th>
+                                    <th style="width: 8%;">9월</th>
+                                    <th style="width: 8%;">10월</th>
+                                    <th style="width: 8%;">11월</th>
+                                    <th style="width: 8%;">12월</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="height: 60px;">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="table-danger">나방류</td>
+                                    <td class="table-danger">노린재류</td>
+                                    <td class="table-warning">노린재류</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr style="height: 60px;">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="table-warning">진딧물류</td>
+                                    <td class="table-warning">심식충</td>
+                                    <td class="table-warning">병해(불마름병 등)</td>
+                                    <td class="table-warning">병해(모자이크병 등)</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr style="height: 60px;">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="table-info">방제시기</td>
+                                    <td class="table-info">방제시기</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 연관 정보 및 도움말 -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">재배달력 활용 가이드</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">재배달력은 예상 시기를 나타내며, 실제 지역 및 기후에 따라 조정이 필요합니다.</p>
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="bg-success p-2 me-2" style="width: 20px; height: 20px;"></span>
+                        <span>생육초기 및 파종단계</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="bg-warning p-2 me-2" style="width: 20px; height: 20px;"></span>
+                        <span>생육중기 및 주의 필요 단계</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="bg-danger p-2 me-2" style="width: 20px; height: 20px;"></span>
+                        <span>수확기 및 심각한 위험 단계</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="bg-primary p-2 me-2" style="width: 20px; height: 20px;"></span>
+                        <span>중요 관리 작업 및 주의 단계</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="bg-info p-2 me-2" style="width: 20px; height: 20px;"></span>
+                        <span>방제 적기 및 정보 제공 단계</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">맞춤형 재배달력 제작</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">내 농장의 특성에 맞는 맞춤형 재배달력을 제작할 수 있습니다.</p>
+                    <div class="mb-3">
+                        <label class="form-label">농장명</label>
+                        <input type="text" class="form-control" placeholder="농장명을 입력하세요">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">특이사항</label>
+                        <textarea class="form-control" rows="3" placeholder="특별히 주의해야 할 사항을 입력하세요"></textarea>
+                    </div>
+                    <div class="d-grid">
+                        <button type="button" class="btn btn-primary">
+                            <i class="bx bx-calendar-edit me-1"></i> 맞춤형 달력 만들기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/calendarData.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 토글 버튼 기능
+        const toggleButtons = document.querySelectorAll('.btn-group .btn');
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                toggleButtons.forEach(btn => btn.classList.remove('btn-primary'));
+                toggleButtons.forEach(btn => btn.classList.add('btn-outline-primary'));
+                this.classList.remove('btn-outline-primary');
+                this.classList.add('btn-primary');
+            });
+        });
+        
+        // 필터 변경 시 달력 업데이트
+        const filterSelects = document.querySelectorAll('.form-select');
+        filterSelects.forEach(select => {
+            select.addEventListener('change', function() {
+                updateCalendarData();
+            });
+        });
+        
+        // 초기 달력 데이터 로드
+        updateCalendarData();
+        
+        // 달력 데이터 업데이트 함수
+        function updateCalendarData() {
+            // 선택된 작물, 지역, 보기 방식 가져오기
+            const selectedCrop = document.querySelector('select[name="crop"]') ? 
+                               document.querySelector('select[name="crop"]').value : 'soybean';
+            const selectedRegion = document.querySelector('select[name="region"]') ? 
+                               document.querySelector('select[name="region"]').value : 'all';
+            const selectedView = document.querySelector('select[name="view"]') ? 
+                               document.querySelector('select[name="view"]').value : 'all';
+                               
+            // 객체 접근을 위한 매핑
+            const cropMapping = {
+                'soybean': 'soybean',
+                'rice': 'rice',
+                'wheat': 'wheat',
+                'corn': 'corn'
+            };
+            
+            const crop = cropMapping[selectedCrop] || 'soybean';
+            
+            // 선택된 지역에 따라 지역 정보 표시
+            updateRegionInfo(selectedRegion);
+            
+            // 모든 달력 테이블 초기화
+            clearCalendarTables();
+            
+            // 선택된 보기 방식에 따라 테이블 표시/숨김 및 지역별 데이터 적용
+            if (selectedView === 'all' || selectedView === 'cultivation') {
+                document.getElementById('cultivation-calendar').style.display = 'block';
+                populateCalendarTable('cultivation-calendar', CalendarDataManager.getRegionalData(crop, 'cultivation', selectedRegion));
+            } else {
+                document.getElementById('cultivation-calendar').style.display = 'none';
+            }
+            
+            if (selectedView === 'all' || selectedView === 'disaster') {
+                document.getElementById('disaster-calendar').style.display = 'block';
+                populateCalendarTable('disaster-calendar', CalendarDataManager.getRegionalData(crop, 'disaster', selectedRegion));
+            } else {
+                document.getElementById('disaster-calendar').style.display = 'none';
+            }
+            
+            if (selectedView === 'all' || selectedView === 'pest') {
+                document.getElementById('pest-calendar').style.display = 'block';
+                populateCalendarTable('pest-calendar', CalendarDataManager.getRegionalData(crop, 'pest', selectedRegion));
+            } else {
+                document.getElementById('pest-calendar').style.display = 'none';
+            }
+        }
+        
+        // 지역 정보 업데이트 함수
+        function updateRegionInfo(region) {
+            // 지역별 설명 메시지
+            const regionMessages = {
+                'all': '전국 평균 재배 시기를 기준으로 합니다.',
+                'gimje': '김제지구 지역의 표준 재배 시기를 기준으로 합니다.',
+                'miryang': '밀양지구는 남부에 위치하여 재배 시기가 약간 빠릅니다.',
+                'taean': '태안지구는 서해안에 위치하여 재배 시기가 약간 늦습니다.'
+            };
+            
+            // 알림 메시지 업데이트
+            const alertElement = document.querySelector('.alert.alert-info');
+            if (alertElement && regionMessages[region]) {
+                // 기존 아이콘과 기본 메시지 유지
+                const iconHTML = '<i class="bx bx-info-circle me-2"></i>';
+                const baseMessage = '콩 재배 시기별 주요 농작업 및 병충해 방제, 기상재해 예상 정보를 월별로 확인할 수 있습니다. ';
+                
+                // 지역별 메시지 추가
+                alertElement.innerHTML = iconHTML + baseMessage + regionMessages[region];
+            }
+        }
+        
+        // 달력 테이블 초기화 함수
+        function clearCalendarTables() {
+            const tables = document.querySelectorAll('.calendar-table tbody');
+            tables.forEach(tbody => {
+                while (tbody.firstChild) {
+                    tbody.removeChild(tbody.firstChild);
+                }
+            });
+        }
+        
+        // 달력 테이블 채우기 함수
+        function populateCalendarTable(tableId, data) {
+            const tbody = document.querySelector(`#${tableId} tbody`);
+            
+            if (!tbody || !data || !data.length) {
+                console.error('테이블 또는 데이터가 없습니다.');
+                return;
+            }
+            
+            // 데이터의 각 카테고리에 대해 행 추가
+            data.forEach(category => {
+                const tr = document.createElement('tr');
+                tr.style.height = '60px';
+                
+                // 12개월에 대한 셀 생성
+                for (let month = 1; month <= 12; month++) {
+                    const td = document.createElement('td');
+                    
+                    // 해당 월에 데이터가 있는지 확인
+                    const monthData = category.data.filter(item => item.month === month);
+                    
+                    if (monthData.length > 0) {
+                        // 데이터가 있으면 셀에 클래스와 텍스트 추가
+                        td.className = `table-${monthData[0].color}`;
+                        td.textContent = monthData[0].text;
+                    }
+                    
+                    tr.appendChild(td);
+                }
+                
+                tbody.appendChild(tr);
+            });
+        }
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,459 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">파인튜닝 학습 데이터 생성</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bx bx-info-circle me-2"></i>
+                    PDF 교본을 업로드하고 OpenAI API를 활용하여 맞춤형 파인튜닝 학습 데이터를 생성합니다.
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">PDF 업로드</h6>
+                            </div>
+                            <div class="card-body">
+                                <form id="pdfUploadForm" enctype="multipart/form-data">
+                                    <div class="mb-3">
+                                        <label for="pdfFile" class="form-label">PDF 파일 선택</label>
+                                        <input class="form-control" type="file" id="pdfFile" accept=".pdf" required>
+                                        <div class="form-text">최대 파일 크기: 50MB</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="modelType" class="form-label">모델 유형</label>
+                                        <select class="form-select" id="modelType">
+                                            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                                            <option value="gpt-4o">GPT-4o</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="datasetName" class="form-label">데이터셋 이름</label>
+                                        <input type="text" class="form-control" id="datasetName" placeholder="my-finetuning-dataset" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" id="uploadBtn">
+                                        <i class="bx bx-upload me-1"></i> 업로드 및 분석
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h6 class="mb-0">데이터 생성 옵션</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="promptTemplate" class="form-label">프롬프트 템플릿</label>
+                                    <textarea class="form-control" id="promptTemplate" rows="3" placeholder="다음 내용을 바탕으로 질문-답변 쌍을 생성해주세요:">다음 내용을 바탕으로 질문-답변 쌍을 5개 생성해주세요. 질문은 실제 사용자가 물을 법한 자연스러운 질문이어야 하고, 답변은 정확하고 명확해야 합니다.</textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="dataFormat" class="form-label">데이터 포맷</label>
+                                    <select class="form-select" id="dataFormat">
+                                        <option value="jsonl">JSONL (JSON Lines)</option>
+                                        <option value="csv">CSV</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="pairsPerPage" class="form-label">페이지 당 생성할 질문-답변 쌍 수</label>
+                                    <input type="number" class="form-control" id="pairsPerPage" value="3" min="1" max="10">
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="includeContext" checked>
+                                    <label class="form-check-label" for="includeContext">
+                                        원문 컨텍스트 포함
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 처리 상태 -->
+                <div id="processingStatus" style="display: none;">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h6 class="mb-0">처리 상태</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="progress mb-3">
+                                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <div id="statusMessage" class="text-center">
+                                PDF 업로드 중...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 결과 미리보기 -->
+                <div id="previewResults" style="display: none;">
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">결과 미리보기</h6>
+                            <div>
+                                <button class="btn btn-sm btn-success" id="downloadBtn">
+                                    <i class="bx bx-download me-1"></i> 다운로드
+                                </button>
+                                <button class="btn btn-sm btn-primary" id="exportToOpenAIBtn">
+                                    <i class="bx bx-cloud-upload me-1"></i> OpenAI로 내보내기
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="resultPreview" class="form-label">생성된 학습 데이터</label>
+                                <textarea class="form-control font-monospace" id="resultPreview" rows="10" readonly></textarea>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <span class="badge bg-primary" id="pairCount">0 쌍의 데이터</span>
+                                    <span class="badge bg-secondary" id="tokenCount">0 토큰</span>
+                                </div>
+                                <button class="btn btn-sm btn-outline-secondary" id="refreshPreviewBtn">
+                                    <i class="bx bx-refresh me-1"></i> 새로고침
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 파인튜닝 가이드 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">파인튜닝 가이드</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="bx bx-book-open me-2"></i>파인튜닝이란?</h6>
+                        <p>
+                            파인튜닝은 사전 학습된 대규모 언어 모델(LLM)을 특정 도메인이나 작업에 맞게 추가로 학습시키는 과정입니다.
+                            이를 통해 모델이 특정 분야의 전문 지식을 더 잘 이해하고 적용할 수 있게 됩니다.
+                        </p>
+                        <h6><i class="bx bx-check-shield me-2"></i>좋은 학습 데이터의 조건</h6>
+                        <ul>
+                            <li>충분한 양의 고품질 데이터 (최소 10-50개 이상의 예제)</li>
+                            <li>다양한 입력 및 출력 패턴</li>
+                            <li>도메인 관련 용어와 개념 포함</li>
+                            <li>일관된 포맷과 스타일</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="bx bx-bulb me-2"></i>파인튜닝 활용 사례</h6>
+                        <ul>
+                            <li>노지 재배 관련 전문 지식 제공</li>
+                            <li>농업 용어 및 개념에 대한 이해 향상</li>
+                            <li>작물별 맞춤형 조언 생성</li>
+                            <li>지역 특화된 농업 정보 제공</li>
+                        </ul>
+                        <h6><i class="bx bx-link me-2"></i>관련 리소스</h6>
+                        <ul>
+                            <li><a href="https://platform.openai.com/docs/guides/fine-tuning" target="_blank">OpenAI 파인튜닝 가이드</a></li>
+                            <li><a href="https://platform.openai.com/docs/api-reference/fine-tuning" target="_blank">OpenAI API 레퍼런스</a></li>
+                            <li><a href="https://cookbook.openai.com/" target="_blank">OpenAI 쿡북</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.10.111/pdf.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // PDF.js 워커 설정
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.10.111/pdf.worker.min.js';
+        
+        // 폼 요소
+        const pdfUploadForm = document.getElementById('pdfUploadForm');
+        const pdfFileInput = document.getElementById('pdfFile');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const modelTypeSelect = document.getElementById('modelType');
+        const datasetNameInput = document.getElementById('datasetName');
+        
+        // 옵션 요소
+        const promptTemplateInput = document.getElementById('promptTemplate');
+        const dataFormatSelect = document.getElementById('dataFormat');
+        const pairsPerPageInput = document.getElementById('pairsPerPage');
+        const includeContextCheck = document.getElementById('includeContext');
+        
+        // 상태 및 결과 요소
+        const processingStatus = document.getElementById('processingStatus');
+        const progressBar = document.getElementById('progressBar');
+        const statusMessage = document.getElementById('statusMessage');
+        const previewResults = document.getElementById('previewResults');
+        const resultPreview = document.getElementById('resultPreview');
+        const pairCount = document.getElementById('pairCount');
+        const tokenCount = document.getElementById('tokenCount');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const exportToOpenAIBtn = document.getElementById('exportToOpenAIBtn');
+        const refreshPreviewBtn = document.getElementById('refreshPreviewBtn');
+        
+        // 전역 데이터 저장소
+        let extractedPages = [];
+        let generatedData = [];
+        let currentFile = null;
+        
+        // PDF 업로드 및 처리
+        pdfUploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const file = pdfFileInput.files[0];
+            if (!file) {
+                alert('PDF 파일을 선택해주세요.');
+                return;
+            }
+            
+            currentFile = file;
+            
+            // 처리 상태 표시
+            processingStatus.style.display = 'block';
+            previewResults.style.display = 'none';
+            progressBar.style.width = '0%';
+            statusMessage.textContent = 'PDF 파일 처리 중...';
+            
+            try {
+                // PDF 파일 처리
+                await processPdf(file);
+                
+                // 데이터 생성
+                await generateTrainingData();
+                
+                // 결과 표시
+                displayResults();
+                
+            } catch (error) {
+                console.error('Error processing PDF:', error);
+                statusMessage.textContent = '오류 발생: ' + error.message;
+                progressBar.classList.remove('bg-primary');
+                progressBar.classList.add('bg-danger');
+            }
+        });
+        
+        // PDF 처리 함수
+        async function processPdf(file) {
+            extractedPages = [];
+            
+            // ArrayBuffer로 PDF 파일 읽기
+            const arrayBuffer = await readFileAsArrayBuffer(file);
+            
+            // PDF 로드
+            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+            const numPages = pdf.numPages;
+            
+            // 진행 상황 업데이트
+            progressBar.style.width = '10%';
+            statusMessage.textContent = `PDF 로드 완료, 총 ${numPages}페이지 분석 중...`;
+            
+            // 페이지 텍스트 추출
+            for (let i = 1; i <= numPages; i++) {
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                const text = textContent.items
+                    .map(item => item.str)
+                    .join(' ')
+                    .replace(/\s+/g, ' ');
+                
+                extractedPages.push({
+                    pageNum: i,
+                    text: text
+                });
+                
+                // 진행 상황 업데이트
+                const progress = 10 + Math.floor((i / numPages) * 40);
+                progressBar.style.width = `${progress}%`;
+                statusMessage.textContent = `PDF 분석 중: ${i}/${numPages} 페이지`;
+            }
+            
+            // 진행 상황 업데이트
+            progressBar.style.width = '50%';
+            statusMessage.textContent = 'PDF 텍스트 추출 완료, 학습 데이터 생성 준비 중...';
+        }
+        
+        // 학습 데이터 생성 함수
+        async function generateTrainingData() {
+            generatedData = [];
+            
+            // OpenAI API를 사용한 데이터 생성 (시뮬레이션)
+            progressBar.style.width = '60%';
+            statusMessage.textContent = 'OpenAI API를 통해 학습 데이터 생성 중...';
+            
+            // 각 페이지에 대해 데이터 생성
+            const totalPages = extractedPages.length;
+            const pairsPerPage = parseInt(pairsPerPageInput.value);
+            
+            for (let i = 0; i < Math.min(totalPages, 10); i++) { // 최대 10페이지만 처리 (시뮬레이션용)
+                const page = extractedPages[i];
+                
+                // 페이지 텍스트가 너무 짧으면 건너뛰기
+                if (page.text.length < 100) continue;
+                
+                // 진행 상황 업데이트
+                const progress = 60 + Math.floor((i / Math.min(totalPages, 10)) * 30);
+                progressBar.style.width = `${progress}%`;
+                statusMessage.textContent = `학습 데이터 생성 중: ${i+1}/${Math.min(totalPages, 10)} 페이지`;
+                
+                // 데이터 생성 시뮬레이션 (실제로는 OpenAI API 호출)
+                await new Promise(resolve => setTimeout(resolve, 500)); // 처리 시간 시뮬레이션
+                
+                // 생성된 데이터 (실제로는 API 응답)
+                for (let j = 0; j < pairsPerPage; j++) {
+                    const data = simulateGeneratedData(page.text, j + 1, page.pageNum);
+                    generatedData.push(data);
+                }
+            }
+            
+            // 완료
+            progressBar.style.width = '100%';
+            statusMessage.textContent = '학습 데이터 생성 완료!';
+        }
+        
+        // 결과 표시 함수
+        function displayResults() {
+            processingStatus.style.display = 'none';
+            previewResults.style.display = 'block';
+            
+            // 데이터 포맷 변환
+            const format = dataFormatSelect.value;
+            let formattedData;
+            
+            if (format === 'jsonl') {
+                formattedData = generatedData.map(item => JSON.stringify(item)).join('\n');
+            } else {
+                // CSV 포맷 (간단한 구현)
+                formattedData = 'question,answer\n' + 
+                    generatedData.map(item => `"${item.messages[0].content.replace(/"/g, '""')}","${item.messages[1].content.replace(/"/g, '""')}"`).join('\n');
+            }
+            
+            // 결과 표시
+            resultPreview.value = formattedData;
+            
+            // 통계 업데이트
+            pairCount.textContent = `${generatedData.length} 쌍의 데이터`;
+            const approxTokens = estimateTokens(formattedData);
+            tokenCount.textContent = `약 ${approxTokens} 토큰`;
+        }
+        
+        // 다운로드 버튼
+        downloadBtn.addEventListener('click', function() {
+            if (generatedData.length === 0) return;
+            
+            const format = dataFormatSelect.value;
+            const extension = format === 'jsonl' ? 'jsonl' : 'csv';
+            const datasetName = datasetNameInput.value || 'finetuning-dataset';
+            const fileName = `${datasetName}.${extension}`;
+            
+            // 데이터 포맷 변환
+            let formattedData;
+            if (format === 'jsonl') {
+                formattedData = generatedData.map(item => JSON.stringify(item)).join('\n');
+            } else {
+                formattedData = 'question,answer\n' + 
+                    generatedData.map(item => `"${item.messages[0].content.replace(/"/g, '""')}","${item.messages[1].content.replace(/"/g, '""')}"`).join('\n');
+            }
+            
+            // 파일 다운로드
+            const blob = new Blob([formattedData], { type: format === 'jsonl' ? 'application/jsonl' : 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+        
+        // OpenAI로 내보내기 버튼
+        exportToOpenAIBtn.addEventListener('click', function() {
+            if (generatedData.length === 0) return;
+            
+            // 실제로는 OpenAI API 호출이 필요
+            alert('OpenAI API 키가 필요합니다. 실제 구현에서는 API 키를 이용해 파인튜닝 작업을 생성합니다.');
+        });
+        
+        // 미리보기 새로고침 버튼
+        refreshPreviewBtn.addEventListener('click', function() {
+            displayResults();
+        });
+        
+        // 유틸리티 함수들
+        
+        // ArrayBuffer로 파일 읽기
+        function readFileAsArrayBuffer(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsArrayBuffer(file);
+            });
+        }
+        
+        // 토큰 수 추정
+        function estimateTokens(text) {
+            // 대략적인 추정: 영어는 단어 당 약 1.3 토큰, 한국어는 글자 당 약 1.5 토큰
+            const words = text.split(/\s+/).length;
+            const chars = text.replace(/\s+/g, '').length;
+            
+            // 한국어와 영어가 섞인 경우를 고려한 간단한 추정
+            return Math.round((words * 1.3 + chars * 0.5) / 2);
+        }
+        
+        // 생성 데이터 시뮬레이션 (실제로는 OpenAI API 응답)
+        function simulateGeneratedData(text, index, pageNum) {
+            // 간단한 내용 발췌
+            const excerpt = text.substring(0, Math.min(200, text.length));
+            
+            // 시뮬레이션된 질문-답변 쌍
+            const questions = [
+                "토양 수분 센서의 정확도에 영향을 미치는 요소는 무엇인가요?",
+                "스마트 관개 시스템에서 데이터 수집 주기는 어떻게 설정해야 하나요?",
+                "노지 재배에서 가장 효과적인 수분 관리 방법은 무엇인가요?",
+                "IoT 센서 네트워크를 농장에 구축할 때 고려해야 할 사항은?",
+                "작물 생육 단계별 최적 관수량은 어떻게 계산하나요?",
+                "온도와 습도 데이터를 활용한 병해 예측은 어떻게 하나요?",
+                "드론을 이용한 농작물 모니터링의 장단점은 무엇인가요?",
+                "인공지능 기반 작물 진단 시스템의 작동 원리는?",
+                "토양 센서 설치 위치는 어떻게 결정해야 하나요?",
+                "기상 데이터와 작물 생육의 상관관계는 어떻게 분석하나요?"
+            ];
+            
+            const answers = [
+                `토양 수분 센서의 정확도에 영향을 미치는 주요 요소는 센서 유형, 토양 종류, 설치 방법, 보정 상태입니다. 특히 토양의 염분 농도와 온도 변화가 측정값에 영향을 줄 수 있으며, 정기적인 보정을 통해 정확도를 유지해야 합니다. 또한 페이지 ${pageNum}에서 언급된 것처럼 적절한 위치 선정도 중요합니다.`,
+                `스마트 관개 시스템의 데이터 수집 주기는 작물 종류, 생육 단계, 기후 조건에 따라 다르게 설정해야 합니다. 일반적으로 생육 초기에는 30분~1시간 간격으로, 성숙기에는 2~4시간 간격으로 설정하는 것이 효과적입니다. 급격한 기후 변화가 예상될 때는 더 짧은 간격으로 조정하는 것이 좋습니다.`,
+                `노지 재배에서 가장 효과적인 수분 관리 방법은 토양 수분 모니터링과 기상 예측을 결합한 접근법입니다. 실시간 토양 수분 센서 데이터를 활용하여 작물의 수분 요구량을 파악하고, 날씨 예보를 고려하여 선제적으로 관수량을 조절하는 것이 중요합니다. 점적 관수 시스템을 활용하면 물 효율성을 높일 수 있습니다.`,
+                `IoT 센서 네트워크 구축 시 고려사항은 전력 공급, 통신 범위, 내구성, 데이터 보안입니다. 농장 환경에 맞는 방수/방진 등급의 센서를 선택하고, 태양광 등 지속 가능한 전원 공급 방식을 고려해야 합니다. 또한 센서 간 통신 프로토콜과 데이터 통합 방식도 사전에 계획해야 합니다.`,
+                `작물 생육 단계별 최적 관수량은 작물의 증발산량(ET), 토양 유형, 뿌리 깊이를 고려하여 계산합니다. 일반적으로 생육 초기에는 ET의 50%, 생육 중기에는 100%, 수확 전에는 80% 정도를 적용합니다. 토양 수분 센서와 함께 작물 스트레스 지표를 관찰하여 맞춤형으로 조정하는 것이 중요합니다.`
+            ];
+            
+            // 시뮬레이션된 데이터
+            return {
+                messages: [
+                    {
+                        role: "user",
+                        content: questions[(index + pageNum) % questions.length]
+                    },
+                    {
+                        role: "assistant",
+                        content: answers[(index + pageNum) % answers.length]
+                    }
+                ]
+            };
+        }
+    });
+</script>
+{% endblock %} 

@@ -502,6 +502,12 @@
         <div class="sidebar-menu">
             <ul>
                 <li>
+                    <a href="/cultivation-calendar" data-page="cultivation-calendar" class="{{ 'active' if active_page == 'cultivation-calendar' }}">
+                        <i class="bx bx-calendar"></i>
+                        <span>재배달력</span>
+                    </a>
+                </li>
+                <li>
                     <a href="/dashboard" data-page="dashboard" class="{{ 'active' if active_page == 'dashboard' }}">
                         <i class="bx bxs-dashboard"></i>
                         <span>대시보드</span>
@@ -542,6 +548,12 @@
                             <a href="/ai-knowledge" data-page="ai-knowledge" class="{{ 'active' if active_page == 'ai-knowledge' }}" style="padding: 0.5rem 0;">
                                 <i class="bx bx-book-content"></i>
                                 <span>AI 지식</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/ai-finetuning" data-page="ai-finetuning" class="{{ 'active' if active_page == 'ai-finetuning' }}" style="padding: 0.5rem 0;">
+                                <i class="bx bx-slider-alt"></i>
+                                <span>파인튜닝</span>
                             </a>
                         </li>
                     </ul>
@@ -634,6 +646,8 @@
                     전체현황 - 김제시 죽산면
                 {% elif active_page == 'moisture-nutrition' %}
                     수분분석
+                {% elif active_page == 'cultivation-calendar' %}
+                    재배달력
                 {% elif active_page == 'impact' %}
                     영양분석
                 {% else %}

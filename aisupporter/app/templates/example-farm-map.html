@@ -1,0 +1,342 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5>팜맵 예제</h5>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info" role="alert">
+            <i class="bx bx-info-circle me-2"></i>
+            이 페이지는 FarmMap 라이브러리를 사용한 예제 페이지입니다. 농장 구역과 센서 데이터를 지도에 시각화합니다.
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <!-- 팜맵 컨테이너 -->
+                <div id="farmMapContainer"></div>
+            </div>
+            <div class="col-lg-4">
+                <!-- 선택된 구역 정보 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">선택된 구역 정보</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="selectedZoneInfo">
+                            <p class="text-muted">구역을 선택하세요...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 액션 버튼 -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">맵 제어</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" id="updateDataBtn">
+                                <i class="bx bx-refresh me-2"></i> 데이터 업데이트
+                            </button>
+                            <button class="btn btn-warning" id="addWarningBtn">
+                                <i class="bx bx-error me-2"></i> 경고 상태 추가
+                            </button>
+                            <button class="btn btn-info" id="toggleLegendBtn">
+                                <i class="bx bx-list-ul me-2"></i> 범례 토글
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 전체 센서 데이터 표 -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">전체 센서 데이터</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="sensorsTable">
+                        <thead>
+                            <tr>
+                                <th>센서 ID</th>
+                                <th>종류</th>
+                                <th>위치</th>
+                                <th>현재 값</th>
+                                <th>상태</th>
+                                <th>마지막 업데이트</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 센서 데이터는 JavaScript에서 채워집니다 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/farmMap.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 팜맵 인스턴스 초기화
+        const farmMap = new FarmMap('farmMapContainer', {
+            width: 700,
+            height: 500,
+            mapImage: '/static/images/farm-map-bg.png',
+            showLegend: true,
+            legendConfig: {
+                position: 'bottom-right',
+                title: '구역 상태'
+            }
+        });
+        
+        // 구역 추가
+        farmMap.addZones([
+            {
+                id: 'zone1',
+                name: '1구역',
+                x: 10,
+                y: 10,
+                width: 30,
+                height: 30,
+                status: 'normal'
+            },
+            {
+                id: 'zone2',
+                name: '2구역',
+                x: 45,
+                y: 10,
+                width: 30,
+                height: 30,
+                status: 'normal'
+            },
+            {
+                id: 'zone3',
+                name: '3구역',
+                x: 10,
+                y: 45,
+                width: 65,
+                height: 30,
+                status: 'normal'
+            }
+        ]);
+        
+        // 센서 데이터 추가
+        const sensorData = [
+            { id: 'temp1', name: '온도 센서 1', type: 'temperature', x: 20, y: 20, value: 24.5, unit: '°C', status: 'normal', zone: 'zone1', lastUpdate: new Date() },
+            { id: 'temp2', name: '온도 센서 2', type: 'temperature', x: 55, y: 25, value: 25.2, unit: '°C', status: 'normal', zone: 'zone2', lastUpdate: new Date() },
+            { id: 'temp3', name: '온도 센서 3', type: 'temperature', x: 40, y: 60, value: 23.8, unit: '°C', status: 'normal', zone: 'zone3', lastUpdate: new Date() },
+            { id: 'hum1', name: '습도 센서 1', type: 'humidity', x: 25, y: 25, value: 65, unit: '%', status: 'normal', zone: 'zone1', lastUpdate: new Date() },
+            { id: 'hum2', name: '습도 센서 2', type: 'humidity', x: 60, y: 20, value: 68, unit: '%', status: 'normal', zone: 'zone2', lastUpdate: new Date() },
+            { id: 'hum3', name: '습도 센서 3', type: 'humidity', x: 45, y: 55, value: 62, unit: '%', status: 'normal', zone: 'zone3', lastUpdate: new Date() },
+            { id: 'soil1', name: '토양 수분 1', type: 'soil_moisture', x: 15, y: 25, value: 42, unit: '%', status: 'normal', zone: 'zone1', lastUpdate: new Date() },
+            { id: 'soil2', name: '토양 수분 2', type: 'soil_moisture', x: 50, y: 15, value: 38, unit: '%', status: 'normal', zone: 'zone2', lastUpdate: new Date() },
+            { id: 'soil3', name: '토양 수분 3', type: 'soil_moisture', x: 30, y: 50, value: 45, unit: '%', status: 'normal', zone: 'zone3', lastUpdate: new Date() }
+        ];
+        
+        farmMap.addSensors(sensorData);
+        
+        // 센서 데이터 테이블 채우기
+        updateSensorsTable(sensorData);
+        
+        // 구역 선택 이벤트 리스너
+        farmMap.on('zoneClick', function(zone) {
+            updateSelectedZoneInfo(zone, sensorData);
+        });
+        
+        // 마커 클릭 이벤트 리스너
+        farmMap.on('markerClick', function(marker) {
+            if (marker.type === 'sensor') {
+                const sensorInfo = marker.data;
+                alert(`${sensorInfo.name}: ${sensorInfo.value}${sensorInfo.unit}`);
+            }
+        });
+        
+        // 데이터 업데이트 버튼
+        document.getElementById('updateDataBtn').addEventListener('click', function() {
+            // 센서 데이터 무작위 업데이트
+            sensorData.forEach(sensor => {
+                let newValue;
+                let status = 'normal';
+                
+                if (sensor.type === 'temperature') {
+                    newValue = Math.round((22 + Math.random() * 6) * 10) / 10; // 22-28°C
+                    if (newValue > 27) status = 'warning';
+                    if (newValue > 29) status = 'danger';
+                } else if (sensor.type === 'humidity') {
+                    newValue = Math.round(55 + Math.random() * 20); // 55-75%
+                    if (newValue < 60) status = 'warning';
+                    if (newValue < 55) status = 'danger';
+                } else if (sensor.type === 'soil_moisture') {
+                    newValue = Math.round(35 + Math.random() * 15); // 35-50%
+                    if (newValue < 40) status = 'warning';
+                    if (newValue < 35) status = 'danger';
+                }
+                
+                sensor.value = newValue;
+                sensor.status = status;
+                sensor.lastUpdate = new Date();
+                
+                // 센서값 업데이트
+                farmMap.updateSensorValue(sensor.id, newValue, status);
+            });
+            
+            // 테이블 업데이트
+            updateSensorsTable(sensorData);
+            
+            // 선택된 구역 정보 업데이트
+            if (farmMap.selectedZone) {
+                updateSelectedZoneInfo(farmMap.selectedZone, sensorData);
+            }
+        });
+        
+        // 경고 상태 추가 버튼
+        document.getElementById('addWarningBtn').addEventListener('click', function() {
+            // 무작위 구역에 경고 상태 설정
+            const zoneId = 'zone' + (Math.floor(Math.random() * 3) + 1);
+            const status = Math.random() > 0.5 ? 'warning' : 'danger';
+            
+            farmMap.updateZoneStatus(zoneId, status);
+        });
+        
+        // 범례 토글 버튼
+        let legendVisible = true;
+        document.getElementById('toggleLegendBtn').addEventListener('click', function() {
+            const legendEl = document.querySelector('.farm-map-legend');
+            if (legendEl) {
+                legendVisible = !legendVisible;
+                legendEl.style.display = legendVisible ? 'block' : 'none';
+            }
+        });
+        
+        // 선택된 구역 정보 업데이트 함수
+        function updateSelectedZoneInfo(zone, sensorData) {
+            const container = document.getElementById('selectedZoneInfo');
+            
+            // 선택된 구역의 센서 필터링
+            const zoneSensors = sensorData.filter(sensor => sensor.zone === zone.id);
+            
+            // HTML 생성
+            let html = `
+                <h5 class="mb-3">${zone.name}</h5>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>상태:</span>
+                        <span class="badge ${getStatusBadgeClass(zone.status)}">${getStatusLabel(zone.status)}</span>
+                    </div>
+                </div>
+                <h6 class="mb-2">센서 데이터</h6>
+            `;
+            
+            if (zoneSensors.length > 0) {
+                html += `<ul class="list-group">`;
+                zoneSensors.forEach(sensor => {
+                    html += `
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="${getSensorIcon(sensor.type)} me-2"></i>
+                                ${sensor.name}
+                            </div>
+                            <span class="badge ${getStatusBadgeClass(sensor.status)}">${sensor.value}${sensor.unit}</span>
+                        </li>
+                    `;
+                });
+                html += `</ul>`;
+            } else {
+                html += `<p class="text-muted">이 구역에는 센서가 없습니다.</p>`;
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        // 센서 테이블 업데이트 함수
+        function updateSensorsTable(sensorData) {
+            const tableBody = document.querySelector('#sensorsTable tbody');
+            tableBody.innerHTML = '';
+            
+            sensorData.forEach(sensor => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${sensor.id}</td>
+                    <td>
+                        <i class="${getSensorIcon(sensor.type)} me-2"></i>
+                        ${getSensorTypeLabel(sensor.type)}
+                    </td>
+                    <td>${getZoneName(sensor.zone)}</td>
+                    <td>${sensor.value}${sensor.unit}</td>
+                    <td><span class="badge ${getStatusBadgeClass(sensor.status)}">${getStatusLabel(sensor.status)}</span></td>
+                    <td>${formatDate(sensor.lastUpdate)}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // 상태에 따른 배지 클래스
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case 'warning': return 'bg-warning';
+                case 'danger': return 'bg-danger';
+                case 'normal':
+                default: return 'bg-success';
+            }
+        }
+        
+        // 상태 레이블
+        function getStatusLabel(status) {
+            switch (status) {
+                case 'warning': return '주의';
+                case 'danger': return '경고';
+                case 'normal':
+                default: return '정상';
+            }
+        }
+        
+        // 센서 유형에 따른 아이콘
+        function getSensorIcon(type) {
+            switch (type) {
+                case 'temperature': return 'bx bx-sun';
+                case 'humidity': return 'bx bx-droplet';
+                case 'soil_moisture': return 'bx bx-water';
+                case 'light': return 'bx bx-bulb';
+                default: return 'bx bx-chip';
+            }
+        }
+        
+        // 센서 유형 레이블
+        function getSensorTypeLabel(type) {
+            switch (type) {
+                case 'temperature': return '온도';
+                case 'humidity': return '습도';
+                case 'soil_moisture': return '토양 수분';
+                case 'light': return '광량';
+                default: return type;
+            }
+        }
+        
+        // 구역 이름 가져오기
+        function getZoneName(zoneId) {
+            switch (zoneId) {
+                case 'zone1': return '1구역';
+                case 'zone2': return '2구역';
+                case 'zone3': return '3구역';
+                default: return zoneId;
+            }
+        }
+        
+        // 날짜 포맷팅
+        function formatDate(date) {
+            return date.toLocaleTimeString('ko-KR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+    });
+</script>
+{% endblock %} 
